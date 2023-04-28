@@ -1,0 +1,64 @@
+{
+  "name": "@eclipse-glsp/glsp-playwright",
+  "version": "0.1.0",
+  "description": "Playwright-based testing framework for GLSP",
+  "homepage": "https://www.eclipse.org/glsp/",
+  "bugs": "https://github.com/eclipse-glsp/glsp/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eclipse-glsp/glsp-playwright.git"
+  },
+  "license": "(EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0)",
+  "author": {
+    "name": "Eclipse GLSP"
+  },
+  "contributors": [
+    {
+      "name": "Eclipse GLSP Project",
+      "email": "glsp-dev@eclipse.org",
+      "url": "https://projects.eclipse.org/projects/ecd.glsp"
+    },
+    {
+      "name": "Haydar Metin",
+      "email": "dev@haydar.metin.at",
+      "url": "https://me.big.tuwien.ac.at/"
+    }
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./extension": "./lib/extension/index.js",
+    "./glsp": "./lib/glsp/index.js",
+    "./integration": "./lib/integration/index.js",
+    "./remote": "./lib/remote/index.js",
+    "./test": "./lib/test.js"
+  },
+  "main": "./lib/index.js",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc -b && tsc-alias",
+    "build:watch": "yarn build && yarn watch",
+    "circular": "npx madge --circular ./lib ./src",
+    "clean": "rimraf lib tsconfig.tsbuildinfo  coverage",
+    "lint": "eslint --ext .ts,.tsx ./src",
+    "lint:all": "yarn lint && yarn circular --no-spinner",
+    "lint:fix": "yarn lint --fix",
+    "prepare": "yarn clean && yarn build",
+    "watch": "(concurrently \"tsc -w\" \"tsc-alias -w\")"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.32.3",
+    "reflect-metadata": "0.1.13",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.0",
+    "concurrently": "^7.6.0",
+    "tsc-alias": "^1.8.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

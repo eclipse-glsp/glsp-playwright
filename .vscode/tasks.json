@@ -1,0 +1,55 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build all",
+      "detail": "Build all packages & examples",
+      "type": "shell",
+      "group": "build",
+      "command": "yarn",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": ["$tsc", "$eslint-stylish"]
+    },
+    {
+      "label": "Watch all",
+      "detail": "Watch all packages & examples",
+      "type": "shell",
+      "group": "build",
+      "command": "yarn watch",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": ["$tsc-watch"]
+    },
+    {
+      "label": "Server standalone",
+      "detail": "Start the standalone server",
+      "type": "shell",
+      "group": "none",
+      "command": "cd examples/workflow-test && yarn server:standalone",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Test standalone",
+      "detail": "Run test cases for standalone integration",
+      "type": "shell",
+      "group": "test",
+      "command": "cd examples/workflow-test && yarn test:standalone",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
