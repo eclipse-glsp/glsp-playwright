@@ -29,21 +29,18 @@ yarn install
 
 This command will also install Playwright and the necessary browsers.
 
-Next, download a pre-built version of the Workflow Example diagram server and start it:
+Next, download a pre-built version of the Workflow Example diagram server by executing the task `Download server` or running the command:
 
 ```bash
 cd examples/workflow-test
 yarn download:server
-yarn server:standalone
 ```
 
-Once the server runs, run the command `yarn test:standalone` in the `examples/workflow-test` folder in a separate terminal.
+Once the server has been downloaded, run the task `Test standalone` or the command `yarn test:standalone` in the `examples/workflow-test` folder.
 
 ### Tasks
 
-The repository provides build & watch tasks, so that you can build all packages with the task Build all or start watching all client packages with Watch all.
-
-Further, tasks for starting the server and running the tests are provided.
+The repository also provides build & watch tasks, so that you can build all packages with the task `Build all` or start watching all packages with `Watch all`.
 
 ## Documentation
 

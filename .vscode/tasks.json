@@ -28,11 +28,11 @@
       "problemMatcher": ["$tsc-watch"]
     },
     {
-      "label": "Server standalone",
-      "detail": "Start the standalone server",
+      "label": "Download server",
+      "detail": "Download Workflow Diagram example server",
       "type": "shell",
       "group": "none",
-      "command": "cd examples/workflow-test && yarn server:standalone",
+      "command": "cd examples/workflow-test && yarn download:server",
       "presentation": {
         "reveal": "always",
         "panel": "new"

@@ -37,13 +37,13 @@ The `STANDALONE_URL` is the URL of the standalone version of the GLSP-Client. Yo
 
 ## Building the examples
 
-The example project has to be built using yarn. Simply execute the following:
+The example project has to be built using yarn. Simply execute the task `Build all` or the following command in the _root_ folder:
 
 ```bash
-yarn install
+yarn
 ```
 
-Then download the server:
+Then download the server by executing the task `Download server` or the following command in the _workflow-test_ folder:
 
 ```bash
 yarn download:server
@@ -51,13 +51,7 @@ yarn download:server
 
 ## Running the examples
 
-First, start the server by running the following command:
-
-```bash
-yarn server:standalone
-```
-
-Afterward, the test cases can be executed by running:
+The test cases can be executed by executing the task `Test standalone` or the following command in the _workflow-test_ folder:
 
 ```bash
 yarn test:standalone
@@ -65,7 +59,7 @@ yarn test:standalone
 
 ## Development
 
-Use the Watch All task to rebuild the project after doing changes.
+Use the `Watch All` task to rebuild the project automatically after doing changes.
 
 > Note: The test files will be also rebuild.
 
