@@ -32,30 +32,74 @@ export class Locateable {
         return this.locator.page;
     }
 
+    /**
+     * Returns the Playwright {@link Locator}
+     */
     locate(): Locator {
         return this.locator.locate();
     }
 
+    /**
+     * Returns whether the element is hidden.
+     *
+     * @see {@link Locator.isVisible}
+     */
     async isHidden(): Promise<boolean> {
         return this.locate().isHidden();
     }
 
+    /**
+     * Returns whether the element is visible.
+     *
+     * @see {@link Locator.isVisible}
+     */
     async isVisible(): Promise<boolean> {
         return this.locate().isVisible();
     }
 
-    async waitFor(options?: { state?: 'attached' | 'detached' | 'visible' | 'hidden'; timeout?: number }): Promise<void> {
+    /**
+     * Returns when element specified by locator satisfies the state option.
+     *
+     * If target element already satisfies the condition, the method returns immediately.
+     * Otherwise, waits for up to timeout milliseconds until the condition is met.
+     *
+     * @param options
+     *
+     * @see {@link Locator.waitFor}
+     */
+    async waitFor(options?: Parameters<Locator['waitFor']>[0]): Promise<void> {
         return this.locate().waitFor(options);
     }
 
+    /**
+     * Returns when element specified by locator satisfies the hidden state.
+     *
+     * If target element already satisfies the condition, the method returns immediately.
+     * Otherwise, waits for up to timeout milliseconds until the condition is met.
+     *
+     * @see {@link Locator.waitFor}
+     */
     async waitForHidden(timeout?: number): Promise<void> {
-        return this.locate().waitFor({ state: 'hidden', timeout });
+        return this.waitFor({ state: 'hidden', timeout });
     }
 
+    /**
+     * Returns when element specified by locator satisfies the visible state.
+     *
+     * If target element already satisfies the condition, the method returns immediately.
+     * Otherwise, waits for up to timeout milliseconds until the condition is met.
+     *
+     * @see {@link Locator.waitFor}
+     */
     async waitForVisible(timeout?: number): Promise<void> {
-        return this.locate().waitFor({ state: 'visible', timeout });
+        return this.waitFor({ state: 'visible', timeout });
     }
 
+    /**
+     * Returns the interactable bounding box of the element.
+     *
+     * @see {@link InteractableBoundingBox}
+     */
     async bounds(): Promise<InteractableBoundingBox> {
         return interactableBoundsOf(this.locate());
     }

@@ -42,24 +42,10 @@ export interface Draggable {
      *
      * @param target Locator of the element to drag to
      * @param options
+     *
+     * @see {@link Locator.dragTo}
      */
-    dragTo(
-        target: Locator,
-        options?: {
-            force?: boolean;
-            noWaitAfter?: boolean;
-            sourcePosition?: {
-                x: number;
-                y: number;
-            };
-            targetPosition?: {
-                x: number;
-                y: number;
-            };
-            timeout?: number;
-            trial?: boolean;
-        }
-    ): Promise<void>;
+    dragTo(target: Parameters<Locator['dragTo']>[0], options?: Parameters<Locator['dragTo']>[1]): Promise<void>;
 }
 
 /**
@@ -75,28 +61,28 @@ export interface Draggable {
  */
 export function useDraggableFlow<TBase extends ConstructorA<Locateable>>(Base: TBase): Flow<TBase, Draggable> {
     abstract class Mixin extends Base implements Draggable {
-        readonly #mouse = this.locator.page.mouse;
-
         async dragToAbsolutePosition(position: Position): Promise<void> {
+            const mouse = this.locator.page.mouse;
             const bounds = await this.bounds();
             const center = bounds.position('middle_center');
 
-            await this.#mouse.move(center.data.x, center.data.y);
-            await this.#mouse.down();
-            await this.#mouse.move(position.x, position.y);
-            await this.#mouse.up();
+            await mouse.move(center.data.x, center.data.y);
+            await mouse.down();
+            await mouse.move(position.x, position.y);
+            await mouse.up();
         }
 
         async dragToRelativePosition(position: Position): Promise<void> {
+            const mouse = this.locator.page.mouse;
             const bounds = await this.bounds();
             const center = bounds.position('middle_center');
 
             const target = addToBoundingBox(bounds.data, position);
 
-            await this.#mouse.move(center.data.x, center.data.y);
-            await this.#mouse.down();
-            await this.#mouse.move(target.x, target.y);
-            await this.#mouse.up();
+            await mouse.move(center.data.x, center.data.y);
+            await mouse.down();
+            await mouse.move(target.x, target.y);
+            await mouse.up();
         }
 
         /**
@@ -104,7 +90,7 @@ export function useDraggableFlow<TBase extends ConstructorA<Locateable>>(Base: T
          *
          * **Details**
          *
-         * Proxied to the Playwright {@link Locator} implementation. The method is same as executing:
+         * Proxied to the Playwright {@link Locator} implementation. The method is the same as executing:
          *
          * ```ts
          * page.locator(...).dragTo(target, options);
@@ -115,17 +101,7 @@ export function useDraggableFlow<TBase extends ConstructorA<Locateable>>(Base: T
          *
          * @see {@link Locator.dragTo}
          */
-        async dragTo(
-            target: Locator,
-            options?: {
-                force?: boolean;
-                noWaitAfter?: boolean;
-                sourcePosition?: { x: number; y: number };
-                targetPosition?: { x: number; y: number };
-                timeout?: number;
-                trial?: boolean;
-            }
-        ): Promise<void> {
+        async dragTo(target: Parameters<Locator['dragTo']>[0], options?: Parameters<Locator['dragTo']>[1]): Promise<void> {
             return this.locate().dragTo(target, options);
         }
     }

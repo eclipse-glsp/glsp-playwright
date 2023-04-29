@@ -13,8 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { Locator } from '@playwright/test'; // For documentation
+import type { Locator } from '@playwright/test';
 import type { Locateable } from '~/remote';
 import type { ConstructorA } from '../../types';
 import type { Flow } from '../types';
@@ -27,17 +26,10 @@ export interface Hoverable {
      * Hover the element.
      *
      * @param options
+     *
+     * @see {@link Locator.hover}
      */
-    hover(options?: {
-        force?: boolean;
-        modifiers?: Array<'Alt' | 'Control' | 'Meta' | 'Shift'>;
-        position?: {
-            x: number;
-            y: number;
-        };
-        timeout?: number;
-        trial?: boolean;
-    }): Promise<void>;
+    hover(options?: Parameters<Locator['hover']>[0]): Promise<void>;
 }
 
 /**
@@ -58,7 +50,7 @@ export function useHoverableFlow<TBase extends ConstructorA<Locateable>>(Base: T
          *
          * **Details**
          *
-         * Proxied to the Playwright {@link Locator} implementation. The method is same as executing:
+         * Proxied to the Playwright {@link Locator} implementation. The method is the same as executing:
          *
          * ```ts
          * page.locator(...).hover(options);
@@ -68,13 +60,7 @@ export function useHoverableFlow<TBase extends ConstructorA<Locateable>>(Base: T
          *
          * @see {@link Locator.hover}
          */
-        async hover(options?: {
-            force?: boolean;
-            modifiers?: ('Alt' | 'Control' | 'Meta' | 'Shift')[];
-            position?: { x: number; y: number };
-            timeout?: number;
-            trial?: boolean;
-        }): Promise<void> {
+        async hover(options?: Parameters<Locator['hover']>[0]): Promise<void> {
             return this.locate().hover(options);
         }
     }

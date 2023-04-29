@@ -49,16 +49,14 @@ export interface PopupCapability<TPopup extends Popup = Popup> {
  */
 export function usePopupCapability<TBase extends ConstructorA<Locateable & Hoverable>>(Base: TBase): Capability<TBase, PopupCapability> {
     abstract class Mixin extends Base implements PopupCapability {
-        #popup = new Popup(this);
-
         popup(): Popup {
-            return this.#popup;
+            return new Popup(this);
         }
 
         async popupText(): Promise<string> {
             await this.hover();
 
-            return this.#popup.innerText();
+            return this.popup().innerText();
         }
     }
 

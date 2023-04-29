@@ -28,14 +28,29 @@ export class GLSPLocator {
         return this.app.page;
     }
 
+    /**
+     * Returns the Playwright {@link Locator}
+     */
     locate(): Locator {
         return this.locator;
     }
 
+    /**
+     * Appends the provided selector to the current {@link GLSPLocator} as child.
+     *
+     * @param selector Selector of the element
+     * @returns New {@link GLSPLocator} with the provided selector as child
+     */
     child(selector: string): GLSPLocator {
         return new GLSPLocator(this.locator.locator(selector), this.app, this);
     }
 
+    /**
+     * Appends the provided selector to the the current {@link GLSPLocator} as sibling.
+     *
+     * @param locator Locator of the element
+     * @returns New {@link GLSPLocator} with the provided locator as sibling
+     */
     override(locator: Locator): GLSPLocator {
         return new GLSPLocator(locator, this.app, this.parent);
     }

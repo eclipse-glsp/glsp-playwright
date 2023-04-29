@@ -43,9 +43,6 @@ export interface Renameable {
  */
 export function Renameable<TBase extends ConstructorA<Locateable & Clickable>>(Base: TBase): Flow<TBase, Renameable> {
     abstract class Mixin extends Base implements Renameable {
-        readonly #keyboard = this.page.keyboard;
-        readonly #labelEditor = this.app.labelEditor;
-
         /**
          * Rename the element.
          *
@@ -59,11 +56,14 @@ export function Renameable<TBase extends ConstructorA<Locateable & Clickable>>(B
          * @param newName New name for the element
          */
         async rename(newName: string): Promise<void> {
+            const keyboard = this.page.keyboard;
+            const labelEditor = this.app.labelEditor;
+
             await this.dblclick();
-            await this.#labelEditor.waitForVisible();
-            await this.#keyboard.type(newName);
-            await this.#keyboard.press('Enter');
-            await this.#labelEditor.waitForHidden();
+            await labelEditor.waitForVisible();
+            await keyboard.type(newName);
+            await keyboard.press('Enter');
+            await labelEditor.waitForHidden();
         }
     }
 

@@ -19,3 +19,4 @@ export * from './glsp';
 export * from './integration';
 export * from './remote';
 export * from './test';
+export * from './types';

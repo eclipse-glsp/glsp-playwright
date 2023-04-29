@@ -13,8 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { Locator } from '@playwright/test'; // For documentation
+import type { Locator } from '@playwright/test';
 import type { Locateable } from '~/remote';
 import type { ConstructorA } from '../../types';
 import type { Flow } from '../types';
@@ -27,42 +26,19 @@ export interface Clickable {
      * Click the element.
      *
      * @param options
+     *
+     * @see {@link Locator.click}
      */
-    click(options?: {
-        button?: 'left' | 'right' | 'middle';
-        clickCount?: number;
-        delay?: number;
-        force?: boolean;
-        modifiers?: Array<'Alt' | 'Control' | 'Meta' | 'Shift'>;
-        noWaitAfter?: boolean;
-        position?: {
-            x: number;
-
-            y: number;
-        };
-        timeout?: number;
-        trial?: boolean;
-    }): Promise<void>;
+    click(options?: Parameters<Locator['click']>[0]): Promise<void>;
 
     /**
      * Double click the element.
      *
      * @param options
+     *
+     * @see {@link Locator.dblclick}
      */
-    dblclick(options?: {
-        button?: 'left' | 'right' | 'middle';
-        delay?: number;
-        force?: boolean;
-        modifiers?: Array<'Alt' | 'Control' | 'Meta' | 'Shift'>;
-        noWaitAfter?: boolean;
-        position?: {
-            x: number;
-
-            y: number;
-        };
-        timeout?: number;
-        trial?: boolean;
-    }): Promise<void>;
+    dblclick(options?: Parameters<Locator['dblclick']>[0]): Promise<void>;
 }
 
 /**
@@ -83,7 +59,7 @@ export function useClickableFlow<TBase extends ConstructorA<Locateable>>(Base: T
          *
          * **Details**
          *
-         * Proxied to the Playwright {@link Locator} implementation. The method is same as executing:
+         * Proxied to the Playwright {@link Locator} implementation. The method is the same as executing:
          *
          * ```ts
          * page.locator(...).click(options);
@@ -93,21 +69,7 @@ export function useClickableFlow<TBase extends ConstructorA<Locateable>>(Base: T
          *
          * @see {@link Locator.click}
          */
-        click(
-            options?:
-                | {
-                      button?: 'left' | 'right' | 'middle' | undefined;
-                      clickCount?: number | undefined;
-                      delay?: number | undefined;
-                      force?: boolean | undefined;
-                      modifiers?: ('Alt' | 'Control' | 'Meta' | 'Shift')[] | undefined;
-                      noWaitAfter?: boolean | undefined;
-                      position?: { x: number; y: number } | undefined;
-                      timeout?: number | undefined;
-                      trial?: boolean | undefined;
-                  }
-                | undefined
-        ): Promise<void> {
+        click(options?: Parameters<Locator['click']>[0]): Promise<void> {
             return this.locate().click(options);
         }
 
@@ -116,7 +78,7 @@ export function useClickableFlow<TBase extends ConstructorA<Locateable>>(Base: T
          *
          * **Details**
          *
-         * Proxied to the Playwright {@link Locator} implementation. The method is same as executing:
+         * Proxied to the Playwright {@link Locator} implementation. The method is the same as executing:
          *
          * ```ts
          * page.locator(...).dblclick(options);
@@ -126,20 +88,7 @@ export function useClickableFlow<TBase extends ConstructorA<Locateable>>(Base: T
          *
          * @see {@link Locator.dblclick}
          */
-        dblclick(
-            options?:
-                | {
-                      button?: 'left' | 'right' | 'middle' | undefined;
-                      delay?: number | undefined;
-                      force?: boolean | undefined;
-                      modifiers?: ('Alt' | 'Control' | 'Meta' | 'Shift')[] | undefined;
-                      noWaitAfter?: boolean | undefined;
-                      position?: { x: number; y: number } | undefined;
-                      timeout?: number | undefined;
-                      trial?: boolean | undefined;
-                  }
-                | undefined
-        ): Promise<void> {
+        dblclick(options?: Parameters<Locator['dblclick']>[0]): Promise<void> {
             return this.locate().dblclick(options);
         }
     }
