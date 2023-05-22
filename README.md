@@ -36,7 +36,7 @@ cd examples/workflow-test
 yarn download:server
 ```
 
-Once the server has been downloaded, run the task `Test standalone` or the command `yarn test:standalone` in the `examples/workflow-test` folder.
+Once the server has been downloaded, run the task `Test standalone` or the command `yarn test:standalone` in the root folder. Alternatively, the command `yarn test:standalone` in the `examples/workflow-test` folder can be also run.
 
 ### Tasks
 

@@ -45,7 +45,7 @@
     "lint": "eslint --ext .ts,.tsx ./src",
     "lint:all": "yarn lint && yarn circular --no-spinner",
     "lint:fix": "yarn lint --fix",
-    "prepare": "yarn clean && yarn build",
+    "prepare": "yarn clean && yarn build && yarn lint",
     "watch": "(concurrently \"tsc -w\" \"tsc-alias -w\")"
   },
   "dependencies": {

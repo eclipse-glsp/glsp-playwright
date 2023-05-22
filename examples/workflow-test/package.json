@@ -37,7 +37,7 @@
     "lint": "eslint --ext .ts,.tsx ./src ./tests",
     "lint:all": "yarn check-types && yarn lint",
     "lint:fix": "yarn lint --fix",
-    "prepare": "yarn clean && yarn build && playwright install",
+    "prepare": "yarn clean && yarn build && yarn lint && playwright install",
     "server:standalone": "tsx scripts/start-server standalone",
     "test": "playwright test",
     "test:standalone": "yarn test --project=standalone",
