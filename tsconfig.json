@@ -1,0 +1,6 @@
+{
+  "extends": "@eclipse-glsp/ts-config/tsconfig.json",
+  "compilerOptions": {
+    "composite": true
+  }
+}
