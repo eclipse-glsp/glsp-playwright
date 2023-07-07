@@ -14,9 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { test as base } from '@playwright/test';
-import type { Integration, IntegrationOptions } from '~/integration';
-import { PageIntegration } from '~/integration/page/page.integration';
-import { StandaloneIntegration } from '~/integration/standalone';
+import { Integration, IntegrationOptions, PageIntegration, StandaloneIntegration, TheiaIntegration } from '~/integration';
 
 /**
  * GLSP-Playwright specific options
@@ -63,6 +61,9 @@ export const test = base.extend<GLSPPlaywrightOptions & GLSPPlaywrightFixtures>(
                     break;
                 case 'Standalone':
                     integration = new StandaloneIntegration(page, integrationOptions);
+                    break;
+                case 'Theia':
+                    integration = new TheiaIntegration(page, integrationOptions);
                     break;
                 default: {
                     const exhaustiveCheck: never = integrationOptions;

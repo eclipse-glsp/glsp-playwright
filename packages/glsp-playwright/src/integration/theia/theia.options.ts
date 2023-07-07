@@ -13,14 +13,19 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import type { PageIntegrationOptions } from './page';
-import type { StandaloneIntegrationOptions } from './standalone';
-import type { TheiaIntegrationOptions } from './theia';
 
-export type IntegrationType = 'Page' | 'Standalone' | 'Theia';
+import type { BaseIntegrationOptions, IntegrationOptions } from '../integration.type';
 
-export interface BaseIntegrationOptions {
-    type: IntegrationType;
+export interface TheiaIntegrationOptions extends BaseIntegrationOptions {
+    type: 'Theia';
+    url: string;
+    widgetId: string;
+    workspace?: string;
+    file?: string;
 }
 
-export type IntegrationOptions = PageIntegrationOptions | StandaloneIntegrationOptions | TheiaIntegrationOptions;
+export namespace TheiaIntegrationOptions {
+    export function is(options?: IntegrationOptions): options is TheiaIntegrationOptions {
+        return options?.type === 'Theia';
+    }
+}

@@ -27,16 +27,11 @@ Clone this repository and build the packages:
 yarn install
 ```
 
-This command will also install Playwright and the necessary browsers.
+This command will also install Playwright, the necessary browsers and the GLSP-Server.
 
-Next, download a pre-built version of the Workflow Example diagram server by executing the task `Download server` or running the command:
+Once the installation is finished, run the task `[Playwright] Test standalone` or the command `yarn test:standalone` in the root folder. Alternatively, the command `yarn test:standalone` in the `examples/workflow-test` folder can be also run.
 
-```bash
-cd examples/workflow-test
-yarn download:server
-```
-
-Once the server has been downloaded, run the task `Test standalone` or the command `yarn test:standalone` in the root folder. Alternatively, the command `yarn test:standalone` in the `examples/workflow-test` folder can be also run.
+More information about testing Theia can be found in the [example folder](./examples/workflow-test/README.md).
 
 ### Tasks
 

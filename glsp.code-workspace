@@ -1,0 +1,16 @@
+{
+    "folders": [
+        {
+            "name": "glsp-playwright",
+            "path": "."
+        },
+        {
+            "name": "glsp-client",
+            "path": "../glsp-client"
+        },
+        {
+            "name": "glsp-theia-integration",
+            "path": "../glsp-theia-integration"
+        }
+    ]
+}

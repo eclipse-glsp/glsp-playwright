@@ -15,23 +15,25 @@
  ********************************************************************************/
 import 'reflect-metadata';
 
-import type { GLSPPlaywrightOptions, StandaloneIntegrationOptions } from '@eclipse-glsp/glsp-playwright';
+import type { GLSPPlaywrightOptions, StandaloneIntegrationOptions, TheiaIntegrationOptions } from '@eclipse-glsp/glsp-playwright';
 import type { PlaywrightTestConfig } from '@playwright/test';
 import { devices } from '@playwright/test';
 import * as dotenv from 'dotenv';
+import { getDefined } from './src/utils';
 
 dotenv.config();
-
-function getDefined(val?: string): string {
-    if (val === undefined || val === null) {
-        throw new Error('missing env var');
-    }
-    return val;
-}
 
 const standaloneIntegrationOptions: StandaloneIntegrationOptions = {
     type: 'Standalone',
     url: getDefined(process.env.STANDALONE_URL)
+};
+
+const theiaIntegrationOptions: TheiaIntegrationOptions = {
+    type: 'Theia',
+    url: getDefined(process.env.THEIA_URL),
+    widgetId: 'workflow-diagram',
+    workspace: '../workspace',
+    file: 'example1.wf'
 };
 
 /**
@@ -52,11 +54,14 @@ const config: PlaywrightTestConfig<GLSPPlaywrightOptions> = {
         actionTimeout: 0,
         trace: 'on-first-retry'
     },
-    webServer: {
-        command: 'yarn server:standalone',
-        port: +getDefined(process.env.GLSP_SERVER_PORT),
-        reuseExistingServer: !process.env.CI
-    },
+    webServer: [
+        {
+            command: 'yarn start:server',
+            port: +getDefined(process.env.GLSP_SERVER_PORT),
+            reuseExistingServer: !process.env.CI,
+            stdout: 'ignore'
+        }
+    ],
     projects: [
         {
             name: 'standalone',
@@ -64,6 +69,15 @@ const config: PlaywrightTestConfig<GLSPPlaywrightOptions> = {
             use: {
                 ...devices['Desktop Chrome'],
                 integrationOptions: standaloneIntegrationOptions
+            }
+        },
+        {
+            name: 'theia',
+            testMatch: ['**/*.spec.js'],
+            use: {
+                ...devices['Desktop Chrome'],
+                baseURL: theiaIntegrationOptions.url,
+                integrationOptions: theiaIntegrationOptions
             }
         }
     ]

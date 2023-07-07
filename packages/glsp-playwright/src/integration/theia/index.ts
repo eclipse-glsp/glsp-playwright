@@ -13,14 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import type { PageIntegrationOptions } from './page';
-import type { StandaloneIntegrationOptions } from './standalone';
-import type { TheiaIntegrationOptions } from './theia';
 
-export type IntegrationType = 'Page' | 'Standalone' | 'Theia';
-
-export interface BaseIntegrationOptions {
-    type: IntegrationType;
-}
-
-export type IntegrationOptions = PageIntegrationOptions | StandaloneIntegrationOptions | TheiaIntegrationOptions;
+export * from './po/theia-glsp-editor.po';
+export * from './theia.integration';
+export * from './theia.options';
