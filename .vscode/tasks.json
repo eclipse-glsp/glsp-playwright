@@ -28,18 +28,6 @@
       "problemMatcher": ["$tsc-watch"]
     },
     {
-      "label": "[Playwright] Download server",
-      "detail": "Download Workflow Diagram example server",
-      "type": "shell",
-      "group": "none",
-      "command": "cd examples/workflow-test && yarn download:server",
-      "presentation": {
-        "reveal": "always",
-        "panel": "new"
-      },
-      "problemMatcher": []
-    },
-    {
       "label": "[Playwright] Test Standalone",
       "detail": "Run test cases for Standalone integration",
       "type": "shell",

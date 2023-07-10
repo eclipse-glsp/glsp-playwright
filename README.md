@@ -12,7 +12,8 @@ This project is built with `yarn`.
 
 ## Workflow Diagram Example
 
-The workflow diagram is a consistent example provided by all GLSP components. The example implements a simple flow chart diagram editor with different types of nodes and edges (see below).
+The workflow diagram is a consistent example provided by all GLSP components.
+The example implements a simple flow chart diagram editor with different types of nodes and edges (see below).
 The example can be used to try out different GLSP features, as well as several available integrations with IDE platforms (Theia, VSCode, Eclipse, Standalone).
 
 The example test cases test the features provided by the GLSP client. The test cases in the [Workflow Example](https://github.com/eclipse-glsp/glsp-playwright/examples/workflow-test) demonstrate all supported features.
@@ -29,9 +30,7 @@ yarn install
 
 This command will also install Playwright, the necessary browsers and the GLSP-Server.
 
-Once the installation is finished, run the task `[Playwright] Test standalone` or the command `yarn test:standalone` in the root folder. Alternatively, the command `yarn test:standalone` in the `examples/workflow-test` folder can be also run.
-
-More information about testing Theia can be found in the [example folder](./examples/workflow-test/README.md).
+Once the installation is finished, follow the instructions to test the example in the [example folder](./examples/workflow-test/README.md).
 
 ### Tasks
 
