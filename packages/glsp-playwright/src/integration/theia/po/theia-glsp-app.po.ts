@@ -13,14 +13,21 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import type { PageIntegrationOptions } from './page';
-import type { StandaloneIntegrationOptions } from './standalone';
-import type { TheiaIntegrationOptions } from './theia';
 
-export type IntegrationType = 'Page' | 'Standalone' | 'Theia';
+import { TheiaApp } from '@theia/playwright';
+import type { TheiaIntegrationOptions } from '../theia.options';
 
-export interface BaseIntegrationOptions {
-    type: IntegrationType;
+/**
+ * App for accessing the [Theia Page Objects](https://www.npmjs.com/package/@theia/playwright).
+ */
+export class TheiaGLSPApp extends TheiaApp {
+    protected _options: TheiaIntegrationOptions;
+
+    get options(): TheiaIntegrationOptions {
+        return this._options;
+    }
+
+    initialize(options: TheiaIntegrationOptions): void {
+        this._options = options;
+    }
 }
-
-export type IntegrationOptions = PageIntegrationOptions | StandaloneIntegrationOptions | TheiaIntegrationOptions;

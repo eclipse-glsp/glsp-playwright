@@ -1,0 +1,92 @@
+{
+  // Use IntelliSense to learn about possible Node.js debug attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run tests (Standalone)",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["test:standalone"],
+      "presentation": {
+        "group": "GLSP-Playwright launch configurations",
+        "order": 1
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run tests (Theia)",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["test:standalone"],
+      "presentation": {
+        "group": "GLSP-Playwright launch configurations",
+        "order": 1
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run current test (Standalone)",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["test:standalone", "${fileBasename}"],
+      "presentation": {
+        "group": "GLSP-Playwright launch configurations",
+        "order": 1
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run current test (Theia)",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["test:theia", "${fileBasename}"],
+      "presentation": {
+        "group": "GLSP-Playwright launch configurations",
+        "order": 1
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Inspect current file (Standalone)",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["test:standalone", "--ui", "${fileBasename}"],
+      "env": {
+        "PWDEBUG": "1"
+      },
+      "presentation": {
+        "group": "GLSP-Playwright launch configurations",
+        "order": 1
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Inspect current file (Theia)",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["test:theia", "--ui", "${fileBasename}"],
+      "env": {
+        "PWDEBUG": "1"
+      },
+      "presentation": {
+        "group": "GLSP-Playwright launch configurations",
+        "order": 1
+      }
+    }
+  ]
+}

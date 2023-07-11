@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Build all",
+      "label": "[Playwright] Build all",
       "detail": "Build all packages & examples",
       "type": "shell",
       "group": "build",
@@ -16,7 +16,7 @@
       "problemMatcher": ["$tsc", "$eslint-stylish"]
     },
     {
-      "label": "Watch all",
+      "label": "[Playwright] Watch all",
       "detail": "Watch all packages & examples",
       "type": "shell",
       "group": "build",
@@ -28,11 +28,11 @@
       "problemMatcher": ["$tsc-watch"]
     },
     {
-      "label": "Download server",
-      "detail": "Download Workflow Diagram example server",
+      "label": "[Playwright] Test Standalone",
+      "detail": "Run test cases for Standalone integration",
       "type": "shell",
-      "group": "none",
-      "command": "cd examples/workflow-test && yarn download:server",
+      "group": "test",
+      "command": "cd examples/workflow-test && yarn test:standalone",
       "presentation": {
         "reveal": "always",
         "panel": "new"
@@ -40,11 +40,11 @@
       "problemMatcher": []
     },
     {
-      "label": "Test standalone",
-      "detail": "Run test cases for standalone integration",
+      "label": "[Playwright] Test Theia",
+      "detail": "Run test cases for Theia integration",
       "type": "shell",
       "group": "test",
-      "command": "cd examples/workflow-test && yarn test:standalone",
+      "command": "cd examples/workflow-test && yarn test:theia",
       "presentation": {
         "reveal": "always",
         "panel": "new"

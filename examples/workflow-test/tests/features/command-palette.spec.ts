@@ -49,6 +49,7 @@ test.describe('The command palette', () => {
                 'Create Automated Task',
                 'Create Merge Node',
                 'Create Decision Node',
+                'Delete All',
                 'Reveal Push',
                 'Reveal ChkWt',
                 'Reveal WtOK',
@@ -58,10 +59,7 @@ test.describe('The command palette', () => {
                 'Reveal KeepTp',
                 'Reveal PreHeat'
             ];
-            expect(suggestions.length).toBe(expectedSuggestions.length);
-            suggestions.forEach(s => {
-                expect(expectedSuggestions).toContain(s);
-            });
+            expect(suggestions.sort()).toEqual(expectedSuggestions.sort());
 
             await globalCommandPalette.search('Create');
             const createSuggestions = await globalCommandPalette.suggestions();
@@ -72,10 +70,7 @@ test.describe('The command palette', () => {
                 'Create Merge Node',
                 'Create Decision Node'
             ];
-            expect(createSuggestions.length).toBe(expectedCreateSuggestions.length);
-            createSuggestions.forEach(s => {
-                expect(expectedCreateSuggestions).toContain(s);
-            });
+            expect(createSuggestions.sort()).toEqual(expectedCreateSuggestions.sort());
         });
 
         test('should allow to confirm suggestions', async () => {
@@ -154,10 +149,7 @@ test.describe('The command palette', () => {
                 'Reveal KeepTp',
                 'Reveal PreHeat'
             ];
-            expect(suggestions.length).toBe(expectedSuggestions.length);
-            suggestions.forEach(s => {
-                expect(expectedSuggestions).toContain(s);
-            });
+            expect(suggestions.sort()).toEqual(expectedSuggestions.sort());
 
             await elementCommandPalette.search('Create');
             const createSuggestions = await elementCommandPalette.suggestions();
@@ -184,10 +176,7 @@ test.describe('The command palette', () => {
                 'Create Weighted Edge to RflWt',
                 'Create Weighted Edge to KeepTp'
             ];
-            expect(createSuggestions.length).toBe(expectedCreateSuggestions.length);
-            createSuggestions.forEach(s => {
-                expect(expectedCreateSuggestions).toContain(s);
-            });
+            expect(createSuggestions.sort()).toEqual(expectedCreateSuggestions.sort());
         });
 
         test('should allow creating new elements in the diagram', async () => {

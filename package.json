@@ -2,10 +2,15 @@
   "name": "parent",
   "version": "0.1.0",
   "private": true,
-  "workspaces": [
-    "packages/*",
-    "examples/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*",
+      "examples/*"
+    ],
+    "nohoist": [
+      "@eclipse-glsp/workflow-test/@eclipse-glsp-examples/workflow-server-bundled"
+    ]
+  },
   "scripts": {
     "all": "yarn install && yarn lint",
     "build": "lerna run build",
@@ -20,6 +25,7 @@
     "publish:prepare": "lerna version --ignore-scripts --yes --no-push",
     "test": "cd examples/workflow-test && yarn test",
     "test:standalone": "cd examples/workflow-test && yarn test:standalone",
+    "test:theia": "cd examples/workflow-test && yarn test:theia",
     "watch": "lerna run --parallel watch"
   },
   "devDependencies": {

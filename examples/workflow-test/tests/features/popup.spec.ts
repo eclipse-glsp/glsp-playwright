@@ -40,10 +40,9 @@ test.describe('The popup', () => {
         const text = await popup.innerText();
 
         const expected = dedent`Push
-
         Type: manual
-        Duration: 0
-        Reference: null
+        Duration: undefined
+        Reference: undefined
         
         `;
         expect(text).toBe(expected);
@@ -60,10 +59,9 @@ test.describe('The popup', () => {
         const text = await task.popupText();
 
         const expected = dedent`Push
-
         Type: manual
-        Duration: 0
-        Reference: null
+        Duration: undefined
+        Reference: undefined
         
         `;
         expect(text).toBe(expected);

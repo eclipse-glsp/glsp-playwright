@@ -8,13 +8,8 @@ The following libraries/frameworks need to be installed on your system:
 
 -   [Node.js](https://nodejs.org/en/) `>=16.11.0`
 -   [Yarn](https://classic.yarnpkg.com/en/docs/install#debian-stable) `>=1.7.0`
--   [Java](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html) `>=11`
 
 ## Structure
-
--   [./scripts](./scripts/): Scripts for easier usage (i.e., downloading the server) are provided in this folder.
-
--   [./server](./server/): The configuration for the server is provided in this folder. The server will also be downloaded and executed from this folder.
 
 -   [./src](./src/): This folder provides the page objects necessary for the `Workflow Example`.
 
@@ -24,37 +19,53 @@ The following libraries/frameworks need to be installed on your system:
 
 ## Preparations
 
-We use the [GLSP-Client](https://github.com/eclipse-glsp/glsp-client) repository to run the tests. Please clone it to your machine and follow the steps to install it.
+We use the [GLSP-Client](https://github.com/eclipse-glsp/glsp-client) repository to run the tests.
+Please clone it to your machine and follow the steps to install it.
 
-Next, create a new `.env` file with the content of `.env.example` in the `workflow-test` folder. This file contains private information about your environment, so do not commit it. Afterward, provide for the keys in `.env` file the necessary data, e.g.,
+Next, create a new `.env` file with the content of `.env.example` in the `workflow-test` folder.
+This file contains private information about your environment, so do not commit it.
+Afterward, provide for the keys in `.env` file the necessary data, e.g.,
 
 ```env
-STANDALONE_URL="file:///<path-to-the-glsp-client-folder>/glsp-client/examples/workflow-standalone/app/diagram.html"
 GLSP_SERVER_PORT=8081
+
+STANDALONE_URL="file:///<path-to-the-glsp-client-folder>/glsp-client/examples/workflow-standalone/app/diagram.html"
+THEIA_URL="http://localhost:3000"
 ```
 
-The `STANDALONE_URL` is the URL of the standalone version of the GLSP-Client. You should also be able to open it in the browser.
+The `STANDALONE_URL` is the URL of the standalone version of the GLSP-Client.
+You should also be able to open it in the browser.
+
+The `THEIA_URL` is the URL of the running Theia editor instance.
 
 ## Building the examples
 
-The example project has to be built using yarn. Simply execute the task `Build all` or the following command in the _root_ folder:
+The example project has to be built using yarn.
+Simply execute the task `[Playwright] Build all` or the following command in the _root_ folder:
 
 ```bash
 yarn
 ```
 
-Then download the server by executing the task `Download server` or the following command in the _workflow-test_ folder:
+The different versions share the same server instance.
+The server will be started automatically by Playwright.
 
-```bash
-yarn download:server
-```
+## Testing the Standalone version
 
-## Running the examples
-
-The test cases can be executed by executing the task `Test standalone` or the following command in the _workflow-test_ folder:
+The test cases can be executed by executing the task `[Playwright] Test Standalone` or the following command in the _workflow-test_ folder:
 
 ```bash
 yarn test:standalone
+```
+
+## Testing the Theia version
+
+It is necessary to first start the Theia instance manually.
+
+Afterward, the test cases can be executed by executing the task `[Playwright] Test Theia` or the following command in the _workflow-test_ folder:
+
+```bash
+yarn test:theia
 ```
 
 ## Development
