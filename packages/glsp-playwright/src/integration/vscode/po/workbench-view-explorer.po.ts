@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2023 Business Informatics Group (TU Wien) and others.
+ * Copyright (c) 2023 EclipseSource and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -13,11 +13,23 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-export * from './integration.base';
-export * from './integration.type';
-export * from './page';
-export * from './standalone';
-export * from './theia';
-export * from './vscode';
-export * from './wait.fixes';
+import type { Page } from '@playwright/test';
 
+/**
+ * Page Object for the file explorer view
+ * in the [Workbench](https://code.visualstudio.com/api/extension-capabilities/extending-workbench).
+ */
+export class VSCodeWorkbenchViewExplorer {
+    readonly locator;
+
+    protected readonly explorerFoldersViewLocator;
+
+    constructor(protected readonly page: Page, protected readonly selector = '[id="workbench.view.explorer"]') {
+        this.locator = this.page.locator(this.selector);
+        this.explorerFoldersViewLocator = this.locator.locator('.explorer-folders-view');
+    }
+
+    async openFile(path: string): Promise<void> {
+        return this.explorerFoldersViewLocator.locator(`[title$="${path}"]`).dblclick();
+    }
+}

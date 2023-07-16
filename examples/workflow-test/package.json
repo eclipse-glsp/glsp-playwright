@@ -37,10 +37,11 @@
     "lint:all": "yarn check-types && yarn lint",
     "lint:fix": "yarn lint --fix",
     "prepare": "yarn clean && yarn build && yarn lint && playwright install",
-    "start:server": "node node_modules/@eclipse-glsp-examples/workflow-server-bundled/wf-glsp-server-node.js -w -p 8081",
+    "start:server": "node node_modules/@eclipse-glsp-examples/workflow-server-bundled/wf-glsp-server-node.js",
     "test": "playwright test",
     "test:standalone": "yarn test --project=standalone",
     "test:theia": "yarn test --project=theia",
+    "test:vscode": "yarn test --project=vscode",
     "watch": "tsc -w"
   },
   "devDependencies": {

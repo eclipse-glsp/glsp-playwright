@@ -15,13 +15,29 @@
  ********************************************************************************/
 import { Marker } from '@eclipse-glsp/glsp-playwright';
 import { GLSPApp } from '@eclipse-glsp/glsp-playwright/glsp';
-import { expect, test } from '@eclipse-glsp/glsp-playwright/test';
+import { createParameterizedIntegrationData, expect, test } from '@eclipse-glsp/glsp-playwright/test';
 import { WorkflowApp } from '../../src/app/workflow-app';
 import { WorkflowToolPalette } from '../../src/features/tool-palette/workflow-tool-palette';
 import { Edge } from '../../src/graph/elements/edge.po';
 import { TaskAutomated } from '../../src/graph/elements/task-automated.po';
 import { TaskManual } from '../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../src/graph/workflow.graph';
+
+const integrationData = createParameterizedIntegrationData<{
+    nodes: string;
+    edges: string;
+}>({
+    default: {
+        edges: 'Edges',
+        nodes: 'Nodes'
+    },
+    override: {
+        VSCode: {
+            edges: 'EDGES',
+            nodes: 'NODES'
+        }
+    }
+});
 
 test.describe('The tool palette', () => {
     let app: WorkflowApp;
@@ -37,13 +53,13 @@ test.describe('The tool palette', () => {
         toolPalette = app.toolPalette;
     });
 
-    test('should allow to access the content items', async () => {
+    test('should allow to access the content items', async ({ integration }) => {
         await toolPalette.waitForVisible();
 
         const groups = await toolPalette.content.toolGroups();
         expect(groups.length).toBe(2);
-        expect(await groups[0].header()).toBe('Nodes');
-        expect(await groups[1].header()).toBe('Edges');
+        expect(await groups[0].header()).toBe(integrationData[integration.type].nodes);
+        expect(await groups[1].header()).toBe(integrationData[integration.type].edges);
 
         const elements0 = await groups[0].items();
         expect(elements0.length).toBe(7);
@@ -54,7 +70,7 @@ test.describe('The tool palette', () => {
         expect(await elements1[1].text()).toBe('Weighted edge');
 
         const headerGroup = await toolPalette.content.toolGroupByHeaderText('Edges');
-        expect(await headerGroup.header()).toBe('Edges');
+        expect(await headerGroup.header()).toBe(integrationData[integration.type].edges);
 
         const headerElements = await headerGroup.items();
         expect(headerElements.length).toBe(2);
@@ -68,7 +84,7 @@ test.describe('The tool palette', () => {
         expect(await toolElement.tabIndexAttr()).toBe('6');
     });
 
-    test('should allow to access the toolbar items', async () => {
+    test('should allow to access the toolbar items', async ({ integration }) => {
         await toolPalette.waitForVisible();
 
         const deleteTool = await toolPalette.toolbar.deletionTool();
@@ -95,7 +111,7 @@ test.describe('The tool palette', () => {
 
         const groups = await toolPalette.content.toolGroups();
         expect(groups.length).toBe(1);
-        expect(await groups[0].header()).toBe('Nodes');
+        expect(await groups[0].header()).toBe(integrationData[integration.type].nodes);
 
         const elements0 = await groups[0].items();
         expect(elements0.length).toBe(1);

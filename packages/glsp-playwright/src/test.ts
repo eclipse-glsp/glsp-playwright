@@ -14,7 +14,16 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { test as base } from '@playwright/test';
-import { Integration, IntegrationOptions, PageIntegration, StandaloneIntegration, TheiaIntegration } from '~/integration';
+import {
+    Integration,
+    IntegrationOptions,
+    IntegrationType,
+    PageIntegration,
+    StandaloneIntegration,
+    TheiaIntegration,
+    VSCodeIntegration,
+    VSCodeSetup
+} from '~/integration';
 
 /**
  * GLSP-Playwright specific options
@@ -46,10 +55,19 @@ export interface GLSPPlaywrightFixtures {
      * ```
      */
     integration: Integration;
+    vscodeSetup?: VSCodeSetup;
 }
 
 export const test = base.extend<GLSPPlaywrightOptions & GLSPPlaywrightFixtures>({
     integrationOptions: [undefined, { option: true }],
+
+    vscodeSetup: ({ integrationOptions }, use) => {
+        if (integrationOptions?.type === 'VSCode') {
+            use(new VSCodeSetup(integrationOptions, { enableLogging: true }));
+        } else {
+            use(undefined);
+        }
+    },
 
     integration: async ({ page, integrationOptions }, use) => {
         if (integrationOptions) {
@@ -65,21 +83,42 @@ export const test = base.extend<GLSPPlaywrightOptions & GLSPPlaywrightFixtures>(
                 case 'Theia':
                     integration = new TheiaIntegration(page, integrationOptions);
                     break;
+                case 'VSCode': {
+                    integration = new VSCodeIntegration(integrationOptions);
+                    break;
+                }
                 default: {
                     const exhaustiveCheck: never = integrationOptions;
                     throw new Error(`Unhandled case: ${JSON.stringify(exhaustiveCheck)}`);
                 }
             }
 
+            await integration.initialize();
             await integration.start();
             await use(integration);
         } else {
             const integration = new PageIntegration(page);
+            await integration.initialize();
             await integration.start();
             await use(integration);
         }
     }
 });
+
+// https://playwright.dev/docs/test-parameterize
+
+export type ParameterizedIntegrationData<T> = Record<IntegrationType, T>;
+export function createParameterizedIntegrationData<T>(options: {
+    default: T;
+    override?: Partial<ParameterizedIntegrationData<T>>;
+}): ParameterizedIntegrationData<T> {
+    return {
+        Page: options.override?.Page ?? options.default,
+        Standalone: options.override?.Standalone ?? options.default,
+        Theia: options.override?.Theia ?? options.default,
+        VSCode: options.override?.VSCode ?? options.default
+    };
+}
 
 export { expect } from '@playwright/test';
 export { test as setup };

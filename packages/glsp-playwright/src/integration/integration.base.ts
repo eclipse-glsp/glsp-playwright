@@ -37,6 +37,13 @@ export abstract class Integration {
     }
 
     /**
+     * Executed after the constructor to execute async commands
+     */
+    async initialize(): Promise<void> {
+        // Nothing to do
+    }
+
+    /**
      * Prepares the test execution. It runs the lifecycle methods
      * to reach the starting point of the test case by launching the GLSP-Client-Integration
      * (e.g., running the Electron Application, loading the page, opening Theia).

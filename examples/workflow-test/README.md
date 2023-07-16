@@ -24,19 +24,7 @@ Please clone it to your machine and follow the steps to install it.
 
 Next, create a new `.env` file with the content of `.env.example` in the `workflow-test` folder.
 This file contains private information about your environment, so do not commit it.
-Afterward, provide for the keys in `.env` file the necessary data, e.g.,
-
-```env
-GLSP_SERVER_PORT=8081
-
-STANDALONE_URL="file:///<path-to-the-glsp-client-folder>/glsp-client/examples/workflow-standalone/app/diagram.html"
-THEIA_URL="http://localhost:3000"
-```
-
-The `STANDALONE_URL` is the URL of the standalone version of the GLSP-Client.
-You should also be able to open it in the browser.
-
-The `THEIA_URL` is the URL of the running Theia editor instance.
+Afterward, provide for the keys in `.env` file the necessary data.
 
 ## Building the examples
 
@@ -66,6 +54,17 @@ Afterward, the test cases can be executed by executing the task `[Playwright] Te
 
 ```bash
 yarn test:theia
+```
+
+## Testing the VS Code version
+
+GLSP-Playwright will download and start the necessary VS Code instances automatically.
+
+The user needs to provide the path of the `vsix` file in the `.env` file.
+Then the test cases can be executed by executing the task `[Playwright] Test VS Code` or the following command in the _workflow-test_ folder:
+
+```bash
+yarn test:vscode
 ```
 
 ## Development

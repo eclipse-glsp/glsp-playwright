@@ -16,11 +16,12 @@
 import type { PageIntegrationOptions } from './page';
 import type { StandaloneIntegrationOptions } from './standalone';
 import type { TheiaIntegrationOptions } from './theia';
+import type { VSCodeIntegrationOptions } from './vscode';
 
-export type IntegrationType = 'Page' | 'Standalone' | 'Theia';
+export type IntegrationType = 'Page' | 'Standalone' | 'Theia' | 'VSCode';
 
 export interface BaseIntegrationOptions {
     type: IntegrationType;
 }
 
-export type IntegrationOptions = PageIntegrationOptions | StandaloneIntegrationOptions | TheiaIntegrationOptions;
+export type IntegrationOptions = PageIntegrationOptions | StandaloneIntegrationOptions | TheiaIntegrationOptions | VSCodeIntegrationOptions;

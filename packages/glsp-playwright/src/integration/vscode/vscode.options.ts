@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2023 Business Informatics Group (TU Wien) and others.
+ * Copyright (c) 2023 EclipseSource and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -13,11 +13,19 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-export * from './integration.base';
-export * from './integration.type';
-export * from './page';
-export * from './standalone';
-export * from './theia';
-export * from './vscode';
-export * from './wait.fixes';
+import type { BaseIntegrationOptions, IntegrationOptions } from '../integration.type';
 
+export interface VSCodeIntegrationOptions extends BaseIntegrationOptions {
+    type: 'VSCode';
+    workspace: string;
+    vsixId: string;
+    vsixPath: string;
+    storagePath: string;
+    file?: string;
+}
+
+export namespace VSCodeIntegrationOptions {
+    export function is(options?: IntegrationOptions): options is VSCodeIntegrationOptions {
+        return options?.type === 'VSCode';
+    }
+}
