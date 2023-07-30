@@ -119,7 +119,9 @@ export class VSCodeIntegration extends Integration {
             });
 
             page.on('console', msg => {
-                // console.log(msg.text());
+                if (this.options.isConsoleLogEnabled) {
+                    console.log(msg.text());
+                }
             });
         });
     }

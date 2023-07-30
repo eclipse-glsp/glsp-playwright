@@ -13,6 +13,9 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+export * from './po/workbench-activitybar.po';
+export * from './po/workbench-view-explorer.po';
+export * from './po/workbench-view-extensions.po';
 export * from './vscode.integration';
 export * from './vscode.options';
 export * from './vscode.setup';

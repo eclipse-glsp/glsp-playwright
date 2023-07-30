@@ -22,6 +22,11 @@ export interface VSCodeIntegrationOptions extends BaseIntegrationOptions {
     vsixPath: string;
     storagePath: string;
     file?: string;
+    /*
+     * Logs the content of the Electron Application to the console.
+     * Disabled by default.
+     */
+    isConsoleLogEnabled?: boolean;
 }
 
 export namespace VSCodeIntegrationOptions {
