@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2023 Business Informatics Group (TU Wien) and others.
+ * Copyright (c) 2023 EclipseSource and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -13,7 +13,10 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-export * from './po/theia-glsp-app.po';
-export * from './po/theia-glsp-editor.po';
-export * from './theia.integration';
-export * from './theia.options';
+export * from './po/workbench-activitybar.po';
+export * from './po/workbench-view-explorer.po';
+export * from './po/workbench-view-extensions.po';
+export * from './vscode.integration';
+export * from './vscode.options';
+export * from './vscode.setup';
+export * from './vscode.storage';

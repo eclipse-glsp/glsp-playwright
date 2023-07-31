@@ -18,4 +18,6 @@ export * from './integration.type';
 export * from './page';
 export * from './standalone';
 export * from './theia';
+export * from './vscode';
 export * from './wait.fixes';
+

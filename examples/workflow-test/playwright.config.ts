@@ -15,10 +15,16 @@
  ********************************************************************************/
 import 'reflect-metadata';
 
-import type { GLSPPlaywrightOptions, StandaloneIntegrationOptions, TheiaIntegrationOptions } from '@eclipse-glsp/glsp-playwright';
+import type {
+    GLSPPlaywrightOptions,
+    StandaloneIntegrationOptions,
+    TheiaIntegrationOptions,
+    VSCodeIntegrationOptions
+} from '@eclipse-glsp/glsp-playwright';
 import type { PlaywrightTestConfig } from '@playwright/test';
 import { devices } from '@playwright/test';
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 import { getDefined } from './src/utils';
 
 dotenv.config();
@@ -34,6 +40,15 @@ const theiaIntegrationOptions: TheiaIntegrationOptions = {
     widgetId: 'workflow-diagram',
     workspace: '../workspace',
     file: 'example1.wf'
+};
+
+const vscodeIntegrationOptions: VSCodeIntegrationOptions = {
+    type: 'VSCode',
+    workspace: '../workspace',
+    file: 'example1.wf',
+    vsixId: getDefined(process.env.VSCODE_VSIX_ID),
+    vsixPath: getDefined(process.env.VSCODE_VSIX_PATH),
+    storagePath: path.join(__dirname, 'playwright/.storage/vscode.setup.json')
 };
 
 /**
@@ -56,7 +71,7 @@ const config: PlaywrightTestConfig<GLSPPlaywrightOptions> = {
     },
     webServer: [
         {
-            command: 'yarn start:server',
+            command: `yarn start:server -w -p ${+getDefined(process.env.GLSP_SERVER_PORT)}`,
             port: +getDefined(process.env.GLSP_SERVER_PORT),
             reuseExistingServer: !process.env.CI,
             stdout: 'ignore'
@@ -78,6 +93,21 @@ const config: PlaywrightTestConfig<GLSPPlaywrightOptions> = {
                 ...devices['Desktop Chrome'],
                 baseURL: theiaIntegrationOptions.url,
                 integrationOptions: theiaIntegrationOptions
+            }
+        },
+        {
+            name: 'vscode-setup',
+            testMatch: ['setup/vscode.setup.js'],
+            use: {
+                integrationOptions: vscodeIntegrationOptions
+            }
+        },
+        {
+            name: 'vscode',
+            testMatch: ['**/*.spec.js'],
+            dependencies: ['vscode-setup'],
+            use: {
+                integrationOptions: vscodeIntegrationOptions
             }
         }
     ]

@@ -50,6 +50,18 @@
         "panel": "new"
       },
       "problemMatcher": []
+    },
+    {
+      "label": "[Playwright] Test VS Code",
+      "detail": "Run test cases for VS Code integration",
+      "type": "shell",
+      "group": "test",
+      "command": "cd examples/workflow-test && yarn test:vscode",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
     }
   ]
 }

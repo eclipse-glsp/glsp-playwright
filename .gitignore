@@ -5,6 +5,7 @@ test-results/
 playwright-report/
 playwright/.cache/
 lib/
+.vscode-test
 
 examples/workflow-test/server/
 examples/workflow-test/playwright/.storage/*.json

@@ -26,6 +26,7 @@
     "test": "cd examples/workflow-test && yarn test",
     "test:standalone": "cd examples/workflow-test && yarn test:standalone",
     "test:theia": "cd examples/workflow-test && yarn test:theia",
+    "test:vscode": "cd examples/workflow-test && yarn test:vscode",
     "watch": "lerna run --parallel watch"
   },
   "devDependencies": {

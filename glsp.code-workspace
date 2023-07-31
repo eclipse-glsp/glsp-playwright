@@ -11,6 +11,10 @@
         {
             "name": "glsp-theia-integration",
             "path": "../glsp-theia-integration"
+        },
+        {
+            "name": "glsp-vscode-integration",
+            "path": "../glsp-vscode-integration"
         }
     ]
 }
