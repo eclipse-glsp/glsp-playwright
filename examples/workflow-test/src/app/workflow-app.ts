@@ -13,8 +13,11 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+import { Clickable, InteractablePosition } from '@eclipse-glsp/glsp-playwright';
 import { GLSPApp } from '@eclipse-glsp/glsp-playwright/glsp';
 import { WorkflowToolPalette } from '../features/tool-palette/workflow-tool-palette';
+import { Edge } from '../graph/elements/edge.po';
+import { TaskManual } from '../graph/elements/task-manual.po';
 import { WorkflowGraph } from '../graph/workflow.graph';
 
 export class WorkflowApp extends GLSPApp {
@@ -27,5 +30,24 @@ export class WorkflowApp extends GLSPApp {
 
     protected override createToolPalette(): WorkflowToolPalette {
         return new WorkflowToolPalette({ locator: WorkflowToolPalette.locate(this) });
+    }
+
+    async createManualTask(position: InteractablePosition): Promise<TaskManual> {
+        const newNodes = await this.graph.waitForCreationOfNodeType(TaskManual, async () => {
+            const automatedTaskPaletteItem = await this.toolPalette.content.toolElement('Nodes', 'Manual Task');
+            await automatedTaskPaletteItem.click();
+            await position.click();
+        });
+        return newNodes[0];
+    }
+
+    async createEdge(source: Clickable, target: Clickable): Promise<Edge> {
+        const newEdges = await this.graph.waitForCreationOfEdgeType(Edge, async () => {
+            const edgePaletteItem = await this.toolPalette.content.toolElement('Edges', 'Edge');
+            await edgePaletteItem.click();
+            await source.click();
+            await target.click();
+        });
+        return newEdges[0];
     }
 }
