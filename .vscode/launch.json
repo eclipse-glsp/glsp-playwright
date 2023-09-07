@@ -24,7 +24,7 @@
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "runtimeExecutable": "yarn",
-      "runtimeArgs": ["test:standalone"],
+      "runtimeArgs": ["test:theia"],
       "presentation": {
         "group": "GLSP-Playwright launch configurations",
         "order": 1

@@ -39,9 +39,9 @@ export interface Renameable {
  * The renaming is done by utilizing the edit label functionality.
  *
  * @param Base Base class that should be extended
- * @returns Extended base class with the {@link Renameable} flow
+ * @returns Extended base class with the {@link useRenameableFlow} flow
  */
-export function Renameable<TBase extends ConstructorA<Locateable & Clickable>>(Base: TBase): Flow<TBase, Renameable> {
+export function useRenameableFlow<TBase extends ConstructorA<Locateable & Clickable>>(Base: TBase): Flow<TBase, Renameable> {
     abstract class Mixin extends Base implements Renameable {
         /**
          * Rename the element.
