@@ -19,8 +19,10 @@ import {
     useClickableFlow,
     useCommandPaletteCapability,
     useDeletableFlow,
+    useDraggableFlow,
     useHoverableFlow,
     usePopupCapability,
+    useRenameableFlow,
     useResizeHandleCapability
 } from '@eclipse-glsp/glsp-playwright/extension';
 import { ChildrenAccessor, NodeMetadata, PNode, SVGMetadataUtils } from '@eclipse-glsp/glsp-playwright/glsp';
@@ -30,6 +32,8 @@ export const TaskManualMixin = Mix(PNode)
     .flow(useClickableFlow)
     .flow(useHoverableFlow)
     .flow(useDeletableFlow)
+    .flow(useDraggableFlow)
+    .flow(useRenameableFlow)
     .capability(useResizeHandleCapability)
     .capability(usePopupCapability)
     .capability(useCommandPaletteCapability)

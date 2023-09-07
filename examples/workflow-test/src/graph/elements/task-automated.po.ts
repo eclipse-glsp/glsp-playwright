@@ -17,6 +17,7 @@ import {
     Mix,
     useClickableFlow,
     useCommandPaletteCapability,
+    useDraggableFlow,
     useHoverableFlow,
     useMarkerCapability,
     usePopupCapability,
@@ -28,6 +29,7 @@ import { LabelHeading } from './label-heading.po';
 export const TaskAutomatedMixin = Mix(PNode)
     .flow(useClickableFlow)
     .flow(useHoverableFlow)
+    .flow(useDraggableFlow)
     .capability(useResizeHandleCapability)
     .capability(usePopupCapability)
     .capability(useCommandPaletteCapability)
