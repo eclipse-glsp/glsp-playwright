@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { GLSPApp } from '@eclipse-glsp/glsp-playwright/glsp';
-import { test } from '@eclipse-glsp/glsp-playwright/test';
+import { expect, test } from '@eclipse-glsp/glsp-playwright/test';
 import { WorkflowApp } from '../../src/app/workflow-app';
 import { TaskManual } from '../../src/graph/elements/task-manual.po';
 
@@ -25,10 +25,10 @@ test.describe('At EclipseCon 2023', () => {
         app = await GLSPApp.loadApp(WorkflowApp, { type: 'integration', integration });
     });
 
-    test('we welcome all attendees', async () => {
-        const task = await app.graph.getNodeBySelector('[id$="task0"]', TaskManual);
+    test('we say hello to all attendees', async () => {
+        const task = await app.graph.getNodeByLabel('Push', TaskManual);
         await task.dragToRelativePosition({ x: 0, y: 150 });
-        await task.rename('Welcome to');
+        await task.rename('Hello');
 
         const bounds = await task.bounds();
         const targetPosition = bounds.position('top_left').moveRelative(170, 0);
@@ -36,7 +36,10 @@ test.describe('At EclipseCon 2023', () => {
         const newTask = await app.createManualTask(targetPosition);
         await newTask.rename('EclipseCon');
 
-        await app.createEdge(task, newTask);
+        const edge = await app.createEdge(task, newTask);
+
+        expect(await edge.sourceId()).toBe(await task.idAttr());
+        expect(await edge.targetId()).toBe(await newTask.idAttr());
     });
 
     test.afterEach(async ({ integration }) => {
