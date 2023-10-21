@@ -1,6 +1,6 @@
 {
   "name": "@eclipse-glsp/glsp-playwright",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "description": "Playwright-based testing framework for GLSP",
   "homepage": "https://www.eclipse.org/glsp/",
   "bugs": "https://github.com/eclipse-glsp/glsp/issues",
@@ -24,14 +24,6 @@
       "url": "https://me.big.tuwien.ac.at/"
     }
   ],
-  "exports": {
-    ".": "./lib/index.js",
-    "./extension": "./lib/extension/index.js",
-    "./glsp": "./lib/glsp/index.js",
-    "./integration": "./lib/integration/index.js",
-    "./remote": "./lib/remote/index.js",
-    "./test": "./lib/test.js"
-  },
   "main": "./lib/index.js",
   "files": [
     "lib",
@@ -44,13 +36,11 @@
     "clean": "rimraf lib tsconfig.tsbuildinfo  coverage",
     "lint": "eslint --ext .ts,.tsx ./src",
     "lint:all": "yarn lint && yarn circular --no-spinner",
-    "lint:fix": "yarn lint --fix",
+    "lint:ci": "yarn lint -o eslint.xml -f checkstyle",
     "prepare": "yarn clean && yarn build && yarn lint",
     "watch": "(concurrently \"tsc -w\" \"tsc-alias -w\")"
   },
   "dependencies": {
-    "@playwright/test": "^1.34.3",
-    "@theia/playwright": "^1.39.0",
     "reflect-metadata": "0.1.13",
     "uuid": "^9.0.0"
   },
@@ -59,6 +49,10 @@
     "@vscode/test-electron": "^2.3.2",
     "concurrently": "^7.6.0",
     "tsc-alias": "^1.8.2"
+  },
+  "peerDependencies": {
+    "@playwright/test": "^1.32.1",
+    "@theia/playwright": "^1.39.0"
   },
   "publishConfig": {
     "access": "public"

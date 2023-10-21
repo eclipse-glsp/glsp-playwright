@@ -14,7 +14,9 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import {
+    ChildrenAccessor,
     Mix,
+    NodeMetadata, PNode, SVGMetadataUtils,
     useClickableFlow,
     useCommandPaletteCapability,
     useDraggableFlow,
@@ -22,8 +24,7 @@ import {
     useMarkerCapability,
     usePopupCapability,
     useResizeHandleCapability
-} from '@eclipse-glsp/glsp-playwright/extension';
-import { ChildrenAccessor, NodeMetadata, PNode, SVGMetadataUtils } from '@eclipse-glsp/glsp-playwright/glsp';
+} from '@eclipse-glsp/glsp-playwright/';
 import { LabelHeading } from './label-heading.po';
 
 export const TaskAutomatedMixin = Mix(PNode)

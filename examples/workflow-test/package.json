@@ -1,6 +1,6 @@
 {
   "name": "@eclipse-glsp/workflow-test",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "private": true,
   "description": "Example project for glsp-playwright",
   "homepage": "https://www.eclipse.org/glsp/",
@@ -35,7 +35,7 @@
     "clean": "rimraf lib tsconfig.tsbuildinfo server/*.log",
     "lint": "eslint --ext .ts,.tsx ./src ./tests",
     "lint:all": "yarn check-types && yarn lint",
-    "lint:fix": "yarn lint --fix",
+    "lint:ci": "yarn lint -o eslint.xml -f checkstyle",
     "prepare": "yarn clean && yarn build && yarn lint && playwright install",
     "start:server": "node node_modules/@eclipse-glsp-examples/workflow-server-bundled/wf-glsp-server-node.js",
     "test": "playwright test",
@@ -45,9 +45,10 @@
     "watch": "tsc -w"
   },
   "devDependencies": {
-    "@eclipse-glsp-examples/workflow-server-bundled": "next",
-    "@eclipse-glsp/glsp-playwright": "0.1.0",
+    "@eclipse-glsp-examples/workflow-server-bundled": "~2.0.1",
+    "@eclipse-glsp/glsp-playwright": "~2.0.0",
     "@playwright/test": "^1.34.3",
+    "@theia/playwright": "^1.39.0",
     "commander": "^10.0.1",
     "dotenv": "^16.0.3",
     "mvn-artifact-download": "5.1.0",

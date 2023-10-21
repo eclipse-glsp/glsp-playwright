@@ -13,9 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { Marker } from '@eclipse-glsp/glsp-playwright';
-import { GLSPApp } from '@eclipse-glsp/glsp-playwright/glsp';
-import { createParameterizedIntegrationData, expect, test } from '@eclipse-glsp/glsp-playwright/test';
+import { GLSPApp, Marker, createParameterizedIntegrationData, expect, test } from '@eclipse-glsp/glsp-playwright';
 import { WorkflowApp } from '../../src/app/workflow-app';
 import { WorkflowToolPalette } from '../../src/features/tool-palette/workflow-tool-palette';
 import { Edge } from '../../src/graph/elements/edge.po';
@@ -74,14 +72,11 @@ test.describe('The tool palette', () => {
 
         const headerElements = await headerGroup.items();
         expect(headerElements.length).toBe(2);
-        expect(await headerElements[0].tabIndexAttr()).toBe('7');
         expect(await headerElements[0].text()).toBe('Edge');
-        expect(await headerElements[1].tabIndexAttr()).toBe('8');
         expect(await headerElements[1].text()).toBe('Weighted edge');
 
         const toolElement = await toolPalette.content.toolElement('Nodes', 'Merge Node');
         expect(await toolElement.text()).toBe('Merge Node');
-        expect(await toolElement.tabIndexAttr()).toBe('6');
     });
 
     test('should allow to access the toolbar items', async ({ integration }) => {

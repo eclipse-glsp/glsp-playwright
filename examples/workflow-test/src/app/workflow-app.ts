@@ -13,7 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { GLSPApp } from '@eclipse-glsp/glsp-playwright/glsp';
+import { GLSPApp } from '@eclipse-glsp/glsp-playwright';
 import { WorkflowToolPalette } from '../features/tool-palette/workflow-tool-palette';
 import { WorkflowGraph } from '../graph/workflow.graph';
 

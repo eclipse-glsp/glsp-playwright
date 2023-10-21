@@ -13,8 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { GLSPSemanticGraph, PNode, PNodeConstructor } from '@eclipse-glsp/glsp-playwright/glsp';
-import { waitForFunction } from '@eclipse-glsp/glsp-playwright/integration';
+import { GLSPSemanticGraph, PNode, PNodeConstructor, waitForFunction } from '@eclipse-glsp/glsp-playwright/';
 
 export class WorkflowGraph extends GLSPSemanticGraph {
     override async waitForCreationOfNodeType<TElement extends PNode>(

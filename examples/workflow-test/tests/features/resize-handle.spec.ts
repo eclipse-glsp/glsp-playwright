@@ -13,9 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { ResizeHandle } from '@eclipse-glsp/glsp-playwright';
-import { GLSPApp, PMetadata } from '@eclipse-glsp/glsp-playwright/glsp';
-import { expect, test } from '@eclipse-glsp/glsp-playwright/test';
+import { GLSPApp, PMetadata, ResizeHandle, expect, test } from '@eclipse-glsp/glsp-playwright';
 import { WorkflowApp } from '../../src/app/workflow-app';
 import { TaskManual } from '../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../src/graph/workflow.graph';

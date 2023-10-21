@@ -13,8 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { GLSPApp, GLSPGlobalCommandPalette } from '@eclipse-glsp/glsp-playwright/glsp';
-import { expect, test } from '@eclipse-glsp/glsp-playwright/test';
+import { GLSPApp, GLSPGlobalCommandPalette, expect, test } from '@eclipse-glsp/glsp-playwright/';
 import { WorkflowApp } from '../../src/app/workflow-app';
 import { Edge } from '../../src/graph/elements/edge.po';
 import { TaskAutomated } from '../../src/graph/elements/task-automated.po';
