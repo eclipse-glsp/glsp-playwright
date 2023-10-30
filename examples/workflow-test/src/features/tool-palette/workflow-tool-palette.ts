@@ -19,7 +19,7 @@ import {
     GLSPToolPaletteOptions,
     ToolPaletteContentGroup,
     ToolPaletteContentItem
-} from '@eclipse-glsp/glsp-playwright/glsp';
+} from '@eclipse-glsp/glsp-playwright';
 
 export class WorkflowToolPalette extends GLSPToolPalette {
     override readonly content: WorkflowToolPaletteContent;

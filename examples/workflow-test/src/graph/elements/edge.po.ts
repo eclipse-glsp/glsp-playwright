@@ -13,8 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { Mix, useClickableFlow, useRoutingPointCapability } from '@eclipse-glsp/glsp-playwright/extension';
-import { EdgeMetadata, PEdge } from '@eclipse-glsp/glsp-playwright/glsp';
+import { EdgeMetadata, Mix, PEdge, useClickableFlow, useRoutingPointCapability } from '@eclipse-glsp/glsp-playwright/';
 
 const EdgeMixin = Mix(PEdge).flow(useClickableFlow).capability(useRoutingPointCapability).build();
 
