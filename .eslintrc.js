@@ -7,14 +7,6 @@ module.exports = {
         tsconfigRootDir: __dirname,
         project: 'tsconfig.eslint.json'
     },
-    settings: {
-        // Necessary for aliasing paths: https://www.typescriptlang.org/tsconfig#paths
-        'import/resolver': {
-            typescript: {
-                project: ['packages/glsp-playwright/tsconfig.json', 'tsconfig.json']
-            }
-        }
-    },
     rules: {
         'no-null/no-null': 'off', // Accessing the browser DOM returns "null" instead of "undefined"
         'no-restricted-imports': [

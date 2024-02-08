@@ -16,6 +16,7 @@
 import { test as base } from '@playwright/test';
 import {
     Integration,
+    IntegrationArgs,
     IntegrationOptions,
     IntegrationType,
     PageIntegration,
@@ -47,7 +48,7 @@ export interface GLSPPlaywrightFixtures {
      *
      * ```ts
      * test.beforeEach(async ({ integration }) => {
-     *      app = await GLSPApp.loadApp(WorkflowApp, {
+     *      app = new GLSPApp({
      *           type: 'integration',
      *           integration
      *      });
@@ -69,22 +70,27 @@ export const test = base.extend<GLSPPlaywrightOptions & GLSPPlaywrightFixtures>(
         }
     },
 
-    integration: async ({ page, integrationOptions }, use) => {
+    integration: async ({ playwright, browser, page, integrationOptions }, use) => {
+        const args: IntegrationArgs = {
+            playwright,
+            browser,
+            page
+        };
+
         if (integrationOptions) {
             let integration: Integration;
-
             switch (integrationOptions.type) {
                 case 'Page':
-                    integration = new PageIntegration(page, integrationOptions);
+                    integration = new PageIntegration(args, integrationOptions);
                     break;
                 case 'Standalone':
-                    integration = new StandaloneIntegration(page, integrationOptions);
+                    integration = new StandaloneIntegration(args, integrationOptions);
                     break;
                 case 'Theia':
-                    integration = new TheiaIntegration(page, integrationOptions);
+                    integration = new TheiaIntegration(args, integrationOptions);
                     break;
                 case 'VSCode': {
-                    integration = new VSCodeIntegration(integrationOptions);
+                    integration = new VSCodeIntegration(args, integrationOptions);
                     break;
                 }
                 default: {
@@ -97,7 +103,7 @@ export const test = base.extend<GLSPPlaywrightOptions & GLSPPlaywrightFixtures>(
             await integration.start();
             await use(integration);
         } else {
-            const integration = new PageIntegration(page);
+            const integration = new PageIntegration(args);
             await integration.initialize();
             await integration.start();
             await use(integration);

@@ -16,7 +16,9 @@
 import {
     ChildrenAccessor,
     Mix,
-    NodeMetadata, PNode, SVGMetadataUtils,
+    NodeMetadata,
+    PNode,
+    SVGMetadataUtils,
     useClickableFlow,
     useCommandPaletteCapability,
     useDraggableFlow,

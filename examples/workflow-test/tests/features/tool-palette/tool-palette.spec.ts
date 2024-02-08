@@ -13,13 +13,13 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { GLSPApp, Marker, createParameterizedIntegrationData, expect, test } from '@eclipse-glsp/glsp-playwright';
-import { WorkflowApp } from '../../src/app/workflow-app';
-import { WorkflowToolPalette } from '../../src/features/tool-palette/workflow-tool-palette';
-import { Edge } from '../../src/graph/elements/edge.po';
-import { TaskAutomated } from '../../src/graph/elements/task-automated.po';
-import { TaskManual } from '../../src/graph/elements/task-manual.po';
-import { WorkflowGraph } from '../../src/graph/workflow.graph';
+import { Marker, createParameterizedIntegrationData, expect, test } from '@eclipse-glsp/glsp-playwright';
+import { WorkflowApp } from '../../../src/app/workflow-app';
+import { WorkflowToolPalette } from '../../../src/features/tool-palette/workflow-tool-palette';
+import { Edge } from '../../../src/graph/elements/edge.po';
+import { TaskAutomated } from '../../../src/graph/elements/task-automated.po';
+import { TaskManual } from '../../../src/graph/elements/task-manual.po';
+import { WorkflowGraph } from '../../../src/graph/workflow.graph';
 
 const integrationData = createParameterizedIntegrationData<{
     nodes: string;
@@ -43,7 +43,7 @@ test.describe('The tool palette', () => {
     let toolPalette: WorkflowToolPalette;
 
     test.beforeEach(async ({ integration }) => {
-        app = await GLSPApp.loadApp(WorkflowApp, {
+        app = new WorkflowApp({
             type: 'integration',
             integration
         });

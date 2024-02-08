@@ -45,14 +45,16 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.40.1",
+    "@theia/playwright": "~1.45.0",
     "@types/uuid": "^9.0.0",
     "@vscode/test-electron": "^2.3.2",
     "concurrently": "^7.6.0",
     "tsc-alias": "^1.8.2"
   },
   "peerDependencies": {
-    "@playwright/test": "^1.32.1",
-    "@theia/playwright": "^1.39.0"
+    "@playwright/test": "^1.40.1",
+    "@theia/playwright": "~1.45.0"
   },
   "publishConfig": {
     "access": "public"

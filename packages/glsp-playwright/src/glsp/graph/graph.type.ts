@@ -42,4 +42,12 @@ export type TypedEdge<TElement extends PEdge, TOptions extends EdgeConstructorOp
 export interface ElementQuery<TElement extends PModelElement> {
     elementType: string;
     all: () => Promise<TElement[]>;
+    filter?: (elements: TElement[]) => Promise<TElement[]>;
+}
+
+export namespace ElementQuery {
+    export async function exec<TElement extends PModelElement>(query: ElementQuery<TElement>): Promise<TElement[]> {
+        const elements = await query.all();
+        return query.filter?.(elements) ?? elements;
+    }
 }

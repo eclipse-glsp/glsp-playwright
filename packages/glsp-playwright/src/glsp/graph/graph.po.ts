@@ -21,11 +21,11 @@ import { definedAttr } from '~/utils/ts.utils';
 import { PMetadata } from './decorators';
 import { assertEqualType, createTypedEdgeProxy, getPModelElementConstructorOfType } from './elements';
 import type { PEdge, PEdgeConstructor } from './elements/edge';
-import type { PModelElement, PModelElementConstructor } from './elements/element';
+import { PModelElement, PModelElementConstructor, isEqualLocatorType } from './elements/element';
 import type { PNode, PNodeConstructor } from './elements/node';
 import type { EdgeConstructorOptions, EdgeSearchOptions, ElementQuery, TypedEdge } from './graph.type';
 import { waitForElementChanges, waitForElementIncrease } from './graph.wait';
-import { SVGMetadataUtils } from './svg-metadata-api';
+import { SVGMetadata, SVGMetadataUtils } from './svg-metadata-api';
 
 export interface GLSPGraphOptions {
     locator: GLSPLocator;
@@ -84,11 +84,19 @@ export class GLSPGraph extends Locateable {
         const elements: TElement[] = [];
 
         for await (const childLocator of await locator.all()) {
-            const id = await definedAttr(childLocator, 'id');
-            elements.push(await this.getModelElementBySelector(`#${id}`, constructor));
+            if ((await childLocator.count()) > 0) {
+                const id = await childLocator.getAttribute('id');
+                if (id !== null && (await isEqualLocatorType(childLocator, constructor))) {
+                    elements.push(await this.getModelElementBySelector(`#${id}`, constructor));
+                }
+            }
         }
 
         return elements;
+    }
+
+    async getAllModelElements(): Promise<PModelElement[]> {
+        return this.getModelElementsBySelector(`[${SVGMetadata.type}]`, PModelElement);
     }
 
     async getNodeBySelector<TElement extends PNode>(selector: string, constructor: PNodeConstructor<TElement>): Promise<TElement> {
@@ -96,7 +104,9 @@ export class GLSPGraph extends Locateable {
     }
 
     async getNodeByLocator<TElement extends PNode>(locator: Locator, constructor: PNodeConstructor<TElement>): Promise<TElement> {
-        const element = new constructor({ locator: this.locator.override(locator) });
+        const element = new constructor({
+            locator: this.locator.override(locator.and(this.locate().locator(SVGMetadataUtils.typeAttrOf(constructor))))
+        });
         await assertEqualType(element);
         return element;
     }
@@ -113,8 +123,12 @@ export class GLSPGraph extends Locateable {
         const elements: TElement[] = [];
 
         for await (const childLocator of await locator.all()) {
-            const id = await definedAttr(childLocator, 'id');
-            elements.push(await this.getNodeBySelector(`#${id}`, constructor));
+            if ((await childLocator.count()) > 0) {
+                const id = await childLocator.getAttribute('id');
+                if (id !== null && (await isEqualLocatorType(childLocator, constructor))) {
+                    elements.push(await this.getNodeBySelector(`#${id}`, constructor));
+                }
+            }
         }
 
         return elements;
@@ -125,8 +139,16 @@ export class GLSPGraph extends Locateable {
         constructor: PEdgeConstructor<TElement>,
         options?: TOptions
     ): Promise<TypedEdge<TElement, TOptions>> {
+        return this.getEdgeByLocator(this.locator.child(selector).locate(), constructor, options);
+    }
+
+    async getEdgeByLocator<TElement extends PEdge, TOptions extends EdgeConstructorOptions>(
+        locator: Locator,
+        constructor: PEdgeConstructor<TElement>,
+        options?: TOptions
+    ): Promise<TypedEdge<TElement, TOptions>> {
         const element = new constructor({
-            locator: this.locator.child(selector)
+            locator: this.locator.override(locator.and(this.locate().locator(SVGMetadataUtils.typeAttrOf(constructor))))
         });
         await assertEqualType(element);
         return createTypedEdgeProxy<TElement, TOptions>(element, options);
@@ -139,43 +161,45 @@ export class GLSPGraph extends Locateable {
         const elements: TypedEdge<TElement, TOptions>[] = [];
 
         for await (const locator of await this.locate().locator(SVGMetadataUtils.typeAttrOf(constructor)).all()) {
-            const id = await definedAttr(locator, 'id');
-            const element = await this.getEdgeBySelector(`#${id}`, constructor, options);
-            const sourceChecks = [];
-            const targetChecks = [];
+            const id = await locator.getAttribute('id');
+            if (id !== null) {
+                const element = await this.getEdgeBySelector(`#${id}`, constructor, options);
+                const sourceChecks = [];
+                const targetChecks = [];
 
-            if (options?.sourceConstructor) {
-                const sourceId = await element.sourceId();
-                sourceChecks.push(
-                    (await this.locate()
-                        .locator(`[id$="${sourceId}"]${SVGMetadataUtils.typeAttrOf(options.sourceConstructor)}`)
-                        .count()) > 0
-                );
-            }
+                if (options?.sourceConstructor) {
+                    const sourceId = await element.sourceId();
+                    sourceChecks.push(
+                        (await this.locate()
+                            .locator(`[id$="${sourceId}"]${SVGMetadataUtils.typeAttrOf(options.sourceConstructor)}`)
+                            .count()) > 0
+                    );
+                }
 
-            if (options?.targetConstructor) {
-                const targetId = await element.targetId();
-                targetChecks.push(
-                    (await this.locate()
-                        .locator(`[id$="${targetId}"]${SVGMetadataUtils.typeAttrOf(options.targetConstructor)}`)
-                        .count()) > 0
-                );
-            }
+                if (options?.targetConstructor) {
+                    const targetId = await element.targetId();
+                    targetChecks.push(
+                        (await this.locate()
+                            .locator(`[id$="${targetId}"]${SVGMetadataUtils.typeAttrOf(options.targetConstructor)}`)
+                            .count()) > 0
+                    );
+                }
 
-            if (options?.sourceSelector) {
-                const sourceId = await element.sourceId();
-                const expectedId = await definedAttr(this.locate().locator(options.sourceSelector), 'id');
-                sourceChecks.push(expectedId.includes(sourceId));
-            }
+                if (options?.sourceSelector) {
+                    const sourceId = await element.sourceId();
+                    const expectedId = await definedAttr(this.locate().locator(options.sourceSelector), 'id');
+                    sourceChecks.push(expectedId.includes(sourceId));
+                }
 
-            if (options?.targetSelector) {
-                const targetId = await element.targetId();
-                const expectedId = await definedAttr(this.locate().locator(options.targetSelector), 'id');
-                sourceChecks.push(expectedId.includes(targetId));
-            }
+                if (options?.targetSelector) {
+                    const targetId = await element.targetId();
+                    const expectedId = await definedAttr(this.locate().locator(options.targetSelector), 'id');
+                    sourceChecks.push(expectedId.includes(targetId));
+                }
 
-            if (sourceChecks.every(c => c) && targetChecks.every(c => c)) {
-                elements.push(element);
+                if (sourceChecks.every(c => c) && targetChecks.every(c => c)) {
+                    elements.push(element);
+                }
             }
         }
 
@@ -215,7 +239,19 @@ export class GLSPGraph extends Locateable {
         const elementType = typeof type === 'string' ? type : PMetadata.getType(type);
         const query: ElementQuery<PModelElement> = {
             elementType: elementType,
-            all: () => this.getModelElementsOfType(getPModelElementConstructorOfType(elementType))
+            all: () => this.getModelElementsOfType(getPModelElementConstructorOfType(elementType)),
+            filter: async elements => {
+                const filtered: PModelElement[] = [];
+
+                for (const element of elements) {
+                    const css = await element.classAttr();
+                    if (css && !css.includes('ghost-element')) {
+                        filtered.push(element);
+                    }
+                }
+
+                return filtered;
+            }
         };
 
         const { before, after } = await waitForElementChanges(query, creator, b => waitForElementIncrease(this.locator, query, b.length));

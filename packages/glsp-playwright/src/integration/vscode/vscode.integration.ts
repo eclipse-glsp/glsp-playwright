@@ -22,7 +22,7 @@ import * as platformPath from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import { SVGMetadataUtils } from '~/glsp';
 import { Integration } from '../integration.base';
-import type { IntegrationType } from '../integration.type';
+import type { IntegrationArgs } from '../integration.type';
 import { VSCodeWorkbenchActivitybar } from './po/workbench-activitybar.po';
 import type { VSCodeIntegrationOptions } from './vscode.options';
 import { VSCodeStorage } from './vscode.storage';
@@ -55,15 +55,18 @@ interface RunPaths {
  * and the configuration will be saved in the temp folder.
  */
 export class VSCodeIntegration extends Integration {
-    readonly type: IntegrationType = 'VSCode';
+    protected _page: Page;
     workbenchActivitybar: VSCodeWorkbenchActivitybar;
 
     protected runConfig: VSCodeRunConfig;
     protected electronApp: ElectronApplication;
     protected storage: VSCodeStorage.Storage;
 
-    constructor(protected readonly options: VSCodeIntegrationOptions) {
-        super();
+    constructor(
+        args: IntegrationArgs,
+        protected readonly options: VSCodeIntegrationOptions
+    ) {
+        super(args, 'VSCode');
     }
 
     override async initialize(): Promise<void> {
@@ -76,8 +79,8 @@ export class VSCodeIntegration extends Integration {
         }
     }
 
-    get page(): Page {
-        return this.electronApp.windows()[0];
+    override get page(): Page {
+        return this._page;
     }
 
     override prefixRootSelector(selector: string): Locator {
@@ -112,25 +115,13 @@ export class VSCodeIntegration extends Integration {
                 this.options.workspace
             ]
         });
-
-        this.electronApp.on('window', async page => {
-            page.on('pageerror', error => {
-                console.error(error);
-            });
-
-            page.on('console', msg => {
-                if (this.options.isConsoleLogEnabled) {
-                    console.log(msg.text());
-                }
-            });
-        });
     }
 
     protected override async afterLaunch(): Promise<void> {
-        const ePage = await this.electronApp.firstWindow();
-        await ePage.waitForLoadState('domcontentloaded');
+        this._page = await this.electronApp.firstWindow();
+        await this.page.waitForLoadState('domcontentloaded');
 
-        this.workbenchActivitybar = new VSCodeWorkbenchActivitybar(ePage);
+        this.workbenchActivitybar = new VSCodeWorkbenchActivitybar(this.page);
 
         await this.waitForReady();
 
