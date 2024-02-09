@@ -162,7 +162,7 @@ export class GLSPGraph extends Locateable {
 
         for await (const locator of await this.locate().locator(SVGMetadataUtils.typeAttrOf(constructor)).all()) {
             const id = await locator.getAttribute('id');
-            if (id !== null) {
+            if (id !== null && (await isEqualLocatorType(locator, constructor))) {
                 const element = await this.getEdgeBySelector(`#${id}`, constructor, options);
                 const sourceChecks = [];
                 const targetChecks = [];

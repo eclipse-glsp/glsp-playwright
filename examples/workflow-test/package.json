@@ -50,7 +50,6 @@
     "@playwright/test": "^1.40.1",
     "dotenv": "^16.0.3",
     "ts-dedent": "^2.2.0",
-    "tsc-alias": "^1.8.2",
     "tsx": "^3.12.4"
   },
   "publishConfig": {

@@ -22,12 +22,13 @@ import { ModelElementMetadata, PMetadata } from '../decorators';
 import { SVGMetadata } from '../svg-metadata-api';
 
 export async function assertEqualType(element: PModelElement): Promise<void> {
-    const located = element.locate();
-    const count = await located.count();
+    const located = await element.locate().all();
+    const count = located.length;
 
     if (count !== 1) {
-        for await (const locator of await located.all()) {
-            console.error('=========== Element ==========');
+        // Provide additional information
+        for (const locator of located) {
+            console.error('=========== ACCESS RETURNS ==========');
             console.error(await locator.evaluate(elem => elem.outerHTML));
         }
 

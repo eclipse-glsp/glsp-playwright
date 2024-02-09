@@ -48,6 +48,7 @@ export function defined<T>(value: T | undefined | null): T {
 export async function definedGLSPAttr(locator: GLSPLocator, attr: string): Promise<string> {
     const o = await locator.locate().getAttribute(attr);
     if (!isDefined(o)) {
+        // Provide additional information
         console.error('=========== Element ==========');
         console.error(await locator.locate().evaluate(elem => elem.outerHTML));
         throw Error(`Attribute ${attr} is not defined for the selector.`);
@@ -59,6 +60,7 @@ export async function definedGLSPAttr(locator: GLSPLocator, attr: string): Promi
 export async function definedAttr(locator: Locator, attr: string): Promise<string> {
     const o = await locator.getAttribute(attr);
     if (!isDefined(o)) {
+        // Provide additional information
         console.error('=========== Element ==========');
         console.error(await locator.evaluate(elem => elem.outerHTML));
         throw Error(`Attribute ${attr} is not defined for the selector`);
