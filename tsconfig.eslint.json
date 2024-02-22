@@ -9,6 +9,7 @@
     "examples/*/src",
     "examples/*/tests",
     "examples/*/scripts",
-    "examples/*/*.config.ts"
+    "examples/*/*.config.ts",
+    "examples/*/configs/*.ts"
   ]
 }

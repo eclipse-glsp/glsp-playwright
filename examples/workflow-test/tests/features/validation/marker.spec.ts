@@ -13,17 +13,17 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { GLSPApp, expect, test } from '@eclipse-glsp/glsp-playwright/';
-import { WorkflowApp } from '../../src/app/workflow-app';
-import { TaskAutomated } from '../../src/graph/elements/task-automated.po';
-import { WorkflowGraph } from '../../src/graph/workflow.graph';
+import { expect, test } from '@eclipse-glsp/glsp-playwright/';
+import { WorkflowApp } from '../../../src/app/workflow-app';
+import { TaskAutomated } from '../../../src/graph/elements/task-automated.po';
+import { WorkflowGraph } from '../../../src/graph/workflow.graph';
 
 test.describe('The marker', () => {
     let app: WorkflowApp;
     let graph: WorkflowGraph;
 
     test.beforeEach(async ({ integration }) => {
-        app = await GLSPApp.loadApp(WorkflowApp, {
+        app = new WorkflowApp({
             type: 'integration',
             integration
         });

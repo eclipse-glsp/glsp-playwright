@@ -13,12 +13,12 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { GLSPApp, GLSPGlobalCommandPalette, expect, test } from '@eclipse-glsp/glsp-playwright/';
-import { WorkflowApp } from '../../src/app/workflow-app';
-import { Edge } from '../../src/graph/elements/edge.po';
-import { TaskAutomated } from '../../src/graph/elements/task-automated.po';
-import { TaskManual } from '../../src/graph/elements/task-manual.po';
-import { WorkflowGraph } from '../../src/graph/workflow.graph';
+import { GLSPGlobalCommandPalette, expect, test } from '@eclipse-glsp/glsp-playwright/';
+import { WorkflowApp } from '../../../src/app/workflow-app';
+import { Edge } from '../../../src/graph/elements/edge.po';
+import { TaskAutomated } from '../../../src/graph/elements/task-automated.po';
+import { TaskManual } from '../../../src/graph/elements/task-manual.po';
+import { WorkflowGraph } from '../../../src/graph/workflow.graph';
 
 test.describe('The command palette', () => {
     let app: WorkflowApp;
@@ -26,7 +26,7 @@ test.describe('The command palette', () => {
     let globalCommandPalette: GLSPGlobalCommandPalette;
 
     test.beforeEach(async ({ integration }) => {
-        app = await GLSPApp.loadApp(WorkflowApp, {
+        app = new WorkflowApp({
             type: 'integration',
             integration
         });

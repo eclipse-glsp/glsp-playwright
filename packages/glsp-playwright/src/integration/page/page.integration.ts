@@ -13,20 +13,22 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import type { Page } from '@playwright/test';
 import { SVGMetadataUtils } from '~/glsp';
 import { Integration } from '../integration.base';
-import type { IntegrationType } from '../integration.type';
+import type { IntegrationArgs } from '../integration.type';
 import type { PageIntegrationOptions } from './page.options';
 
 /**
  * The {@link PageIntegration} provides an unchanged experience of Playwright.
  */
 export class PageIntegration extends Integration {
-    readonly type: IntegrationType = 'Page';
+    override page = this.args.page;
 
-    constructor(public readonly page: Page, protected readonly options?: PageIntegrationOptions) {
-        super();
+    constructor(
+        args: IntegrationArgs,
+        protected readonly options?: PageIntegrationOptions
+    ) {
+        super(args, 'Page');
     }
 
     /**

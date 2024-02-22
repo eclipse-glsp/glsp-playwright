@@ -13,6 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+import { Locator } from '@playwright/test';
 import { extractMetaTree } from '~/debugger/extractor';
 import { GLSPLocator, Locateable } from '~/remote';
 import type { ConstructorT } from '~/types/constructor';
@@ -21,19 +22,42 @@ import { ModelElementMetadata, PMetadata } from '../decorators';
 import { SVGMetadata } from '../svg-metadata-api';
 
 export async function assertEqualType(element: PModelElement): Promise<void> {
-    if ((await element.locate().count()) !== 1) {
+    const located = await element.locate().all();
+    const count = located.length;
+
+    if (count !== 1) {
+        // Provide additional information
+        for (const locator of located) {
+            console.error('=========== ACCESS RETURNS ==========');
+            console.error(await locator.evaluate(elem => elem.outerHTML));
+        }
+
         throw Error(
-            `Assertion failed. Locator of ${typeof PModelElement} did not find single element in the DOM. It found ${await element.locate()
-                .count} elements.`
+            `Assertion failed. Locator did not find single element in the DOM. 
+            It found ${count} elements for type ${element._metadata.type}. 
+            Executed query: ${element.locate()}`
         );
     }
 
-    const typeAttr = await element.typeAttr();
-    if (typeAttr !== element._metadata.type) {
+    if (!(await isEqualType(element))) {
         throw Error(
-            `Assertion failed. Expected type '${element._metadata.type}', but it was '${typeAttr}'. Id = ${await element.idAttr()}`
+            `Assertion failed. Expected type '${
+                element._metadata.type
+            }', but it was '${await element.typeAttr()}'. Id = ${await element.idAttr()}`
         );
     }
+}
+
+export async function isEqualType(element: PModelElement): Promise<boolean> {
+    const typeAttr = await element.typeAttr();
+    return element._metadata.type === '*' || typeAttr === element._metadata.type;
+}
+
+export async function isEqualLocatorType(locator: Locator, constructor: PModelElementConstructor): Promise<boolean> {
+    const typeAttr = await locator.getAttribute(SVGMetadata.type);
+    const constructorType = PMetadata.getType(constructor);
+
+    return typeAttr !== null && (constructorType === '*' || typeAttr === constructorType);
 }
 
 export interface PModelElementData {
@@ -42,6 +66,9 @@ export interface PModelElementData {
 
 export type PModelElementConstructor<TElement extends PModelElement = PModelElement> = ConstructorT<TElement, [PModelElementData]>;
 
+@ModelElementMetadata({
+    type: '*'
+})
 export class PModelElement extends Locateable {
     readonly graph;
     readonly _metadata;

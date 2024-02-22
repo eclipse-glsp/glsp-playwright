@@ -16,7 +16,6 @@
 import type { Locator, Page } from 'playwright-core';
 import type { Integration } from '~/integration';
 import { GLSPLocator } from '~/remote/locator';
-import type { ConstructorT } from '~/types';
 import { GLSPGlobalCommandPalette } from '../features/command-palette';
 import { GLSPLabelEditor } from '../features/label-editor/label-editor.po';
 import { GLSPPopup } from '../features/popup/popup.po';
@@ -60,7 +59,7 @@ export type GLSPAppOptions = GLSPPageOptions | GLSPIntegrationOptions;
  * Integration mode
  * ```ts
  *   test.beforeEach(async ({ integration }) => {
- *       app = await GLSPApp.loadApp(WorkflowApp, {
+ *       app = await new GLSPApp({
  *           type: 'integration',
  *           integration
  *       });
@@ -71,7 +70,7 @@ export type GLSPAppOptions = GLSPPageOptions | GLSPIntegrationOptions;
  * Page mode
  * ```ts
  *   test.beforeEach(async ({ page }) => {
- *       app = await GLSPApp.loadApp(WorkflowApp, {
+ *       app = await new GLSPApp({
  *           type: 'page',
  *           page
  *       });
@@ -80,28 +79,30 @@ export type GLSPAppOptions = GLSPPageOptions | GLSPIntegrationOptions;
  * ```
  */
 export class GLSPApp {
-    readonly rootLocator;
-    readonly locator;
-    readonly integration;
-    readonly page;
+    readonly sprottySelector = 'div.sprotty';
 
-    readonly graph;
-    readonly labelEditor;
-    readonly toolPalette;
-    readonly popup;
-    readonly globalCommandPalette;
+    rootLocator: GLSPLocator;
+    locator: GLSPLocator;
+    integration?: Integration;
+    page: Page;
 
-    static async load(options: GLSPAppOptions): Promise<GLSPApp> {
-        return this.loadApp(GLSPApp, options);
-    }
-
-    static async loadApp<TApp extends GLSPApp>(appConstructor: ConstructorT<TApp>, options: GLSPAppOptions): Promise<TApp> {
-        const app = new appConstructor(options);
-        return app;
-    }
+    graph;
+    labelEditor;
+    toolPalette;
+    popup;
+    globalCommandPalette;
 
     constructor(public readonly options: GLSPAppOptions) {
-        const sprottySelector = 'div.sprotty';
+        this.initialize(options);
+
+        this.graph = this.createGraph();
+        this.labelEditor = this.createLabelEditor();
+        this.toolPalette = this.createToolPalette();
+        this.popup = this.createPopup();
+        this.globalCommandPalette = this.createGlobalCommandPalette();
+    }
+
+    protected initialize(options: GLSPAppOptions): void {
         let locate: (selector: string) => Locator;
 
         if (options.type === 'page') {
@@ -119,13 +120,7 @@ export class GLSPApp {
             options.rootSelector === undefined ? locate('body') : locate(options.rootSelector).locator('body'),
             this
         );
-        this.locator = this.rootLocator.child(sprottySelector);
-
-        this.graph = this.createGraph();
-        this.labelEditor = this.createLabelEditor();
-        this.toolPalette = this.createToolPalette();
-        this.popup = this.createPopup();
-        this.globalCommandPalette = this.createGlobalCommandPalette();
+        this.locator = this.rootLocator.child(this.sprottySelector);
     }
 
     protected createGraph(): GLSPGraph {

@@ -2,6 +2,40 @@
 
 This package contains code examples that demonstrate how to test diagram editors using the [Graphical Language Server Platform (GLSP)](https://github.com/eclipse-glsp/glsp).
 
+<details>
+  <summary>Expand test list</summary>
+  
+| Feature                                                                              |      Standalone      | Theia Integration | Eclipse Integration | VS Code Integration |
+| ------------------------------------------------------------------------------------ | :------------------: | :---------------: | :-----------------: | :-----------------: |
+| Model Saving                                                                         |          -           |         -         |          -          |          -          |
+| Model Dirty State                                                                    |                      |         -         |          -          |          -          |
+| Model SVG Export                                                                     |          -           |         -         |          -          |          -          |
+| Model Layout                                                                         |          -           |         -         |          -          |          -          |
+| Restoring viewport on re-open                                                        |                      |         -         |                     |                     |
+| Model Edit Modes<br>- Edit<br>- Read-only                                            |   <br>-<br>-&nbsp;   |    <br>-<br>-     |   <br>-<br>&nbsp;   |  <br>-<br>-&nbsp;   |
+| Client View Port<br>- Center<br>- Fit to Screen                                      |      <br>-<br>-      |    <br>-<br>-     |     <br>-<br>-      |     <br>-<br>-      |
+| Client Status Notification                                                           |          -           |         -         |          -          |          -          |
+| Client Message Notification                                                          |          -           |         -         |                     |          -          |
+| Client Progress Reporting                                                            |                      |         -         |                     |          -          |
+| Element Selection                                                                    |          ✓           |         ✓         |          -          |          ✓          |
+| Element Hover                                                                        |          -           |         -         |          -          |          -          |
+| Element Validation                                                                   |          -           |         -         |          -          |          -          |
+| Element Navigation                                                                   |                      |         -         |          -          |          -          |
+| Element Type Hints                                                                   |          -           |         -         |          -          |          -          |
+| Element Creation and Deletion                                                        |          -           |         -         |          -          |          -          |
+| Node Change Bounds<br>- Move<br>- Resize                                             |      <br>-<br>-      |    <br>-<br>-     |     <br>-<br>-      |     <br>-<br>-      |
+| Node Change Container                                                                |          -           |         -         |          -          |          -          |
+| Edge Reconnect                                                                       |          -           |         -         |          -          |          -          |
+| Edge Routing Points                                                                  |          -           |         -         |          -          |          -          |
+| Ghost Elements                                                                       |          -           |         -         |          -          |          -          |
+| Element Text Editing                                                                 |          -           |         -         |          -          |          -          |
+| Clipboard (Cut, Copy, Paste)                                                         |          -           |         -         |          -          |          -          |
+| Undo / Redo                                                                          |          -           |         -         |          -          |          -          |
+| Contexts<br>- Context Menu<br>- Command Palette<br>- Tool Palette                    |    <br><br>-<br>-    |  <br>-<br>-<br>-  |   <br><br>-<br>-    |   <br>-<br>-<br>-   |
+| Accessibility Features (experimental) <br>- Search<br>- Move <br>- Zoom <br>- Resize | <br>-<br>-<br>-<br>- |                   |                     |                     |
+| Helper Lines (experimental)                                                          |          -           |         -         |          -          |          -          |
+</details>
+
 ## Prerequisites
 
 The following libraries/frameworks need to be installed on your system:

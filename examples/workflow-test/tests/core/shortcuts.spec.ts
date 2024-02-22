@@ -13,57 +13,32 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { GLSPApp, expect, test } from '@eclipse-glsp/glsp-playwright/';
-import { dedent } from 'ts-dedent';
+import { expect, test } from '@eclipse-glsp/glsp-playwright';
 import { WorkflowApp } from '../../src/app/workflow-app';
 import { TaskManual } from '../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../src/graph/workflow.graph';
 
-test.describe('The popup', () => {
+test.describe('Shortcuts', () => {
     let app: WorkflowApp;
     let graph: WorkflowGraph;
 
     test.beforeEach(async ({ integration }) => {
-        app = await GLSPApp.loadApp(WorkflowApp, {
+        app = new WorkflowApp({
             type: 'integration',
             integration
         });
         graph = app.graph;
     });
 
-    test('should be shown on hover', async () => {
+    test('should allow deleting the element in the graph', async ({ integration }) => {
         const task = await graph.getNodeBySelector('[id$="task0"]', TaskManual);
-        await task.hover();
+        expect(await task.isVisible()).toBeTruthy();
 
-        const popup = task.popup();
-        const text = await popup.innerText();
+        await task.click();
+        await integration.page.keyboard.press('Delete');
+        await task.waitFor({ state: 'detached' });
 
-        const expected = dedent`Push
-        Type: manual
-        Duration: undefined
-        Reference: undefined
-        
-        `;
-        expect(text).toBe(expected);
-
-        await graph.deselect();
-        await popup.waitForHidden();
-
-        expect(await app.popup.classAttr()).toContain('sprotty-popup-closed');
-    });
-
-    test('should allow to access the text directly in elements', async () => {
-        const task = await graph.getNodeBySelector('[id$="task0"]', TaskManual);
-
-        const text = await task.popupText();
-
-        const expected = dedent`Push
-        Type: manual
-        Duration: undefined
-        Reference: undefined
-        
-        `;
-        expect(text).toBe(expected);
+        expect(await task.locate().count()).toBe(0);
     });
 
     test.afterEach(async ({ integration }) => {

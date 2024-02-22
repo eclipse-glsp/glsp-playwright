@@ -85,6 +85,7 @@ export class VSCodeSetup {
 
         const extensionArg = defaultArgs[0].split(/=(.*)/s);
         const extensionDir = extensionArg[1];
+        let status: number | undefined;
 
         try {
             const extensionsFile = `${extensionDir}/extensions.json`;
@@ -94,8 +95,8 @@ export class VSCodeSetup {
             const entry = installedExtensions.find(e => e.identifier.id === this.integrationOptions.vsixId);
 
             if (entry === undefined) {
-                this.installExtension(cli, extensionArg, this.integrationOptions.vsixPath);
-                this.log('[Extension] Extension installed');
+                const spawn = this.installExtension(cli, extensionArg, this.integrationOptions.vsixPath);
+                status = spawn.status ?? -1;
             } else {
                 const stat = await fs.stat(this.integrationOptions.vsixPath);
                 if (entry.metadata.installedTimestamp < stat.birthtimeMs) {
@@ -105,8 +106,8 @@ export class VSCodeSetup {
                         new Date(stat.birthtimeMs).toISOString()
                     );
                     this.deleteExtension(cli, extensionArg, this.integrationOptions.vsixId);
-                    this.installExtension(cli, extensionArg, this.integrationOptions.vsixPath);
-                    this.log('[Extension] Extension installed');
+                    const spawn = this.installExtension(cli, extensionArg, this.integrationOptions.vsixPath);
+                    status = spawn.status ?? -1;
                 } else {
                     this.log('[Extension] Extension already installed. Skipping install');
                 }
@@ -114,8 +115,16 @@ export class VSCodeSetup {
         } catch (ex) {
             this.log('[Extension] Proceed with clean install.');
             this.deleteExtension(cli, extensionArg, this.integrationOptions.vsixId);
-            this.installExtension(cli, extensionArg, this.integrationOptions.vsixPath);
-            this.log('[Extension] Extension installed');
+            const spawn = this.installExtension(cli, extensionArg, this.integrationOptions.vsixPath);
+            status = spawn.status ?? -1;
+        }
+
+        if (status) {
+            if (status === 0) {
+                this.log('[Extension] Extension installed');
+            } else {
+                throw new Error('[Extension] Extension install failed - Check logs');
+            }
         }
     }
 
@@ -125,17 +134,17 @@ export class VSCodeSetup {
         }
     }
 
-    protected deleteExtension(cli: string, args: string[], vsixId: string): void {
+    protected deleteExtension(cli: string, args: string[], vsixId: string): cp.SpawnSyncReturns<string> {
         this.log('[Extension] Delete:', vsixId);
-        cp.spawnSync(cli, [...args, '--uninstall-extension', vsixId], {
+        return cp.spawnSync(cli, [...args, '--uninstall-extension', vsixId], {
             encoding: 'utf-8',
             stdio: 'inherit'
         });
     }
 
-    protected installExtension(cli: string, args: string[], vsixPath: string): void {
+    protected installExtension(cli: string, args: string[], vsixPath: string): cp.SpawnSyncReturns<string> {
         this.log('[Extension] Install:', vsixPath);
-        cp.spawnSync(cli, [...args, '--install-extension', vsixPath], {
+        return cp.spawnSync(cli, [...args, '--install-extension', vsixPath], {
             encoding: 'utf-8',
             stdio: 'inherit'
         });

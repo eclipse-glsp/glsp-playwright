@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import { TheiaApp } from '@theia/playwright';
+import { TheiaApp, TheiaEditor } from '@theia/playwright';
 import type { TheiaIntegrationOptions } from '../theia.options';
 
 /**
@@ -29,5 +29,14 @@ export class TheiaGLSPApp extends TheiaApp {
 
     initialize(options: TheiaIntegrationOptions): void {
         this._options = options;
+    }
+
+    override openEditor<T extends TheiaEditor>(
+        filePath: string,
+        editorFactory: new (editorFilePath: string, app: TheiaGLSPApp) => T,
+        editorName?: string | undefined,
+        expectFileNodes?: boolean | undefined
+    ): Promise<T> {
+        return super.openEditor(filePath, editorFactory as new (f: string, a: TheiaApp) => T, editorName, expectFileNodes);
     }
 }

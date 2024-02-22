@@ -18,3 +18,4 @@ export * from './delete.flow';
 export * from './drag.flow';
 export * from './hover.flow';
 export * from './rename.flow';
+export * from './select.flow';

@@ -16,7 +16,7 @@
 import { waitForFunction } from '~/integration/wait.fixes';
 import type { GLSPLocator } from '~/remote/locator';
 import type { PModelElement } from './elements/element';
-import type { ElementQuery } from './graph.type';
+import { ElementQuery } from './graph.type';
 import { SVGMetadataUtils } from './svg-metadata-api';
 
 /**
@@ -35,12 +35,12 @@ export async function waitForElementChanges<TElement extends PModelElement>(
     before: TElement[];
     after: TElement[];
 }> {
-    const before = await query.all();
+    const before = await ElementQuery.exec(query);
 
     await operation();
     await waitForOperation(before);
 
-    const after = await query.all();
+    const after = await ElementQuery.exec(query);
 
     return {
         before,

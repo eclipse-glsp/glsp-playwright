@@ -15,7 +15,7 @@
  ********************************************************************************/
 import type { Locator, Page } from '@playwright/test';
 import { SVGMetadataUtils } from '../glsp/index';
-import type { IntegrationType } from './integration.type';
+import type { IntegrationArgs, IntegrationType } from './integration.type';
 
 /**
  * Base class for all integrations. It provides lifecycle methods and
@@ -23,7 +23,11 @@ import type { IntegrationType } from './integration.type';
  */
 export abstract class Integration {
     abstract readonly page: Page;
-    abstract readonly type: IntegrationType;
+
+    constructor(
+        protected readonly args: IntegrationArgs,
+        readonly type: IntegrationType
+    ) {}
 
     /**
      * Prefixes the provided selector and returns the new {@link Locator}.

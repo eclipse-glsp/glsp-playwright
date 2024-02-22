@@ -18,7 +18,8 @@ import {
     Mix,
     NodeMetadata,
     PLabelledElement,
-    PNode, SVGMetadataUtils,
+    PNode,
+    SVGMetadataUtils,
     useClickableFlow,
     useCommandPaletteCapability,
     useDeletableFlow,
@@ -26,7 +27,8 @@ import {
     useHoverableFlow,
     usePopupCapability,
     useRenameableFlow,
-    useResizeHandleCapability
+    useResizeHandleCapability,
+    useSelectableFlow
 } from '@eclipse-glsp/glsp-playwright/';
 import { LabelHeading } from './label-heading.po';
 
@@ -36,6 +38,7 @@ export const TaskManualMixin = Mix(PNode)
     .flow(useDeletableFlow)
     .flow(useDraggableFlow)
     .flow(useRenameableFlow)
+    .flow(useSelectableFlow)
     .capability(useResizeHandleCapability)
     .capability(usePopupCapability)
     .capability(useCommandPaletteCapability)

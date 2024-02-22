@@ -13,6 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+import type { Browser, Page } from '@playwright/test';
 import type { PageIntegrationOptions } from './page';
 import type { StandaloneIntegrationOptions } from './standalone';
 import type { TheiaIntegrationOptions } from './theia';
@@ -25,3 +26,9 @@ export interface BaseIntegrationOptions {
 }
 
 export type IntegrationOptions = PageIntegrationOptions | StandaloneIntegrationOptions | TheiaIntegrationOptions | VSCodeIntegrationOptions;
+
+export interface IntegrationArgs {
+    page: Page;
+    playwright: typeof import('playwright-core');
+    browser: Browser;
+}
