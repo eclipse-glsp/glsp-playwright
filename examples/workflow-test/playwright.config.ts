@@ -15,41 +15,13 @@
  ********************************************************************************/
 import 'reflect-metadata';
 
-import type {
-    GLSPPlaywrightOptions,
-    StandaloneIntegrationOptions,
-    TheiaIntegrationOptions,
-    VSCodeIntegrationOptions
-} from '@eclipse-glsp/glsp-playwright';
+import type { GLSPPlaywrightOptions } from '@eclipse-glsp/glsp-playwright';
 import type { PlaywrightTestConfig } from '@playwright/test';
-import { devices } from '@playwright/test';
 import * as dotenv from 'dotenv';
-import * as path from 'path';
-import { getDefined } from './src/utils';
+import { createStandaloneProject, createTheiaProject, createVSCodeProject } from './configs/project.config';
+import { createWebserver, hasRunningServer } from './configs/webserver.config';
 
 dotenv.config();
-
-const standaloneIntegrationOptions: StandaloneIntegrationOptions = {
-    type: 'Standalone',
-    url: getDefined(process.env.STANDALONE_URL)
-};
-
-const theiaIntegrationOptions: TheiaIntegrationOptions = {
-    type: 'Theia',
-    url: getDefined(process.env.THEIA_URL),
-    widgetId: 'workflow-diagram',
-    workspace: '../workspace',
-    file: 'example1.wf'
-};
-
-const vscodeIntegrationOptions: VSCodeIntegrationOptions = {
-    type: 'VSCode',
-    workspace: '../workspace',
-    file: 'example1.wf',
-    vsixId: getDefined(process.env.VSCODE_VSIX_ID),
-    vsixPath: getDefined(process.env.VSCODE_VSIX_PATH),
-    storagePath: path.join(__dirname, 'playwright/.storage/vscode.setup.json')
-};
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -69,48 +41,12 @@ const config: PlaywrightTestConfig<GLSPPlaywrightOptions> = {
         actionTimeout: 0,
         trace: 'on-first-retry'
     },
-    webServer: [
-        {
-            command: `yarn start:server -w -p ${+getDefined(process.env.GLSP_SERVER_PORT)}`,
-            port: +getDefined(process.env.GLSP_SERVER_PORT),
-            reuseExistingServer: !process.env.CI,
-            stdout: 'ignore'
-        }
-    ],
-    projects: [
-        {
-            name: 'standalone',
-            testMatch: ['**/*.spec.js'],
-            use: {
-                ...devices['Desktop Chrome'],
-                integrationOptions: standaloneIntegrationOptions
-            }
-        },
-        {
-            name: 'theia',
-            testMatch: ['**/*.spec.js'],
-            use: {
-                ...devices['Desktop Chrome'],
-                baseURL: theiaIntegrationOptions.url,
-                integrationOptions: theiaIntegrationOptions
-            }
-        },
-        {
-            name: 'vscode-setup',
-            testMatch: ['setup/vscode.setup.js'],
-            use: {
-                integrationOptions: vscodeIntegrationOptions
-            }
-        },
-        {
-            name: 'vscode',
-            testMatch: ['**/*.spec.js'],
-            dependencies: ['vscode-setup'],
-            use: {
-                integrationOptions: vscodeIntegrationOptions
-            }
-        }
-    ]
+    webServer: createWebserver(),
+    projects: []
 };
+
+if (hasRunningServer(config)) {
+    config.projects = [...createStandaloneProject(), ...createTheiaProject(), ...createVSCodeProject()];
+}
 
 export default config;

@@ -126,5 +126,9 @@ export function createParameterizedIntegrationData<T>(options: {
     };
 }
 
+export function skipIntegration(integrationOptions?: IntegrationOptions, ...integration: IntegrationType[]): boolean {
+    return integrationOptions === undefined || integration.includes(integrationOptions.type);
+}
+
 export { expect } from '@playwright/test';
 export { test as setup };

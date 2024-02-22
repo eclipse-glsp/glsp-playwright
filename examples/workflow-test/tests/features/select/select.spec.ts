@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import { PModelElement, Selectable, expect, test } from '@eclipse-glsp/glsp-playwright';
+import { PModelElement, Selectable, expect, skipIntegration, test } from '@eclipse-glsp/glsp-playwright';
 import { WorkflowApp } from '../../../src/app/workflow-app';
 import { TaskManual } from '../../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../../src/graph/workflow.graph';
@@ -81,22 +81,26 @@ test.describe('The select feature', () => {
         }
     });
 
-    test('should allow to deselect a single element through a keybinding', async () => {
-        const page = app.page;
-        const element = await graph.getNodeByLabel('Push', TaskManual);
-        await element.select();
-        const before = await graph.getNodesBySelector(`.${Selectable.CSS}`, TaskManual);
-        expect(before).toHaveLength(1);
+    test.describe('', () => {
+        test.skip(({ integrationOptions }) => skipIntegration(integrationOptions, 'Theia', 'VSCode'), 'Not supported');
 
-        // Resize Handle
-        await page.keyboard.press('Escape');
-        // Selection
-        await page.keyboard.press('Escape');
+        test('should allow to deselect a single element through a keybinding', async () => {
+            const page = app.page;
+            const element = await graph.getNodeByLabel('Push', TaskManual);
+            await element.select();
+            const before = await graph.getNodesBySelector(`.${Selectable.CSS}`, TaskManual);
+            expect(before).toHaveLength(1);
 
-        await Promise.all((await graph.locate().locator(`.${Selectable.CSS}`).all()).map(l => l.waitFor({ state: 'detached' })));
+            // Resize Handle
+            await page.keyboard.press('Escape');
+            // Selection
+            await page.keyboard.press('Escape');
 
-        const after = await graph.getModelElementsBySelector(`.${Selectable.CSS}`, PModelElement);
-        expect(after).toHaveLength(0);
+            await Promise.all((await graph.locate().locator(`.${Selectable.CSS}`).all()).map(l => l.waitFor({ state: 'detached' })));
+
+            const after = await graph.getModelElementsBySelector(`.${Selectable.CSS}`, PModelElement);
+            expect(after).toHaveLength(0);
+        });
     });
 
     test('should allow to deselect a single element by clicking outside', async () => {
