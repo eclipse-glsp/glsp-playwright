@@ -30,14 +30,12 @@
     "src"
   ],
   "scripts": {
-    "build": "tsc -b && tsc-alias",
-    "build:watch": "yarn build && yarn watch",
+    "build": "tsc -b && yarn post:build",
+    "post:build":"tsc-alias",
     "circular": "npx madge --circular ./lib ./src",
-    "clean": "rimraf lib tsconfig.tsbuildinfo  coverage",
+    "clean": "rimraf lib *.tsbuildinfo  coverage",
     "lint": "eslint --ext .ts,.tsx ./src",
     "lint:all": "yarn lint && yarn circular --no-spinner",
-    "lint:ci": "yarn lint -o eslint.xml -f checkstyle",
-    "prepare": "yarn clean && yarn build && yarn lint",
     "watch": "(concurrently \"tsc -w\" \"tsc-alias -w\")"
   },
   "dependencies": {
@@ -45,7 +43,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.40.1",
+    "@playwright/test": "^1.42.1",
     "@theia/playwright": "~1.45.0",
     "@types/uuid": "^9.0.0",
     "@vscode/test-electron": "^2.3.2",
@@ -53,7 +51,7 @@
     "tsc-alias": "^1.8.2"
   },
   "peerDependencies": {
-    "@playwright/test": "^1.40.1",
+    "@playwright/test": "^1.42.1",
     "@theia/playwright": "~1.45.0"
   },
   "publishConfig": {

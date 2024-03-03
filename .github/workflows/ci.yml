@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - testci
+  pull_request:
+    branches:
+      - testci
+  workflow_dispatch:
+
+jobs:
+  build_and_lint:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - name: Install dependencies
+        run: yarn install
+      - name: Check for uncommitted changes in yarn.lock
+        run: |
+          if git diff --name-only | grep -q "^yarn.lock"; then
+            echo "::error::The yarn.lock file has uncommitted changes!"
+            exit 1
+          fi
+      - name: ESLint Check
+        run: yarn lint:ci
+        continue-on-error: true
+      - name: Annotate Code Linting Results
+        uses: ataylorme/eslint-annotate-action@2.2.0
+        with:
+          report-json: "eslint_report.json"

@@ -1,6 +1,15 @@
 {
-  "extends": "@eclipse-glsp/ts-config/tsconfig.json",
+  "extends": "@eclipse-glsp/ts-config",
+  "include": [],
   "compilerOptions": {
     "composite": true
-  }
+  },
+  "references": [
+    {
+      "path": "./packages/glsp-playwright"
+    },
+    {
+      "path": "./examples/workflow-test"
+    }
+  ]
 }

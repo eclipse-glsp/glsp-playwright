@@ -32,22 +32,22 @@
   "scripts": {
     "build": "tsc -b",
     "check-types": "tsc --noemit",
-    "clean": "rimraf --glob lib tsconfig.tsbuildinfo server/*.log",
+    "clean": "rimraf  lib *.tsbuildinfo",
     "lint": "eslint --ext .ts,.tsx ./src ./tests",
     "lint:all": "yarn check-types && yarn lint",
-    "lint:ci": "yarn lint -o eslint.xml -f checkstyle",
-    "prepare": "yarn clean && yarn build && yarn lint && playwright install",
+    "prepare": "playwright install",
     "start:server": "node node_modules/@eclipse-glsp-examples/workflow-server-bundled/wf-glsp-server-node.js",
     "test": "playwright test",
-    "test:standalone": "yarn test --project=standalone",
-    "test:theia": "yarn test --project=theia",
+    "test:standalone": "yarn test --project=standalone-*",
+    "test:theia": "yarn test --project=theia-*",
     "test:vscode": "yarn test --project=vscode",
     "watch": "tsc -w"
   },
   "devDependencies": {
     "@eclipse-glsp-examples/workflow-server-bundled": "~2.0.1",
     "@eclipse-glsp/glsp-playwright": "~2.0.0",
-    "@playwright/test": "^1.40.1",
+    "@estruyf/github-actions-reporter": "1.5.0",
+    "@playwright/test": "^1.42.1",
     "dotenv": "^16.0.3",
     "ts-dedent": "^2.2.0",
     "tsx": "^3.12.4"

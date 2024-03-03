@@ -3,12 +3,11 @@
   "compilerOptions": {
     "noEmit": true
   },
-  "exclude": ["**/node_modules", "**/.eslintrc.js"],
+  "exclude": ["**/node_modules", "**/.eslintrc.js","**/lib", "scripts"],
   "include": [
     "packages/*/src",
     "examples/*/src",
     "examples/*/tests",
-    "examples/*/scripts",
     "examples/*/*.config.ts",
     "examples/*/configs/*.ts"
   ]

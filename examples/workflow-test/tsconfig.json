@@ -3,9 +3,11 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "lib",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "baseUrl": "."
   },
-  "include": ["src", "tests", "scripts", "playwright.config.ts", "./configs/*.ts", "./server/server-config.json"]
+  "include": ["src", "tests", "playwright.config.ts", "./configs/*.ts"],
+  "references": [
+    {
+      "path": "../../packages/glsp-playwright"
+    }
+  ]
 }

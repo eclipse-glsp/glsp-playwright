@@ -24,7 +24,10 @@ import { PlaywrightTestOptions, PlaywrightWorkerArgs, PlaywrightWorkerOptions, P
 import * as path from 'path';
 import { getEnv } from './utils';
 
-const projectDevices = devices['Desktop Chrome'];
+export function isMultiBrowser(): boolean {
+    const env = getEnv('MULTI_BROWSER', false);
+    return env === undefined || env === 'true';
+}
 
 export function createStandaloneProject(): Project<PlaywrightTestOptions & GLSPPlaywrightOptions, PlaywrightWorkerArgs>[] {
     const url = getEnv('STANDALONE_URL');
@@ -39,16 +42,41 @@ export function createStandaloneProject(): Project<PlaywrightTestOptions & GLSPP
         url
     };
 
-    return [
-        {
-            name: 'standalone',
+    const chromeProject = {
+        name: 'standalone-chrome',
+        testMatch: ['**/*.spec.js'],
+        use: {
+            ...devices['Desktop Chrome'],
+            integrationOptions: standaloneIntegrationOptions
+        }
+    };
+
+    if (!isMultiBrowser()) {
+        return [chromeProject];
+    }
+
+    const firefoxProject = {
+        name: 'standalone-firefox',
+        testMatch: ['**/*.spec.js'],
+        use: {
+            ...devices['Desktop Firefox'],
+            integrationOptions: standaloneIntegrationOptions
+        }
+    };
+
+    const projects = [chromeProject, firefoxProject];
+    if (process.platform === 'win32') {
+        const edgeProject = {
+            name: 'standalone-edge',
             testMatch: ['**/*.spec.js'],
             use: {
-                ...projectDevices,
+                ...devices['Desktop Edge'],
                 integrationOptions: standaloneIntegrationOptions
             }
-        }
-    ];
+        };
+        projects.push(edgeProject);
+    }
+    return projects;
 }
 
 export function createTheiaProject(): Project<PlaywrightTestOptions & GLSPPlaywrightOptions, PlaywrightWorkerOptions>[] {
@@ -67,17 +95,45 @@ export function createTheiaProject(): Project<PlaywrightTestOptions & GLSPPlaywr
         file: 'example1.wf'
     };
 
-    return [
-        {
-            name: 'theia',
+    const chromeProject = {
+        name: 'theia-chrome',
+        testMatch: ['**/*.spec.js'],
+        use: {
+            ...devices['Desktop Chrome'],
+            baseURL: theiaIntegrationOptions.url,
+            integrationOptions: theiaIntegrationOptions
+        }
+    };
+
+    if (!isMultiBrowser()) {
+        return [chromeProject];
+    }
+
+    const firefoxProject = {
+        name: 'theia-firefox',
+        testMatch: ['**/*.spec.js'],
+        use: {
+            ...devices['Desktop Firefox'],
+            baseURL: theiaIntegrationOptions.url,
+            integrationOptions: theiaIntegrationOptions
+        }
+    };
+
+    const projects = [chromeProject, firefoxProject];
+    if (process.platform === 'win32') {
+        const edgeProject = {
+            name: 'theia-edge',
             testMatch: ['**/*.spec.js'],
             use: {
-                ...projectDevices,
+                ...devices['Desktop Edge'],
                 baseURL: theiaIntegrationOptions.url,
                 integrationOptions: theiaIntegrationOptions
             }
-        }
-    ];
+        };
+        projects.push(edgeProject);
+    }
+
+    return projects;
 }
 
 export function createVSCodeProject(): Project<PlaywrightTestOptions & GLSPPlaywrightOptions, PlaywrightWorkerOptions>[] {
