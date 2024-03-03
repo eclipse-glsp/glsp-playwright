@@ -1,0 +1,118 @@
+name: playwright-tests
+
+on:
+  push:
+    branches:
+      - testci
+  workflow_run:
+    workflows: ['ci']
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      glspClientRef:
+        description: 'GLSP Client branch/commit/tag to checkout'
+        required: true
+        default: 'master'
+      nodeServerRef:
+        description: 'GLSP node server branch/commit/tag to checkout'
+        required: true
+        default: 'main'
+      platform:
+        description: 'Specify platform to run tests on (ubuntu, windows, macos, all)'
+        required: true
+        default: 'ubuntu'
+
+jobs:
+  setup-environment:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      standaloneUrl: ${{ steps.set-env.outputs.standaloneUrl }}
+      vsixPath: ${{ steps.set-env.outputs.vsixPath }}
+    steps:
+      - id: set-matrix
+        run: |
+          PLATFORM_INPUT="${{ github.event.inputs.platform || 'ubuntu' }}"
+          if [ "$PLATFORM_INPUT" = "all" ]; then
+            echo "::set-output name=matrix::{\"include\": [{\"os\": \"ubuntu-latest\"}, {\"os\": \"windows-latest\"}, {\"os\": \"macos-latest\"}]}"
+          elif [ "$PLATFORM_INPUT" = "ubuntu" ]; then
+            echo "::set-output name=matrix::{\"include\": [{\"os\": \"ubuntu-latest\"}]}"
+          elif [ "$PLATFORM_INPUT" = "windows" ]; then
+            echo "::set-output name=matrix::{\"include\": [{\"os\": \"windows-latest\"}]}"
+          elif [ "$PLATFORM_INPUT" = "macos" ]; then
+            echo "::set-output name=matrix::{\"include\": [{\"os\": \"macos-latest\"}]}"
+          else
+            echo "Error: Invalid platform input" >&2
+            exit 1
+          fi
+      - id: set-env
+        run: |
+          if [ "${{ github.event.inputs.platform }}" = "windows" ]; then 
+            echo "::set-output name=standaloneUrl::file:///${{ github.workspace }}\glsp-client\examples\workflow-standalone\app\diagram.html"
+            echo "::set-output name=vsixPath::${{ github.workspace }}\glsp-vscode-integration\example\workflow\extension\workflow-vscode-example-2.2.0-next.vsix"
+          else
+            echo "::set-output name=standaloneUrl::file://${{ github.workspace }}/glsp-client/examples/workflow-standalone/app/diagram.html"
+            echo "::set-output name=vsixPath::${{ github.workspace }}/glsp-vscode-integration/example/workflow/extension\workflow-vscode-example-2.2.0-next.vsix"
+          fi
+  playwright:
+    name: Playwright Tests on ${{ matrix.os }}
+    needs: setup-environment
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix: ${{fromJson(needs.setup-environment.outputs.matrix)}}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: 'glsp-playwright'
+      - uses: actions/checkout@v4
+        with:
+          repository: 'eclipse-glsp/glsp-client'
+          ref: ${{ github.event.inputs.glspClientRef }}
+          path: 'glsp-client'
+      - uses: actions/checkout@v4
+        with:
+          repository: 'eclipse-glsp/glsp-server-node'
+          ref: ${{ github.event.inputs.nodeServerRef }}
+          path: 'glsp-server-node'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install workflow server
+        run: |
+          cd glsp-server-node
+          yarn
+      - name: Start workflow server (Unix)
+        if: runner.os != 'Windows'
+        run: nohup yarn start:websocket > server.log 2>&1 &
+      - name: Start workflow server (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: Start-Job -ScriptBlock { yarn start:websocket *> server.log }
+      - name: Install and start app integrations
+        run: |
+          cd glsp-client
+          yarn
+      - name: Run Playwright tests
+        run: |
+          echo Standalone URL: ${{ needs.setup-environment.outputs.standaloneUrl }}
+          echo VSIX Path: ${{ needs.setup-environment.outputs.vsixPath }}
+          cd glsp-playwright
+          yarn
+          yarn test:standalone
+        env:
+          CI: true
+          MULTI_BROWSER: true
+          GLSP_SERVER_PORT: '8081'
+          GLSP_SERVER_DEBUG: true
+          GLSP_WEBSOCKET_PATH: workflow
+          GLSP_SERVER_PLAYWRIGHT_MANAGED: false
+          STANDALONE_URL: ${{ needs.setup-environment.outputs.standaloneUrl }}
+          THEIA_URL: 'http://localhost:3000'
+          VSCODE_VSIX_ID: 'eclipse-glsp.workflow-vscode-example'
+          VSCODE_VSIX_PATH: ${{ needs.setup-environment.outputs.vsixPath }}
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.os }}
+          path: glsp-playwright/examples/workflow-test/playwright-report/

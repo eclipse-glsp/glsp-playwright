@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_and_lint:
+  build:
     name: Build
     runs-on: ubuntu-latest
     steps:
@@ -32,4 +32,4 @@ jobs:
       - name: Annotate Code Linting Results
         uses: ataylorme/eslint-annotate-action@2.2.0
         with:
-          report-json: "eslint_report.json"
+          report-json: 'eslint_report.json'
