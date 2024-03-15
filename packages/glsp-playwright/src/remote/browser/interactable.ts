@@ -46,7 +46,10 @@ export async function interactableBoundsOf(locator: Locator): Promise<Interactab
  * ```
  */
 export class InteractableBoundingBox {
-    constructor(public readonly page: Page, public readonly data: BoundingBox) {}
+    constructor(
+        public readonly page: Page,
+        public readonly data: BoundingBox
+    ) {}
 
     /**
      * Returns the {@link InteractablePosition} of the provided parameter.
@@ -126,7 +129,10 @@ export class InteractableBoundingBox {
  * with the coordinates.
  */
 export class InteractablePosition {
-    constructor(public readonly page: Page, public readonly data: Position) {}
+    constructor(
+        public readonly page: Page,
+        public readonly data: Position
+    ) {}
 
     /**
      * Moves the current coordinates based on the provided coordinates and returns
@@ -145,5 +151,9 @@ export class InteractablePosition {
 
     async click(): Promise<void> {
         await this.page.mouse.click(this.data.x, this.data.y);
+    }
+
+    async move(): Promise<void> {
+        await this.page.mouse.move(this.data.x, this.data.y);
     }
 }

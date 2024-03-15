@@ -36,7 +36,7 @@ test.describe('The resizing handle', () => {
         const oldBounds = await task.bounds();
         const oldTopLeft = oldBounds.position('top_left');
 
-        const resizeHandle = await task.resizeHandles().ofKind('top-left', { wait: false });
+        const resizeHandle = await task.resizeHandles().ofKind('top-left');
         const newPosition = oldTopLeft.moveRelative(-50, 0);
         await resizeHandle.dragToAbsolutePosition(newPosition.data);
 
@@ -56,16 +56,16 @@ test.describe('The resizing handle', () => {
             await task.click();
         });
 
-        const topLeft = await task.resizeHandles().ofKind('top-left', { wait: false });
+        const topLeft = await task.resizeHandles().waitForKind('top-left');
         expect(await topLeft.locate().count()).toBe(1);
 
-        const topRight = await task.resizeHandles().ofKind('top-right');
+        const topRight = await task.resizeHandles().waitForKind('top-right');
         expect(await topRight.locate().count()).toBe(1);
 
-        const bottomLeft = await task.resizeHandles().ofKind('bottom-left');
+        const bottomLeft = await task.resizeHandles().waitForKind('bottom-left');
         expect(await bottomLeft.locate().count()).toBe(1);
 
-        const bottomRight = await task.resizeHandles().ofKind('bottom-right');
+        const bottomRight = await task.resizeHandles().waitForKind('bottom-right');
         expect(await bottomRight.locate().count()).toBe(1);
     });
 

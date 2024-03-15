@@ -8,6 +8,7 @@ module.exports = {
         project: 'tsconfig.eslint.json'
     },
     rules: {
+        '@typescript-eslint/no-floating-promises': 'error',
         'no-null/no-null': 'off', // Accessing the browser DOM returns "null" instead of "undefined"
         'no-restricted-imports': [
             'error',

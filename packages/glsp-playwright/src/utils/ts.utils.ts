@@ -68,3 +68,7 @@ export async function definedAttr(locator: Locator, attr: string): Promise<strin
 
     return o;
 }
+
+export function hasProperty<T extends object, K extends keyof T = keyof T>(obj: object, prop: K): obj is Record<K, unknown> {
+    return prop in obj;
+}

@@ -15,6 +15,7 @@
  ********************************************************************************/
 import type { Locator, Page } from '@playwright/test';
 import { SVGMetadataUtils } from '../glsp/index';
+import { hasProperty } from '../utils/ts.utils';
 import type { IntegrationArgs, IntegrationType } from './integration.type';
 
 /**
@@ -103,9 +104,19 @@ export abstract class Integration {
      * Asserts the existence of the SVG Metadata API
      */
     async assertMetadataAPI(): Promise<void> {
-        this.prefixRootSelector(SVGMetadataUtils.apiAttr).waitFor({
+        return this.prefixRootSelector(SVGMetadataUtils.apiAttr).waitFor({
             state: 'attached',
             timeout: 5 * 1000
         });
+    }
+}
+
+export interface ContextMenuIntegration extends Integration {
+    contextMenuLocator: Locator;
+}
+
+export namespace ContextMenuIntegration {
+    export function is(integration: Integration): integration is ContextMenuIntegration {
+        return hasProperty<ContextMenuIntegration>(integration, 'contextMenuLocator');
     }
 }

@@ -18,7 +18,7 @@ This package contains code examples that demonstrate how to test diagram editors
 | Client Message Notification                                                          |          -           |         -         |                     |          -          |
 | Client Progress Reporting                                                            |                      |         -         |                     |          -          |
 | Element Selection                                                                    |          ✓           |         ✓         |          -          |          ✓          |
-| Element Hover                                                                        |          -           |         -         |          -          |          -          |
+| Element Hover                                                                        |          ✓           |         ✓         |          -          |          ✓          |
 | Element Validation                                                                   |          -           |         -         |          -          |          -          |
 | Element Navigation                                                                   |                      |         -         |          -          |          -          |
 | Element Type Hints                                                                   |          -           |         -         |          -          |          -          |
@@ -42,6 +42,14 @@ The following libraries/frameworks need to be installed on your system:
 
 -   [Node.js](https://nodejs.org/en/) `>=16.11.0`
 -   [Yarn](https://classic.yarnpkg.com/en/docs/install#debian-stable) `>=1.7.0`
+
+## Min versions
+
+-   [Standalone](https://github.com/eclipse-glsp/glsp-client): v2.1.1
+-   [Theia](https://github.com/eclipse-glsp/glsp-theia-integration): v2.1.1
+-   [VSCode](https://github.com/eclipse-glsp/glsp-vscode-integration): v2.1.1
+
+The bundled node server: v2.1.1
 
 ## Structure
 
