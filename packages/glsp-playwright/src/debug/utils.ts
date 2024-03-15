@@ -15,6 +15,7 @@
  ********************************************************************************/
 import { Locator } from '@playwright/test';
 import { SVGMetadata } from '~/glsp/graph/svg-metadata-api';
+import { GLSPLocator } from '../remote';
 
 export interface DebugNode {
     id: string | null;
@@ -32,7 +33,7 @@ export interface DebugNode {
  */
 export async function extractMetaTree(locator: Locator): Promise<DebugNode> {
     const children: DebugNode[] = [];
-    for (const loc of await locator.locator(`> [${SVGMetadata.type}]`).all()) {
+    for (const loc of await locator.locator(`[${SVGMetadata.type}]`).all()) {
         const child = await extractMetaTree(loc);
         children.push(child);
     }
@@ -58,4 +59,46 @@ export async function extractElement(locator: Locator): Promise<DebugNode> {
         children: [],
         html: await (await locator.allTextContents()).join(',')
     };
+}
+
+export interface DebugGLSPLocator {
+    locator: string;
+    children: string[];
+}
+
+/**
+ * This function extracts structured debugging information from a given GLSPLocator.
+ * It processes the provided locator and its ancestors, detailing its locator and a simplified version of its children's HTML content,
+ * aimed at aiding in debugging.
+ * The traversal ends when there are no more parent locators anymore.
+ */
+export async function extractDebugInformationOfGLSPLocator(glspLocator: GLSPLocator): Promise<DebugGLSPLocator[]> {
+    let elementLocator: GLSPLocator | undefined = glspLocator;
+    const extracted: DebugGLSPLocator[] = [];
+
+    while (elementLocator !== undefined) {
+        const locator = elementLocator.locate();
+        const children: string[] = [];
+
+        const all = await locator.all();
+        for (const l of all) {
+            children.push(
+                await l.evaluate(h => {
+                    const cloned = h.cloneNode(false) as HTMLElement;
+                    cloned.textContent = '...';
+
+                    return cloned.outerHTML;
+                })
+            );
+        }
+
+        extracted.push({
+            locator: locator + '',
+            children
+        });
+
+        elementLocator = elementLocator.parent;
+    }
+
+    return extracted;
 }

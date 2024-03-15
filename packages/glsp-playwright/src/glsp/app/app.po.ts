@@ -52,7 +52,7 @@ export type GLSPAppOptions = GLSPPageOptions | GLSPIntegrationOptions;
 /**
  * The central piece of the **GLSP-Playwright** framework.
  * The {@link GLSPApp} is the entry point into the framework and provides all the necessary
- * page objects to interact with the GLSP-Client.
+ * page objects to interact with the GLSP-Client. You can extend {@link GLSPApp} and provide your own customizations.
  *
  * **Usage**
  *
@@ -79,7 +79,7 @@ export type GLSPAppOptions = GLSPPageOptions | GLSPIntegrationOptions;
  * ```
  */
 export class GLSPApp {
-    readonly sprottySelector = 'div.sprotty';
+    readonly sprottySelector = 'div.sprotty:not(.sprotty-hidden)';
 
     rootLocator: GLSPLocator;
     locator: GLSPLocator;

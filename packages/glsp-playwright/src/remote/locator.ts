@@ -22,7 +22,11 @@ import type { GLSPApp } from '~/glsp/app';
  *
  */
 export class GLSPLocator {
-    constructor(protected readonly locator: Locator, public readonly app: GLSPApp, public readonly parent?: GLSPLocator) {}
+    constructor(
+        protected readonly locator: Locator,
+        public readonly app: GLSPApp,
+        public readonly parent?: GLSPLocator
+    ) {}
 
     get page(): Page {
         return this.app.page;
@@ -38,11 +42,12 @@ export class GLSPLocator {
     /**
      * Appends the provided selector to the current {@link GLSPLocator} as child.
      *
-     * @param selector Selector of the element
+     * @param selectorOrLocator Selector or locator of the element
+     * @param options Options for the locator
      * @returns New {@link GLSPLocator} with the provided selector as child
      */
-    child(selector: string): GLSPLocator {
-        return new GLSPLocator(this.locator.locator(selector), this.app, this);
+    child(selectorOrLocator: string | Locator, options?: Parameters<Locator['locator']>[1]): GLSPLocator {
+        return new GLSPLocator(this.locator.locator(selectorOrLocator, options), this.app, this);
     }
 
     /**

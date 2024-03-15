@@ -107,6 +107,27 @@ Use the `Watch All` task to rebuild the project automatically after doing change
 
 > Note: The test files will be also rebuild.
 
+## Debugging
+
+1. Read the [Playwright Debug Documentation](https://playwright.dev/docs/debug).
+2. Install the VSCode Playwright Extension.
+
+### Live Debugging
+
+-   Read the [Live Debugging Documentation](https://playwright.dev/docs/debug#live-debugging)
+-   You can get the locator of a specific page object or a `GLSPLocator` by using the `.locate()` method:
+
+```ts
+const locator = task.locate();
+```
+
+-   Click on the locator variable to highlight it within the browser
+
+### Extractors
+
+Using the powerful debugger coming with `Playwright` is the recommended way to debug the test cases.
+Still, to provide more information, we offer util functions to extract additional context information. See the [debug tests](./tests/core/debug.standalone.spec.ts) for instructions on how to use them.
+
 ## More information
 
 For more information, please visit the [Eclipse GLSP Umbrella repository](https://github.com/eclipse-glsp/glsp) and the [Eclipse GLSP Website](https://www.eclipse.org/glsp/).

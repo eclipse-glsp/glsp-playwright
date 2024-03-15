@@ -71,6 +71,7 @@ export function createTheiaProject(): Project<PlaywrightTestOptions & GLSPPlaywr
         {
             name: 'theia',
             testMatch: ['**/*.spec.js'],
+            testIgnore: ['**/*.standalone.spec.js'],
             use: {
                 ...projectDevices,
                 baseURL: theiaIntegrationOptions.url,
@@ -109,6 +110,7 @@ export function createVSCodeProject(): Project<PlaywrightTestOptions & GLSPPlayw
         {
             name: 'vscode',
             testMatch: ['**/*.spec.js'],
+            testIgnore: ['**/*.standalone.spec.js'],
             dependencies: ['vscode-setup'],
             use: {
                 integrationOptions: vscodeIntegrationOptions
