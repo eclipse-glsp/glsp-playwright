@@ -126,6 +126,32 @@ export function createParameterizedIntegrationData<T>(options: {
     };
 }
 
+/**
+ * Returns true iff the active integration is provided within the parameters.
+ *
+ * **Details**
+ *
+ * The following test case will be executed only if the `Theia` integration is active.
+ *
+ * ```
+ * test.skip(skipNonIntegration(integrationOptions, 'Theia'), 'Only within Theia supported');
+ * ```
+ */
+export function skipNonIntegration(integrationOptions?: IntegrationOptions, ...integration: IntegrationType[]): boolean {
+    return integrationOptions !== undefined && !integration.includes(integrationOptions.type);
+}
+
+/**
+ * Returns true iff the active integration is not provided within the parameters.
+ *
+ * **Details**
+ *
+ * The following test case will be skipped if the `Theia` integration is active.
+ *
+ * ```
+ * test.skip(skipIntegration(integrationOptions, 'Theia'), 'Not supported');
+ * ```
+ */
 export function skipIntegration(integrationOptions?: IntegrationOptions, ...integration: IntegrationType[]): boolean {
     return integrationOptions === undefined || integration.includes(integrationOptions.type);
 }

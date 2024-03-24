@@ -206,7 +206,10 @@ export class GLSPGraph extends Locateable {
         return elements;
     }
 
-    async deselect(): Promise<void> {
+    /**
+     * Focuses the graph by clicking on it
+     */
+    async select(): Promise<void> {
         await this.locate().click();
         await this.locate().focus();
     }

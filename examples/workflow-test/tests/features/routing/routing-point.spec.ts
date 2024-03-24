@@ -13,7 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { expect, test } from '@eclipse-glsp/glsp-playwright/';
+import { PMetadata, RoutingPoint, expect, test } from '@eclipse-glsp/glsp-playwright/';
 import { WorkflowApp } from '../../../src/app/workflow-app';
 import { Edge } from '../../../src/graph/elements/edge.po';
 import { WorkflowGraph } from '../../../src/graph/workflow.graph';
@@ -37,7 +37,9 @@ test.describe('The routing points of an edge', () => {
         expect((await routingPoints.points({ wait: false })).length).toBe(0);
         expect((await routingPoints.volatilePoints({ wait: false })).length).toBe(0);
 
-        await edge.click();
+        await graph.waitForCreationOfType(PMetadata.getType(RoutingPoint), async () => {
+            await edge.click();
+        });
 
         expect((await routingPoints.points()).length).toBeGreaterThan(0);
         expect((await routingPoints.volatilePoints()).length).toBe(1);
@@ -49,7 +51,9 @@ test.describe('The routing points of an edge', () => {
         const routingPoints = edge.routingPoints();
         expect((await routingPoints.volatilePoints({ wait: false })).length).toBe(0);
 
-        await edge.click();
+        await graph.waitForCreationOfType(PMetadata.getType(RoutingPoint), async () => {
+            await edge.click();
+        });
 
         const points = await routingPoints.volatilePoints();
         expect(points.length).toBe(1);

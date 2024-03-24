@@ -37,7 +37,7 @@ export class ResizeHandles {
         await handle.locate().waitFor({ state: 'visible', timeout: options?.timeout });
     }
 
-    async ofKind(kind: ResizeHandleKind, options?: AutoWaitOptions): Promise<ResizeHandle> {
+    async waitForKind(kind: ResizeHandleKind, options?: AutoWaitOptions): Promise<ResizeHandle> {
         const resizeHandle = new ResizeHandle(
             this.element.locator.child(`[${SVGMetadata.type}="${PMetadata.getType(ResizeHandle)}"][data-kind="${kind}"]`),
             this,
@@ -48,6 +48,10 @@ export class ResizeHandles {
 
         return resizeHandle;
     }
+
+    async ofKind(kind: ResizeHandleKind, options: AutoWaitOptions = { wait: false }): Promise<ResizeHandle> {
+        return this.waitForKind(kind, options);
+    }
 }
 
 const ResizeHandleMixin = Mix(Locateable).flow(useDraggableFlow).build();
@@ -55,7 +59,11 @@ const ResizeHandleMixin = Mix(Locateable).flow(useDraggableFlow).build();
     type: 'resize-handle'
 })
 export class ResizeHandle extends ResizeHandleMixin {
-    constructor(locator: GLSPLocator, public readonly resizeHandles: ResizeHandles, public readonly kind: ResizeHandleKind) {
+    constructor(
+        locator: GLSPLocator,
+        public readonly resizeHandles: ResizeHandles,
+        public readonly kind: ResizeHandleKind
+    ) {
         super(locator);
     }
 
@@ -74,14 +82,16 @@ export class ResizeHandle extends ResizeHandleMixin {
         await this.autoPrepare(options);
 
         await super.dragToAbsolutePosition(position);
-        await this.resizeHandles.element.graph.deselect();
+        await this.resizeHandles.element.graph.select();
+        await this.waitForHidden();
     }
 
     override async dragToRelativePosition(position: Position, options?: AutoPrepareOptions): Promise<void> {
         await this.autoPrepare(options);
 
         await super.dragToRelativePosition(position);
-        await this.resizeHandles.element.graph.deselect();
+        await this.resizeHandles.element.graph.select();
+        await this.waitForHidden();
     }
 
     override async dragTo(
@@ -98,6 +108,6 @@ export class ResizeHandle extends ResizeHandleMixin {
         await this.autoPrepare(options);
 
         await this.dragTo(target, options);
-        await this.resizeHandles.element.graph.deselect();
+        await this.resizeHandles.element.graph.select();
     }
 }

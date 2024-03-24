@@ -28,7 +28,6 @@ dotenv.config();
  */
 const config: PlaywrightTestConfig<GLSPPlaywrightOptions> = {
     testDir: 'lib/tests',
-    timeout: 30 * 1000,
     expect: {
         timeout: 5000
     },

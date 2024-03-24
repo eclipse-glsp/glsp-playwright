@@ -14,7 +14,12 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import type { GLSPToolPalette } from '../tool-palette.po';
-import { SearchToolbarItem, ToolPaletteToolbarItem, ToolPaletteToolbarItemConstructor } from './tool-palette-toolbar-item.po';
+import {
+    SearchToolbarItem,
+    ToolPaletteToolbarItem,
+    ToolPaletteToolbarItemConstructor,
+    ValidationToolbarItem
+} from './tool-palette-toolbar-item.po';
 
 export class GLSPToolPaletteToolbar {
     readonly toolbarLocator;
@@ -44,8 +49,8 @@ export class GLSPToolPaletteToolbar {
         return this.itemByIcon('.codicon-screen-full', ToolPaletteToolbarItem);
     }
 
-    validateTool(): ToolPaletteToolbarItem {
-        return this.itemByIcon('.codicon-pass', ToolPaletteToolbarItem);
+    validateTool(): ValidationToolbarItem {
+        return this.itemByIcon('.codicon-pass', ValidationToolbarItem);
     }
 
     searchTool(): SearchToolbarItem {

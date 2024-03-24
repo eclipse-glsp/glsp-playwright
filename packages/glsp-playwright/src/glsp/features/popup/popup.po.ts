@@ -34,4 +34,9 @@ export class GLSPPopup extends Locateable {
     async classAttr(): Promise<string> {
         return definedGLSPAttr(this.locator, 'class');
     }
+
+    async close(): Promise<void> {
+        await this.app.graph.select();
+        await this.waitForHidden();
+    }
 }

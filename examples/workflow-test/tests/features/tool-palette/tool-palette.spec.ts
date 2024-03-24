@@ -126,7 +126,7 @@ test.describe('The tool palette', () => {
             await target.click();
         });
         expect(edges.length).toBe(1);
-        await graph.deselect();
+        await graph.select();
 
         const newEdge = edges[0];
 
@@ -147,7 +147,7 @@ test.describe('The tool palette', () => {
             await taskBounds.position('bottom_left').moveRelative(-50, 0).click();
         });
         expect(nodes.length).toBe(1);
-        await graph.deselect();
+        await graph.select();
 
         const newTask = nodes[0];
 
@@ -168,15 +168,11 @@ test.describe('The tool palette', () => {
     });
 
     test('should allow to validate', async () => {
-        await graph.waitForCreationOfType(Marker, async () => {
+        const markers = await graph.waitForCreationOfType(Marker, async () => {
             await toolPalette.toolbar.validateTool().click();
         });
 
-        const task = await graph.getNodeBySelector('[id$="task0_automated"]', TaskAutomated);
-        expect(await task.isVisible()).toBeTruthy();
-
-        const marker = task.marker();
-        expect(await marker.isVisible()).toBeTruthy();
+        expect(markers.length).toBeGreaterThan(0);
     });
 
     test.afterEach(async ({ integration }) => {

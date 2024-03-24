@@ -100,7 +100,7 @@ test.describe('The command palette', () => {
                 await command.search('Create Manual Task', { confirm: true });
             });
             expect(nodes.length).toBe(1);
-            await graph.deselect();
+            await graph.select();
 
             const newTask = nodes[0];
 
@@ -187,7 +187,7 @@ test.describe('The command palette', () => {
                 await command.search('Create Manual Task', { confirm: true });
             });
             expect(nodes.length).toBe(1);
-            await graph.deselect();
+            await graph.select();
 
             const newTask = nodes[0];
 
@@ -207,7 +207,7 @@ test.describe('The command palette', () => {
                 await command.search('create edge to ' + (await targetLabel.textContent()), { confirm: true });
             });
             expect(edges.length).toBe(1);
-            await graph.deselect();
+            await graph.select();
 
             const newEdge = edges[0];
 

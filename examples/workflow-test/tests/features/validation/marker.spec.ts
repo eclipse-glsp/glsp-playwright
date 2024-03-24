@@ -18,6 +18,9 @@ import { WorkflowApp } from '../../../src/app/workflow-app';
 import { TaskAutomated } from '../../../src/graph/elements/task-automated.po';
 import { WorkflowGraph } from '../../../src/graph/workflow.graph';
 
+const automatedSelector = '[id$="task0_automated"]';
+const expectedAutomatedPopupText = 'INFO: This is an automated task';
+
 test.describe('The marker', () => {
     let app: WorkflowApp;
     let graph: WorkflowGraph;
@@ -30,16 +33,31 @@ test.describe('The marker', () => {
         graph = app.graph;
     });
 
-    test('should show a popup on hover', async () => {
-        const task = await graph.getNodeBySelector('[id$="task0_automated"]', TaskAutomated);
-
-        await app.toolPalette.toolbar.validateTool().click();
+    test('should be shown after validation', async () => {
+        await app.toolPalette.toolbar.validateTool().trigger();
+        const task = await graph.getNodeBySelector(automatedSelector, TaskAutomated);
 
         const marker = task.marker();
-        await marker.hover();
+        await expect(marker.locate()).toBeVisible();
+    });
 
-        const text = await marker.popup().innerText();
-        expect(text).toBe('INFO: This is an automated task');
+    test('should show a popup on hover', async () => {
+        await app.toolPalette.toolbar.validateTool().trigger();
+        const task = await graph.getNodeBySelector(automatedSelector, TaskAutomated);
+        expect(await task.marker().popupText()).toBe(expectedAutomatedPopupText);
+    });
+
+    test('should be still visible after resizing', async () => {
+        await app.toolPalette.toolbar.validateTool().trigger();
+        const task = await graph.getNodeBySelector(automatedSelector, TaskAutomated);
+        expect(await task.marker().popupText()).toBe(expectedAutomatedPopupText);
+
+        await app.popup.close();
+        await expect(task.popup().locate()).toBeHidden();
+
+        const handle = await task.resizeHandles().ofKind('top-left');
+        await handle.dragToRelativePosition({ x: 10, y: 10 });
+        expect(await task.marker().popupText()).toBe(expectedAutomatedPopupText);
     });
 
     test.afterEach(async ({ integration }) => {

@@ -14,10 +14,10 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import { Page } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 import { TheiaAppLoader, TheiaWorkspace } from '@theia/playwright';
 import { SVGMetadataUtils } from '~/glsp';
-import { Integration } from '../integration.base';
+import { ContextMenuIntegration, Integration } from '../integration.base';
 import type { IntegrationArgs } from '../integration.type';
 import { TheiaGLSPApp } from './po/theia-glsp-app.po';
 import { TheiaGLSPEditor } from './po/theia-glsp-editor.po';
@@ -27,11 +27,15 @@ import { TheiaIntegrationOptions } from './theia.options';
  * The {@link TheiaIntegration} provides the glue code for working
  * with the Theia version of the GLSP-Client.
  */
-export class TheiaIntegration extends Integration {
+export class TheiaIntegration extends Integration implements ContextMenuIntegration {
     protected theiaApp: TheiaGLSPApp;
 
     override get page(): Page {
         return this.theiaApp.page;
+    }
+
+    get contextMenuLocator(): Locator {
+        return this.page.locator('body > .p-Widget.p-Menu');
     }
 
     constructor(
