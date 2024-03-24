@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { Locator } from '@playwright/test';
-import { extractMetaTree } from '~/debugger/extractor';
+import { extractMetaTree } from '~/debug';
 import { GLSPLocator, Locateable } from '~/remote';
 import type { ConstructorT } from '~/types/constructor';
 import { definedGLSPAttr } from '~/utils/ts.utils';

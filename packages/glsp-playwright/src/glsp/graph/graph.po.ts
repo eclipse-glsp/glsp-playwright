@@ -43,7 +43,7 @@ export interface GLSPGraphOptions {
  */
 export class GLSPGraph extends Locateable {
     static locate(app: GLSPApp): GLSPLocator {
-        return app.locator.child(SVGMetadataUtils.typeAttrOf('graph')).child('svg.sprotty-graph');
+        return app.locator.child(SVGMetadataUtils.typeAttrOf('graph'));
     }
 
     constructor(protected readonly options: GLSPGraphOptions) {
