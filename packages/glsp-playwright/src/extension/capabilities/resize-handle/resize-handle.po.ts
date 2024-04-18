@@ -82,7 +82,7 @@ export class ResizeHandle extends ResizeHandleMixin {
         await this.autoPrepare(options);
 
         await super.dragToAbsolutePosition(position);
-        await this.resizeHandles.element.graph.select();
+        await this.resizeHandles.element.graph.focus();
         await this.waitForHidden();
     }
 
@@ -90,7 +90,7 @@ export class ResizeHandle extends ResizeHandleMixin {
         await this.autoPrepare(options);
 
         await super.dragToRelativePosition(position);
-        await this.resizeHandles.element.graph.select();
+        await this.resizeHandles.element.graph.focus();
         await this.waitForHidden();
     }
 
@@ -108,6 +108,6 @@ export class ResizeHandle extends ResizeHandleMixin {
         await this.autoPrepare(options);
 
         await this.dragTo(target, options);
-        await this.resizeHandles.element.graph.select();
+        await this.resizeHandles.element.graph.focus();
     }
 }

@@ -127,6 +127,22 @@ export function createParameterizedIntegrationData<T>(options: {
 }
 
 /**
+ * Runs the given callback if the active integration is the same as the provided integration type
+ */
+export async function runInIntegration(
+    integration: Integration,
+    types: IntegrationType | IntegrationType[],
+    run: () => void | Promise<void>,
+    elseRun?: () => void | Promise<void>
+): Promise<void> {
+    if (types === integration.type || (Array.isArray(types) && types.includes(integration.type))) {
+        await run();
+    } else {
+        await elseRun?.();
+    }
+}
+
+/**
  * Returns true iff the active integration is provided within the parameters.
  *
  * **Details**

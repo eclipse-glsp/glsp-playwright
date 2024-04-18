@@ -36,7 +36,7 @@ export class GLSPPopup extends Locateable {
     }
 
     async close(): Promise<void> {
-        await this.app.graph.select();
+        await this.app.graph.focus();
         await this.waitForHidden();
     }
 }

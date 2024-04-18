@@ -18,7 +18,7 @@ import {
     PNodeConstructor,
     PopupCapability,
     expect,
-    skipIntegration,
+    runInIntegration,
     skipNonIntegration,
     test
 } from '@eclipse-glsp/glsp-playwright/';
@@ -77,7 +77,7 @@ test.describe('The popup', () => {
 
     test.describe('should be closed on', () => {
         test('escape', async () => {
-            await app.graph.select();
+            await app.graph.focus();
             await assertPopup(app, manualSelector, TaskManual, expectedManualPopupText);
 
             await app.page.keyboard.press('Escape');
@@ -113,42 +113,68 @@ test.describe('The popup', () => {
             await expect(task.popup().locate()).toBeHidden();
         });
 
-        test.describe('', () => {
-            test.skip(({ integrationOptions }) => skipIntegration(integrationOptions, 'Standalone'), 'Not supported');
+        test('context menu', async ({ integrationOptions }) => {
+            test.skip(skipNonIntegration(integrationOptions, 'Theia'), 'Only within Theia supported');
+            await assertPopup(app, manualSelector, TaskManual, expectedManualPopupText);
 
-            test('context menu', async ({ integrationOptions }) => {
-                test.skip(skipNonIntegration(integrationOptions, 'Theia'), 'Only within Theia supported');
-                await assertPopup(app, manualSelector, TaskManual, expectedManualPopupText);
+            await app.contextMenu.open();
+            await app.popup.waitForHidden();
 
-                await app.contextMenu.open();
-                await app.popup.waitForHidden();
+            await expect(app.popup.locate()).toBeHidden();
+        });
 
-                await expect(app.popup.locate()).toBeHidden();
-            });
+        test('center command', async ({ integration }) => {
+            await assertPopup(app, manualSelector, TaskManual, expectedManualPopupText);
+            await graph.focus();
+            await runInIntegration(
+                integration,
+                ['Standalone'],
+                async () => {
+                    await app.page.keyboard.press('Control+Shift+C');
+                },
+                async () => {
+                    await app.page.keyboard.press('Alt+C');
+                }
+            );
+            await app.popup.waitForHidden();
 
-            test('center command', async () => {
-                await assertPopup(app, manualSelector, TaskManual, expectedManualPopupText);
-                await app.page.keyboard.press('Alt+C');
-                await app.popup.waitForHidden();
+            await expect(app.popup.locate()).toBeHidden();
+        });
 
-                await expect(app.popup.locate()).toBeHidden();
-            });
+        test('fit to screen command', async ({ integration }) => {
+            await assertPopup(app, manualSelector, TaskManual, expectedManualPopupText);
+            await graph.focus();
+            await runInIntegration(
+                integration,
+                ['Standalone'],
+                async () => {
+                    await app.page.keyboard.press('Control+Shift+F');
+                },
+                async () => {
+                    await app.page.keyboard.press('Alt+F');
+                }
+            );
+            await app.popup.waitForHidden();
 
-            test('fit to screen command', async () => {
-                await assertPopup(app, manualSelector, TaskManual, expectedManualPopupText);
-                await app.page.keyboard.press('Alt+F');
-                await app.popup.waitForHidden();
+            await expect(app.popup.locate()).toBeHidden();
+        });
 
-                await expect(app.popup.locate()).toBeHidden();
-            });
+        test('layout command', async ({ integration }) => {
+            await assertPopup(app, manualSelector, TaskManual, expectedManualPopupText);
+            await graph.focus();
+            await runInIntegration(
+                integration,
+                ['Standalone'],
+                async () => {
+                    await app.page.keyboard.press('Control+Shift+L');
+                },
+                async () => {
+                    await app.page.keyboard.press('Alt+L');
+                }
+            );
+            await app.popup.waitForHidden();
 
-            test('layout command', async () => {
-                await assertPopup(app, manualSelector, TaskManual, expectedManualPopupText);
-                await app.page.keyboard.press('Alt+L');
-                await app.popup.waitForHidden();
-
-                await expect(app.popup.locate()).toBeHidden();
-            });
+            await expect(app.popup.locate()).toBeHidden();
         });
     });
 

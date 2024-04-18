@@ -102,7 +102,7 @@ export function createVSCodeProject(): Project<PlaywrightTestOptions & GLSPPlayw
     return [
         {
             name: 'vscode-setup',
-            timeout: 60 * 1000,
+            timeout: 5 * 60 * 1000,
             testMatch: ['setup/vscode.setup.js'],
             use: {
                 integrationOptions: vscodeIntegrationOptions

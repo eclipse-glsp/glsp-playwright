@@ -100,14 +100,14 @@ export abstract class BaseRoutingPoint extends BaseRoutingPointMixin {
         await this.autoPrepare(options);
 
         await super.dragToAbsolutePosition(position);
-        await this.routingPoints.element.graph.select();
+        await this.routingPoints.element.graph.focus();
     }
 
     override async dragToRelativePosition(position: Position, options?: AutoPrepareOptions): Promise<void> {
         await this.autoPrepare(options);
 
         await super.dragToRelativePosition(position);
-        await this.routingPoints.element.graph.select();
+        await this.routingPoints.element.graph.focus();
     }
 
     override async dragTo(
@@ -124,7 +124,7 @@ export abstract class BaseRoutingPoint extends BaseRoutingPointMixin {
         await this.autoPrepare();
 
         await this.dragTo(target, options);
-        await this.routingPoints.element.graph.select();
+        await this.routingPoints.element.graph.focus();
     }
 }
 

@@ -126,7 +126,7 @@ test.describe('The tool palette', () => {
             await target.click();
         });
         expect(edges.length).toBe(1);
-        await graph.select();
+        await graph.focus();
 
         const newEdge = edges[0];
 
@@ -147,7 +147,7 @@ test.describe('The tool palette', () => {
             await taskBounds.position('bottom_left').moveRelative(-50, 0).click();
         });
         expect(nodes.length).toBe(1);
-        await graph.select();
+        await graph.focus();
 
         const newTask = nodes[0];
 

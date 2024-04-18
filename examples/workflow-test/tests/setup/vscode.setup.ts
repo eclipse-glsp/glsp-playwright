@@ -16,6 +16,8 @@
 
 import { IntegrationOptions, VSCodeIntegrationOptions, VSCodeStorage, expect, setup } from '@eclipse-glsp/glsp-playwright';
 
+const VSCODE_VERSION = process.env['VSCODE_VERSION'] ?? '1.88.1';
+
 setup.describe.configure({
     mode: 'serial'
 });
@@ -31,7 +33,7 @@ setup.describe('Setup VSCode', () => {
         assertVSCodeOptions(integrationOptions);
         expect(vscodeSetup).toBeDefined();
 
-        const vscodeExecutablePath = await vscodeSetup!.downloadVSCode('stable');
+        const vscodeExecutablePath = await vscodeSetup!.downloadVSCode(VSCODE_VERSION);
 
         await VSCodeStorage.write(integrationOptions.storagePath, { vscodeExecutablePath });
     });

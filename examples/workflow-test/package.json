@@ -42,6 +42,7 @@
     "test:standalone": "yarn test --project=standalone",
     "test:theia": "yarn test --project=theia",
     "test:vscode": "yarn test --project=vscode",
+    "test:vscode-setup": "yarn test --project=vscode-setup",
     "watch": "tsc -w"
   },
   "devDependencies": {

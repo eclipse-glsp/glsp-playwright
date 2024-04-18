@@ -17,6 +17,7 @@
     "check:headers": "glsp checkHeaders .",
     "check:pr": "yarn all && yarn check:headers",
     "clean": "lerna run clean",
+    "example": "yarn --cwd ./examples/workflow-test",
     "lint": "lerna run --parallel lint",
     "lint:ci": "lerna run lint:ci",
     "prepare": "lerna run prepare",
@@ -24,9 +25,10 @@
     "publish:next": "SHA=$(git rev-parse --short HEAD) && lerna publish preminor --exact --canary --preid next.${SHA} --dist-tag next --no-git-reset --no-git-tag-version --no-push --ignore-scripts --yes --no-verify-access",
     "publish:prepare": "lerna version --ignore-scripts --yes --no-push",
     "test": "cd examples/workflow-test && yarn test",
-    "test:standalone": "cd examples/workflow-test && yarn test:standalone",
-    "test:theia": "cd examples/workflow-test && yarn test:theia",
-    "test:vscode": "cd examples/workflow-test && yarn test:vscode",
+    "test:standalone": "yarn example test:standalone",
+    "test:theia": "yarn example test:theia",
+    "test:vscode": "yarn example test:vscode",
+    "test:vscode-setup": "yarn example test:vscode-setup",
     "watch": "lerna run --parallel watch"
   },
   "devDependencies": {

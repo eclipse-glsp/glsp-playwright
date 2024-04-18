@@ -49,14 +49,15 @@ The following libraries/frameworks need to be installed on your system:
 -   [Theia](https://github.com/eclipse-glsp/glsp-theia-integration): v2.1.1
 -   [VSCode](https://github.com/eclipse-glsp/glsp-vscode-integration): v2.1.1
 
-The bundled node server: v2.1.1
+Default installations:
+
+-   [Bundled Workflow Server](https://www.npmjs.com/package/@eclipse-glsp-examples/workflow-server-bundled): v2.1.1
+-   [VS Code IDE](https://code.visualstudio.com/updates/): 1.88.1
 
 ## Structure
 
 -   [./src](./src/): This folder provides the page objects necessary for the `Workflow Example`.
-
 -   [./tests](./tests/): The test cases are implemented in this folder. Every `GLSP-Playwright` feature has the respective test cases for demonstration purposes provided here.
-
 -   [playwright.config.ts](./playwright.config.ts): The Playwright configuration. More information is available in the [Playwright Documentation](https://playwright.dev/docs/test-configuration).
 
 ## Preparations
