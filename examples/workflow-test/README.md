@@ -18,7 +18,7 @@ This package contains code examples that demonstrate how to test diagram editors
 | Client Message Notification                                                          |          -           |         -         |                     |          -          |
 | Client Progress Reporting                                                            |                      |         -         |                     |          -          |
 | Element Selection                                                                    |          ✓           |         ✓         |          -          |          ✓          |
-| Element Hover                                                                        |          -           |         -         |          -          |          -          |
+| Element Hover                                                                        |          ✓           |         ✓         |          -          |          ✓          |
 | Element Validation                                                                   |          -           |         -         |          -          |          -          |
 | Element Navigation                                                                   |                      |         -         |          -          |          -          |
 | Element Type Hints                                                                   |          -           |         -         |          -          |          -          |
@@ -43,12 +43,21 @@ The following libraries/frameworks need to be installed on your system:
 -   [Node.js](https://nodejs.org/en/) `>=16.11.0`
 -   [Yarn](https://classic.yarnpkg.com/en/docs/install#debian-stable) `>=1.7.0`
 
+## Min versions
+
+-   [Standalone](https://github.com/eclipse-glsp/glsp-client): v2.1.1
+-   [Theia](https://github.com/eclipse-glsp/glsp-theia-integration): v2.1.1
+-   [VSCode](https://github.com/eclipse-glsp/glsp-vscode-integration): v2.1.1
+
+Default installations:
+
+-   [Bundled Workflow Server](https://www.npmjs.com/package/@eclipse-glsp-examples/workflow-server-bundled): v2.1.1
+-   [VS Code IDE](https://code.visualstudio.com/updates/): 1.88.1
+
 ## Structure
 
 -   [./src](./src/): This folder provides the page objects necessary for the `Workflow Example`.
-
 -   [./tests](./tests/): The test cases are implemented in this folder. Every `GLSP-Playwright` feature has the respective test cases for demonstration purposes provided here.
-
 -   [playwright.config.ts](./playwright.config.ts): The Playwright configuration. More information is available in the [Playwright Documentation](https://playwright.dev/docs/test-configuration).
 
 ## Preparations

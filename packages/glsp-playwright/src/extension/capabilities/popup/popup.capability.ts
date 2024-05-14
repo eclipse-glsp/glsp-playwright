@@ -55,8 +55,9 @@ export function usePopupCapability<TBase extends ConstructorA<Locateable & Hover
 
         async popupText(): Promise<string> {
             await this.hover();
-
-            return this.popup().innerText();
+            const popup = this.popup();
+            await popup.waitForVisible();
+            return popup.innerText();
         }
     }
 

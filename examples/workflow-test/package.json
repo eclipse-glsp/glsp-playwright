@@ -42,10 +42,11 @@
     "test:standalone": "yarn test --project=standalone",
     "test:theia": "yarn test --project=theia",
     "test:vscode": "yarn test --project=vscode",
+    "test:vscode-setup": "yarn test --project=vscode-setup",
     "watch": "tsc -w"
   },
   "devDependencies": {
-    "@eclipse-glsp-examples/workflow-server-bundled": "~2.0.1",
+    "@eclipse-glsp-examples/workflow-server-bundled": "~2.1.1",
     "@eclipse-glsp/glsp-playwright": "~2.0.0",
     "@playwright/test": "^1.40.1",
     "dotenv": "^16.0.3",

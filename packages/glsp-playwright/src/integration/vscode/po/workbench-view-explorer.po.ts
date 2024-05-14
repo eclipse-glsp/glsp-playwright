@@ -24,12 +24,19 @@ export class VSCodeWorkbenchViewExplorer {
 
     protected readonly explorerFoldersViewLocator;
 
-    constructor(protected readonly page: Page, protected readonly selector = '[id="workbench.view.explorer"]') {
+    constructor(
+        protected readonly page: Page,
+        protected readonly selector = '[id="workbench.view.explorer"]'
+    ) {
         this.locator = this.page.locator(this.selector);
         this.explorerFoldersViewLocator = this.locator.locator('.explorer-folders-view');
     }
 
-    async openFile(path: string): Promise<void> {
-        return this.explorerFoldersViewLocator.locator(`[title$="${path}"]`).dblclick();
+    async openFile(file: string): Promise<void> {
+        return this.explorerFoldersViewLocator
+            .locator('.label-name', {
+                hasText: file
+            })
+            .dblclick();
     }
 }

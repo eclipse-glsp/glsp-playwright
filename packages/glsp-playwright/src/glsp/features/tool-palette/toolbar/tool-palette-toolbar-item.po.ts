@@ -13,6 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+import { Marker } from '~/extension/capabilities';
 import { useClickableFlow } from '~/extension/flows';
 import { Mix } from '~/extension/mixin';
 import type { GLSPLocator } from '~/remote';
@@ -54,5 +55,23 @@ export class SearchToolbarItem extends ToolPaletteToolbarItem {
 
         await this.input.type(text);
         await this.input.press('Enter');
+    }
+}
+
+export class ValidationToolbarItem extends ToolPaletteToolbarItem {
+    readonly input;
+
+    constructor(locator: GLSPLocator, toolPalette: GLSPToolPalette) {
+        super(locator, toolPalette);
+        this.input = new Input(toolPalette.locator.child('[id$="_tool-palette_search_field"]'));
+    }
+
+    async trigger(): Promise<Marker[]> {
+        const markers = await this.locator.app.graph.waitForCreationOfType(Marker, async () => {
+            await this.click();
+        });
+
+        await Promise.all(markers.map(m => m.waitForVisible()));
+        return markers;
     }
 }

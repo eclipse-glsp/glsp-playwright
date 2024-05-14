@@ -14,8 +14,9 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import type { Locator, Page } from 'playwright-core';
-import type { Integration } from '~/integration';
+import { ContextMenuIntegration, type Integration } from '~/integration';
 import { GLSPLocator } from '~/remote/locator';
+import { GLSPContextMenu, GLSPContextMenuNotSupported } from '../features';
 import { GLSPGlobalCommandPalette } from '../features/command-palette';
 import { GLSPLabelEditor } from '../features/label-editor/label-editor.po';
 import { GLSPPopup } from '../features/popup/popup.po';
@@ -91,15 +92,17 @@ export class GLSPApp {
     toolPalette;
     popup;
     globalCommandPalette;
+    contextMenu;
 
     constructor(public readonly options: GLSPAppOptions) {
         this.initialize(options);
 
-        this.graph = this.createGraph();
-        this.labelEditor = this.createLabelEditor();
-        this.toolPalette = this.createToolPalette();
-        this.popup = this.createPopup();
-        this.globalCommandPalette = this.createGlobalCommandPalette();
+        this.graph = this.createGraph(options);
+        this.labelEditor = this.createLabelEditor(options);
+        this.toolPalette = this.createToolPalette(options);
+        this.popup = this.createPopup(options);
+        this.globalCommandPalette = this.createGlobalCommandPalette(options);
+        this.contextMenu = this.createContextMenu(options);
     }
 
     protected initialize(options: GLSPAppOptions): void {
@@ -123,23 +126,32 @@ export class GLSPApp {
         this.locator = this.rootLocator.child(this.sprottySelector);
     }
 
-    protected createGraph(): GLSPGraph {
+    protected createGraph(_options: GLSPAppOptions): GLSPGraph {
         return new GLSPGraph({ locator: GLSPGraph.locate(this) });
     }
 
-    protected createLabelEditor(): GLSPLabelEditor {
+    protected createLabelEditor(_options: GLSPAppOptions): GLSPLabelEditor {
         return new GLSPLabelEditor({ locator: GLSPLabelEditor.locate(this) });
     }
 
-    protected createToolPalette(): GLSPToolPalette {
+    protected createToolPalette(_options: GLSPAppOptions): GLSPToolPalette {
         return new GLSPToolPalette({ locator: GLSPToolPalette.locate(this) });
     }
 
-    protected createPopup(): GLSPPopup {
+    protected createPopup(_options: GLSPAppOptions): GLSPPopup {
         return new GLSPPopup({ locator: GLSPPopup.locate(this) });
     }
 
-    protected createGlobalCommandPalette(): GLSPGlobalCommandPalette {
+    protected createGlobalCommandPalette(_options: GLSPAppOptions): GLSPGlobalCommandPalette {
         return new GLSPGlobalCommandPalette({ locator: GLSPGlobalCommandPalette.locate(this) });
+    }
+
+    protected createContextMenu(options: GLSPAppOptions): GLSPContextMenu {
+        if (options.type === 'integration' && ContextMenuIntegration.is(options.integration)) {
+            const integration = options.integration;
+            return new GLSPContextMenu({ locator: new GLSPLocator(integration.contextMenuLocator, this) });
+        }
+
+        return GLSPContextMenuNotSupported;
     }
 }

@@ -70,6 +70,7 @@ export function createTheiaProject(): Project<PlaywrightTestOptions & GLSPPlaywr
     return [
         {
             name: 'theia',
+            timeout: 60 * 1000,
             testMatch: ['**/*.spec.js'],
             testIgnore: ['**/*.standalone.spec.js'],
             use: {
@@ -102,6 +103,7 @@ export function createVSCodeProject(): Project<PlaywrightTestOptions & GLSPPlayw
     return [
         {
             name: 'vscode-setup',
+            timeout: 5 * 60 * 1000,
             testMatch: ['setup/vscode.setup.js'],
             use: {
                 integrationOptions: vscodeIntegrationOptions
@@ -109,6 +111,7 @@ export function createVSCodeProject(): Project<PlaywrightTestOptions & GLSPPlayw
         },
         {
             name: 'vscode',
+            timeout: 60 * 1000,
             testMatch: ['**/*.spec.js'],
             testIgnore: ['**/*.standalone.spec.js'],
             dependencies: ['vscode-setup'],

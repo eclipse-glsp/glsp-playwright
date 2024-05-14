@@ -208,10 +208,10 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
-"@eclipse-glsp-examples/workflow-server-bundled@~2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@eclipse-glsp-examples/workflow-server-bundled/-/workflow-server-bundled-2.0.1.tgz#c6b91b0548a0d024a1fdab9dd8a0907244f5e5e7"
-  integrity sha512-ZsfrzaTVaIgTWzKxHPp5gTtALJaAUwmmL65PqGzwpkkM/zJrgThcyMwzcHNoKRoljMWcUvKz10XeDhdW+k4yWw==
+"@eclipse-glsp-examples/workflow-server-bundled@~2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@eclipse-glsp-examples/workflow-server-bundled/-/workflow-server-bundled-2.1.1.tgz#3695ecf07409212fbc99be125500d698e148eb12"
+  integrity sha512-1Wc8Y/8Ss5voZ9pzrwM5BlJZD37smqYj+NpRE65kT8mXu++M1t3h6It7TQiWg3o6olhS2i9sNcTkfHiqX9YHyg==
 
 "@eclipse-glsp/cli@~2.0.0":
   version "2.0.0"
