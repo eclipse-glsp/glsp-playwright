@@ -63,7 +63,7 @@ Default installations:
 ## Preparations
 
 We use the [GLSP-Client](https://github.com/eclipse-glsp/glsp-client) repository to run the tests.
-Please clone it to your machine and follow the steps to install it.
+Please clone it to your machine and follow the steps to install it or you can use `yarn repo prepare` to automatically clone and build the repositories.
 
 Next, create a new `.env` file with the content of `.env.example` in the `workflow-test` folder.
 This file contains private information about your environment, so do not commit it.

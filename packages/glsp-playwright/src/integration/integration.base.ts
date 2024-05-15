@@ -105,8 +105,7 @@ export abstract class Integration {
      */
     async assertMetadataAPI(): Promise<void> {
         return this.prefixRootSelector(SVGMetadataUtils.apiAttr).waitFor({
-            state: 'attached',
-            timeout: 5 * 1000
+            state: 'attached'
         });
     }
 }

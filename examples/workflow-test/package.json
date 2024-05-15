@@ -37,6 +37,7 @@
     "lint:all": "yarn check-types && yarn lint",
     "lint:ci": "yarn lint -o eslint.xml -f checkstyle",
     "prepare": "yarn clean && yarn build && yarn lint && playwright install",
+    "repo": "npx tsx ./scripts/repositories.ts",
     "start:server": "node node_modules/@eclipse-glsp-examples/workflow-server-bundled/wf-glsp-server-node.js",
     "test": "playwright test",
     "test:standalone": "yarn test --project=standalone",
@@ -49,9 +50,11 @@
     "@eclipse-glsp-examples/workflow-server-bundled": "~2.1.1",
     "@eclipse-glsp/glsp-playwright": "~2.0.0",
     "@playwright/test": "^1.40.1",
+    "@types/yargs": "^17.0.32",
     "dotenv": "^16.0.3",
     "ts-dedent": "^2.2.0",
-    "tsx": "^3.12.4"
+    "tsx": "^3.12.4",
+    "yargs": "^17.7.2"
   },
   "publishConfig": {
     "access": "public"

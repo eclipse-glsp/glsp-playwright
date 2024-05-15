@@ -14,8 +14,10 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import { TheiaApp, TheiaEditor } from '@theia/playwright';
+import { Page } from '@playwright/test';
+import { TheiaApp, TheiaEditor, TheiaWorkspace } from '@theia/playwright';
 import type { TheiaIntegrationOptions } from '../theia.options';
+import { TheiaNotifications } from './theia-notifications.po';
 
 /**
  * App for accessing the [Theia Page Objects](https://www.npmjs.com/package/@theia/playwright).
@@ -23,12 +25,23 @@ import type { TheiaIntegrationOptions } from '../theia.options';
 export class TheiaGLSPApp extends TheiaApp {
     protected _options: TheiaIntegrationOptions;
 
+    notifications: TheiaNotifications;
+
     get options(): TheiaIntegrationOptions {
         return this._options;
     }
 
+    public constructor(page: Page, workspace: TheiaWorkspace, isElectron: boolean) {
+        super(page, workspace, isElectron);
+        this.notifications = this.createNotifications();
+    }
+
     initialize(options: TheiaIntegrationOptions): void {
         this._options = options;
+    }
+
+    protected createNotifications(): TheiaNotifications {
+        return new TheiaNotifications(this);
     }
 
     override openEditor<T extends TheiaEditor>(
