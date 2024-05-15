@@ -60,8 +60,8 @@ function exec(command: string, args: readonly string[], options?: SpawnOptionsWi
     return false;
 }
 
-function clone(glspRepository: string, options: CloneOptions): void {
-    const destination = repositoryFolder(options.folder, glspRepository);
+function clone(repository: string, options: CloneOptions): void {
+    const destination = repositoryFolder(options.folder, repository);
     let branch: string[] = [];
     if (options.branch) {
         branch = ['-b', options.branch];
@@ -78,7 +78,11 @@ function clone(glspRepository: string, options: CloneOptions): void {
         }
     }
 
-    exec('git', ['clone', `git@github.com:eclipse-glsp/${glspRepository}.git`, ...branch, destination]);
+    exec('git', ['clone', `git@github.com:eclipse-glsp/${repository}.git`, ...branch, destination]);
+}
+
+function log(repository: string, options: GlobalOptions): void {
+    exec('git', ['--no-pager', 'log', '-1'], { cwd: repositoryFolder(options.folder, repository) });
 }
 
 function buildClient(options: GlobalOptions): void {
@@ -92,16 +96,18 @@ function buildTheia(options: GlobalOptions): void {
 function buildVSCode(options: GlobalOptions): void {
     const repoCwd = repositoryFolder(options.folder, vsCodeRepository);
     if (exec('yarn', [], { cwd: repoCwd })) {
-        exec('yarn', ['bundle'], {
-            cwd: repoCwd
-        });
-        exec('yarn', ['workflow', 'package'], {
-            cwd: repoCwd
-        });
+        // Lerna fails to execute those commands as we have a repo within a repo
+        exec('yarn', ['build'], { cwd: path.resolve(repoCwd, 'example', 'workflow', 'webview') });
+        exec('yarn', ['workflow', 'build'], { cwd: path.resolve(repoCwd) });
+        exec('yarn', ['workflow', 'package'], { cwd: repoCwd });
     }
 }
 
 // ========== CLI ======================================================== //
+/**
+ * This script allows to manage the necessary repositories
+ * Use `yarn repo -h` for more information.
+ */
 async function main(): Promise<void> {
     const cli = yargs(hideBin(process.argv));
     await cli
@@ -137,6 +143,23 @@ async function main(): Promise<void> {
                 buildClient(argv);
                 buildTheia(argv);
                 buildVSCode(argv);
+            }
+        )
+        .command(
+            'log',
+            'Logs the last commit of each repository',
+            () => {},
+            argv => {
+                const { folder } = argv;
+                log(clientRepository, {
+                    folder
+                });
+                log(theiaRepository, {
+                    folder
+                });
+                log(vsCodeRepository, {
+                    folder
+                });
             }
         )
         .command(
