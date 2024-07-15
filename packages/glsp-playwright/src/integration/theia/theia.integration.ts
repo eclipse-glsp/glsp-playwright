@@ -55,7 +55,12 @@ export class TheiaIntegration extends Integration implements ContextMenuIntegrat
         if (this.options.file) {
             await this.theiaApp.openEditor(this.options.file, TheiaGLSPEditor);
             await this.assertMetadataAPI();
-            await this.page.waitForSelector(`${SVGMetadataUtils.typeAttrOf('graph')} svg.sprotty-graph > g`);
+            await this.theiaApp.notifications.closeAll();
+
+            const selector = `${SVGMetadataUtils.typeAttrOf('graph')} svg.sprotty-graph > g`;
+            await this.page.waitForSelector(selector);
+            // Reset mouse state
+            await this.page.click(selector, { force: true });
         }
     }
 }

@@ -109,7 +109,7 @@ export class VSCodeSetup {
                     const spawn = this.installExtension(cli, extensionArg, this.integrationOptions.vsixPath);
                     status = spawn.status ?? -1;
                 } else {
-                    this.log('[Extension] Extension already installed. Skipping install');
+                    this.log('[Extension] Extension is already installed. Skipping install.');
                 }
             }
         } catch (ex) {
