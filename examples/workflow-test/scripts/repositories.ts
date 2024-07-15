@@ -90,7 +90,7 @@ function buildClient(options: GlobalOptions): void {
 }
 
 function buildTheia(options: GlobalOptions): void {
-    exec('yarn', [], { cwd: repositoryFolder(options.folder, theiaRepository) });
+    exec('yarn && yarn browser build', [], { cwd: repositoryFolder(options.folder, theiaRepository) });
 }
 
 function buildVSCode(options: GlobalOptions): void {
@@ -274,4 +274,4 @@ function buildCommand(handler: (argv: BuildCommandArgv) => void) {
     };
 }
 
-main();
+main().catch(console.error);

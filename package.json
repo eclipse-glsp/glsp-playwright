@@ -1,6 +1,6 @@
 {
   "name": "parent",
-  "version": "2.0.0",
+  "version": "2.2.0-next",
   "private": true,
   "workspaces": {
     "packages": [
@@ -12,30 +12,36 @@
     ]
   },
   "scripts": {
-    "all": "yarn install && yarn lint",
-    "build": "lerna run build",
-    "check:headers": "glsp checkHeaders .",
+    "all": "yarn clean && yarn install && yarn lint",
+    "build": "yarn compile && yarn compile:alias",
+    "check:headers": "glsp checkHeaders . -t lastCommit",
     "check:pr": "yarn all && yarn check:headers",
     "clean": "lerna run clean",
+    "compile": "tsc -b",
+    "compile:alias": "lerna run compile:alias",
     "example": "yarn --cwd ./examples/workflow-test",
-    "lint": "lerna run --parallel lint",
-    "lint:ci": "lerna run lint:ci",
-    "prepare": "lerna run prepare",
-    "publish:latest": "lerna publish from-git --no-git-reset --no-git-tag-version --no-verify-access --no-push",
-    "publish:next": "SHA=$(git rev-parse --short HEAD) && lerna publish preminor --exact --canary --preid next.${SHA} --dist-tag next --no-git-reset --no-git-tag-version --no-push --ignore-scripts --yes --no-verify-access",
-    "publish:prepare": "lerna version --ignore-scripts --yes --no-push",
+    "generate:index": "lerna run generate:index  && yarn lint:fix",
+    "lint": "eslint --ext .ts,.tsx  --ignore-pattern '**/repositories/**' .",
+    "lint:ci": "yarn lint -o eslint.xml -f checkstyle",
+    "lint:fix": " yarn lint --fix",
+    "prepare": "lerna run prepare && yarn build",
+    "publish:latest": "lerna publish from-git --no-push",
+    "publish:next": "lerna publish preminor --exact --canary --preid next --dist-tag next --no-git-tag-version --no-push --ignore-scripts --yes",
+    "publish:prepare": "lerna version --ignore-scripts --yes --no-push --exact",
     "test": "cd examples/workflow-test && yarn test",
     "test:standalone": "yarn example test:standalone",
     "test:theia": "yarn example test:theia",
     "test:vscode": "yarn example test:vscode",
     "test:vscode-setup": "yarn example test:vscode-setup",
-    "watch": "lerna run --parallel watch"
+    "watch": "concurrently --kill-others -n tsc,alias -c red,yellow \"tsc -b -w --preserveWatchOutput\" \"yarn --cwd packages/glsp-playwright watch:alias\""
   },
   "devDependencies": {
-    "@eclipse-glsp/dev": "2.0.0",
+    "@eclipse-glsp/dev": "next",
     "@types/node": "16.x",
+    "concurrently": "^8.2.2",
     "eslint-import-resolver-typescript": "^3.5.3",
     "lerna": "^7.4.1",
+    "tsc-alias": "1.8.10",
     "typescript": "^5.2.2"
   },
   "engines": {

@@ -20,23 +20,23 @@ import { WorkflowApp } from '../../src/app/workflow-app';
 import { TaskManual } from '../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../src/graph/workflow.graph';
 
-const taskSelector = '[id$="task0"]';
+const taskSelector = '[id$="task_Push"]';
 const expectedElementMetadata = {
-    id: 'sprotty_task0',
+    id: 'sprotty_task_Push',
     type: 'task:manual',
     parent: 'sprotty_sprotty',
     children: [
         {
-            id: 'sprotty_task0_icon',
+            id: 'sprotty_task_Push_icon',
             type: 'icon',
-            parent: 'sprotty_task0',
+            parent: 'sprotty_task_Push',
             children: [],
             html: ''
         },
         {
-            id: 'sprotty_task0_classname',
+            id: 'sprotty_task_Push_label',
             type: 'label:heading',
-            parent: 'sprotty_task0',
+            parent: 'sprotty_task_Push',
             children: [],
             html: 'Push'
         }
@@ -46,9 +46,9 @@ const expectedElementMetadata = {
 const expectedGLSPLocatorData = [
     {
         locator:
-            "locator('body').locator('div.sprotty:not(.sprotty-hidden)').locator('[data-svg-metadata-type=\"graph\"]').locator('[id$=\"task0\"]').and(locator('body').locator('div.sprotty:not(.sprotty-hidden)').locator('[data-svg-metadata-type=\"graph\"]').locator('[data-svg-metadata-type=\"task:manual\"]'))",
+            "locator('body').locator('div.sprotty:not(.sprotty-hidden)').locator('[data-svg-metadata-type=\"graph\"]').locator('[id$=\"task_Push\"]').and(locator('body').locator('div.sprotty:not(.sprotty-hidden)').locator('[data-svg-metadata-type=\"graph\"]').locator('[data-svg-metadata-type=\"task:manual\"]'))",
         children: [
-            '<g id="sprotty_task0" transform="translate(70, 140)" data-svg-metadata-type="task:manual" data-svg-metadata-parent-id="sprotty_sprotty" class="node task manual">...</g>'
+            '<g id="sprotty_task_Push" transform="translate(70, 100)" data-svg-metadata-type="task:manual" data-svg-metadata-parent-id="sprotty_sprotty" class="node task manual">...</g>'
         ]
     },
     {

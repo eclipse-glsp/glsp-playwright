@@ -14,8 +14,8 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import {
-    ConsoleReporter as VSCodeDownloadConsoleReporter,
     downloadAndUnzipVSCode,
+    makeConsoleReporter,
     resolveCliArgsFromVSCodeExecutablePath
 } from '@vscode/test-electron';
 import * as cp from 'child_process';
@@ -46,7 +46,7 @@ export interface VSCodeSetupOptions {
  * - install extensions
  */
 export class VSCodeSetup {
-    protected readonly vscodeDownloadReporter = new VSCodeDownloadConsoleReporter(true);
+    protected readonly vscodeDownloadReporter =  makeConsoleReporter();
 
     constructor(
         protected readonly integrationOptions: VSCodeIntegrationOptions,
@@ -56,14 +56,15 @@ export class VSCodeSetup {
     ) {}
 
     async downloadVSCode(version: string): Promise<string> {
+        const downloadReporter= await makeConsoleReporter();
         return downloadAndUnzipVSCode(version, undefined, {
             report: report => {
                 if (this.setupOptions.enableLogging) {
-                    this.vscodeDownloadReporter.report(report);
+                    downloadReporter.report(report);
                 }
             },
             error: error => {
-                this.vscodeDownloadReporter.error(error);
+                downloadReporter.error(error);
             }
         });
     }

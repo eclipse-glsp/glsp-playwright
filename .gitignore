@@ -16,5 +16,3 @@ examples/workflow-test/playwright/.storage/*.json
 *.vsix
 !*.env.example
 *.env
-
-

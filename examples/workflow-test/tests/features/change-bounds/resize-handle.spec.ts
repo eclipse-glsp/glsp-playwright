@@ -31,7 +31,7 @@ test.describe('The resizing handle', () => {
     });
 
     test('should allow resizing', async () => {
-        const task = await graph.getNodeBySelector('[id$="task0"]', TaskManual);
+        const task = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
 
         const oldBounds = await task.bounds();
         const oldTopLeft = oldBounds.position('top_left');
@@ -50,7 +50,7 @@ test.describe('The resizing handle', () => {
     });
 
     test('should show 4 handles', async () => {
-        const task = await graph.getNodeBySelector('[id$="task0"]', TaskManual);
+        const task = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
 
         await graph.waitForCreationOfType(PMetadata.getType(ResizeHandle), async () => {
             await task.click();

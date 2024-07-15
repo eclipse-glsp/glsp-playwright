@@ -1,6 +1,23 @@
 {
   "extends": "@eclipse-glsp/ts-config/tsconfig.json",
   "compilerOptions": {
+    "baseUrl": ".",
+    "target": "ES2019",
+    "lib": ["ES2019", "DOM"],
+    "paths": {
+      "~/": ["packages/glsp-playwright/src"],
+      "~/*": ["packages/glsp-playwright/src/*"]
+    },
     "composite": true
-  }
+  },
+  "exclude": ["**/node_modules", "**/.eslintrc.js"],
+  "include": [
+    "packages/*/src",
+    "examples/*/src",
+    "examples/*/tests",
+    "examples/*/scripts",
+    "examples/*/*.config.ts",
+    "examples/*/configs/*.ts"
+  ],
+  "references": [{ "path": "./packages/glsp-playwright" }, { "path": "./examples/workflow-test" }]
 }

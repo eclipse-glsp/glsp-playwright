@@ -15,6 +15,6 @@
  ********************************************************************************/
 export * from './command-palette';
 export * from './marker';
-export * from './popup/index';
+export * from './popup';
 export * from './resize-handle';
 export * from './routing-point';

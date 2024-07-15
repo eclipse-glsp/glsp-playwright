@@ -13,10 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-export * from './content/tool-palette-content-group.po';
-export * from './content/tool-palette-content-item.po';
-export * from './content/tool-palette-content.po';
+export * from './content';
 export * from './tool-palette-item.base';
 export * from './tool-palette.po';
-export * from './toolbar/tool-palette-toolbar-item.po';
-export * from './toolbar/tool-palette-toolbar.po';
+export * from './toolbar';

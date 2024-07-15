@@ -31,7 +31,7 @@ test.describe('Shortcuts', () => {
     });
 
     test('should allow deleting the element in the graph', async ({ integration }) => {
-        const task = await graph.getNodeBySelector('[id$="task0"]', TaskManual);
+        const task = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
         expect(await task.isVisible()).toBeTruthy();
 
         await task.click();

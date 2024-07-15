@@ -28,14 +28,14 @@ import { TaskAutomated } from '../../../src/graph/elements/task-automated.po';
 import { TaskManual } from '../../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../../src/graph/workflow.graph';
 
-const manualSelector = '[id$="task0"]';
+const manualSelector = '[id$="task_Push"]';
 const expectedManualPopupText = dedent`Push
 Type: manual
 Duration: undefined
 Reference: undefined
 
 `;
-const automatedSelector = '[id$="task0_automated"]';
+const automatedSelector = '[id$="task_ChkWt"]';
 const expectedAutomatedPopupText = dedent`ChkWt
 Type: automated
 Duration: undefined
