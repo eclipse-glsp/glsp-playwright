@@ -90,7 +90,9 @@ function buildClient(options: GlobalOptions): void {
 }
 
 function buildTheia(options: GlobalOptions): void {
-    exec('yarn && yarn browser build', [], { cwd: repositoryFolder(options.folder, theiaRepository) });
+    if (exec('yarn', [], { cwd: repositoryFolder(options.folder, theiaRepository) })) {
+        exec('yarn', ['browser', 'build'], { cwd: repositoryFolder(options.folder, theiaRepository) });
+    }
 }
 
 function buildVSCode(options: GlobalOptions): void {
@@ -111,6 +113,7 @@ function buildVSCode(options: GlobalOptions): void {
 async function main(): Promise<void> {
     const cli = yargs(hideBin(process.argv));
     await cli
+        .scriptName('repo')
         .options('folder', {
             alias: 'o',
             type: 'string',
@@ -201,7 +204,7 @@ async function main(): Promise<void> {
                         () => {},
                         argv => {
                             const { folder } = argv;
-                            exec('yarn', ['start:ws:debug'], { cwd: repositoryFolder(folder, theiaRepository) });
+                            exec('yarn', ['browser', 'start:ws:debug'], { cwd: repositoryFolder(folder, theiaRepository) });
                         }
                     );
                 }
