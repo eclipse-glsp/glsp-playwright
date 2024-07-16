@@ -37,7 +37,6 @@
     "generate:index": "glsp generateIndex src -f",
     "lint": "eslint --ext .ts,.tsx ./src",
     "lint:all": "yarn lint && yarn circular --no-spinner",
-    "lint:ci": "yarn lint -o eslint.xml -f checkstyle",
     "watch": "(concurrently \"tsc -w\" \"tsc-alias -w\")",
     "watch:alias": "tsc-alias -w"
   },
