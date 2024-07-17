@@ -1,6 +1,6 @@
 {
   "name": "@eclipse-glsp/glsp-playwright",
-  "version": "2.0.0",
+  "version": "2.2.0-next",
   "description": "Playwright-based testing framework for GLSP",
   "homepage": "https://www.eclipse.org/glsp/",
   "bugs": "https://github.com/eclipse-glsp/glsp/issues",
@@ -30,31 +30,26 @@
     "src"
   ],
   "scripts": {
-    "build": "tsc -b && tsc-alias",
-    "build:watch": "yarn build && yarn watch",
+    "build": "tsc -b ",
     "circular": "npx madge --circular ./lib ./src",
     "clean": "rimraf lib tsconfig.tsbuildinfo  coverage",
+    "compile:alias": "tsc-alias",
+    "generate:index": "glsp generateIndex src -f",
     "lint": "eslint --ext .ts,.tsx ./src",
     "lint:all": "yarn lint && yarn circular --no-spinner",
-    "lint:ci": "yarn lint -o eslint.xml -f checkstyle",
-    "prepare": "yarn clean && yarn build && yarn lint",
-    "watch": "(concurrently \"tsc -w\" \"tsc-alias -w\")"
+    "watch": "(concurrently \"tsc -w\" \"tsc-alias -w\")",
+    "watch:alias": "tsc-alias -w"
   },
   "dependencies": {
-    "reflect-metadata": "0.1.13",
+    "@vscode/test-electron": "^2.3.2",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.40.1",
-    "@theia/playwright": "~1.45.0",
-    "@types/uuid": "^9.0.0",
-    "@vscode/test-electron": "^2.3.2",
-    "concurrently": "^7.6.0",
-    "tsc-alias": "^1.8.2"
+    "@types/uuid": "^9.0.0"
   },
   "peerDependencies": {
-    "@playwright/test": "^1.40.1",
-    "@theia/playwright": "~1.45.0"
+    "@playwright/test": "^1.37.1",
+    "@theia/playwright": "^1.49.1"
   },
   "publishConfig": {
     "access": "public"

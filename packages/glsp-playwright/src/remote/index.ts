@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-export * from './browser/input.po';
-export * from './browser/interactable';
+export * from './browser';
 export * from './locateable';
 export * from './locator';

@@ -13,7 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-export * from './po/theia-glsp-app.po';
-export * from './po/theia-glsp-editor.po';
+export * from './po';
 export * from './theia.integration';
 export * from './theia.options';

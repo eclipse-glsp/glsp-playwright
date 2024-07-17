@@ -111,7 +111,7 @@ test.describe('The command palette', () => {
 
     test.describe('in the element context', () => {
         test('should allow to search suggestions', async () => {
-            const task = await graph.getNodeBySelector('[id$="task0"]', TaskManual);
+            const task = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
 
             const elementCommandPalette = await task.commandPalette();
             await elementCommandPalette.open();
@@ -179,7 +179,7 @@ test.describe('The command palette', () => {
         });
 
         test('should allow creating new elements in the diagram', async () => {
-            const task = await graph.getNodeBySelector('[id$="task0"]', TaskManual);
+            const task = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
 
             const nodes = await graph.waitForCreationOfNodeType(TaskManual, async () => {
                 const command = task.commandPalette();
@@ -196,8 +196,8 @@ test.describe('The command palette', () => {
         });
 
         test('should allow creating edges in the graph', async () => {
-            const source = await graph.getNodeBySelector('[id$="task0"]', TaskManual);
-            const target = await graph.getNodeBySelector('[id$="task0_automated"]', TaskAutomated);
+            const source = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
+            const target = await graph.getNodeBySelector('[id$="task_ChkWt"]', TaskAutomated);
 
             const edges = await graph.waitForCreationOfEdgeType(Edge, async () => {
                 const command = source.commandPalette();

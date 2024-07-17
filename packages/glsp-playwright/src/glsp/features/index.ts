@@ -16,5 +16,5 @@
 export * from './command-palette';
 export * from './context-menu';
 export * from './label-editor';
-export * from './popup/index';
+export * from './popup';
 export * from './tool-palette';

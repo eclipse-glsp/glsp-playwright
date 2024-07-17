@@ -87,12 +87,10 @@ test.describe('The select feature', () => {
         test('should allow to deselect a single element through a keybinding', async () => {
             const page = app.page;
             const element = await graph.getNodeByLabel('Push', TaskManual);
-            await element.select();
+            await element.click();
             const before = await graph.getNodesBySelector(`.${Selectable.CSS}`, TaskManual);
             expect(before).toHaveLength(1);
 
-            // Resize Handle
-            await page.keyboard.press('Escape');
             // Selection
             await page.keyboard.press('Escape');
 

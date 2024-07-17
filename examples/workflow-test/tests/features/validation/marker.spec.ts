@@ -18,7 +18,7 @@ import { WorkflowApp } from '../../../src/app/workflow-app';
 import { TaskAutomated } from '../../../src/graph/elements/task-automated.po';
 import { WorkflowGraph } from '../../../src/graph/workflow.graph';
 
-const automatedSelector = '[id$="task0_automated"]';
+const automatedSelector = '[id$="task_ChkWt"]';
 const expectedAutomatedPopupText = 'INFO: This is an automated task';
 
 test.describe('The marker', () => {

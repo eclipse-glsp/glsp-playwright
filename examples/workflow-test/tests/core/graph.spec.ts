@@ -34,7 +34,7 @@ test.describe('The graph', () => {
 
     test.describe('should allow accessing the edge', () => {
         test('by using a selector', async () => {
-            const edge = await graph.getEdgeBySelector('[id$="d34c37e0-e45e-4cfe-a76f-0e9274ed8e60"]', Edge);
+            const edge = await graph.getEdgeBySelector('[id$="edge_task_Push_fork_1"]', Edge);
             const task = await edge.sourceOfType(TaskManual);
 
             expect(await (await task.children.label()).textContent()).toBe('Push');
@@ -44,7 +44,7 @@ test.describe('The graph', () => {
             const edges = await graph.getEdgesOfType(Edge, { sourceConstructor: TaskManual });
 
             const ids = await Promise.all(edges.map(async e => e.idAttr()));
-            const expectedIds = ['d34c37e0-e45e-4cfe-a76f-0e9274ed8e60', 'a36985a7-3e61-499c-9bdb-5be2b00cb75c'];
+            const expectedIds = ['edge_task_Push_fork_1', 'edge_task_RflWt_merge_1'];
 
             expect(ids.length).toBe(expectedIds.length);
             ids.forEach(id => {
@@ -55,18 +55,18 @@ test.describe('The graph', () => {
         });
 
         test('by using a source selector', async () => {
-            const edges = await graph.getEdgesOfType(Edge, { sourceSelector: '[id$="task0"]' });
+            const edges = await graph.getEdgesOfType(Edge, { sourceSelector: '[id$="task_Push"]' });
             expect(edges.length).toBe(1);
 
             const source = await edges[0].sourceOfType(TaskManual);
-            expect(await source.idAttr()).toContain('task0');
+            expect(await source.idAttr()).toContain('task_Push');
         });
 
         test('by using the source type with multiple elements', async () => {
             const edges = await graph.getEdgesOfType(Edge, { sourceConstructor: TaskManual });
 
             const ids = await Promise.all(edges.map(async e => e.idAttr()));
-            const expectedIds = ['d34c37e0-e45e-4cfe-a76f-0e9274ed8e60', 'a36985a7-3e61-499c-9bdb-5be2b00cb75c'];
+            const expectedIds = ['edge_task_Push_fork_1', 'edge_task_RflWt_merge_1'];
 
             expect(ids.length).toBe(expectedIds.length);
             for await (const [index, id] of ids.entries()) {
@@ -81,7 +81,7 @@ test.describe('The graph', () => {
             const edges = await graph.getEdgesOfType(Edge, { targetConstructor: ActivityNodeFork });
 
             const ids = await Promise.all(edges.map(async e => e.idAttr()));
-            const expectedIds = ['d34c37e0-e45e-4cfe-a76f-0e9274ed8e60'];
+            const expectedIds = ['edge_task_Push_fork_1'];
 
             expect(ids.length).toBe(expectedIds.length);
             for await (const [index, id] of ids.entries()) {
@@ -99,7 +99,7 @@ test.describe('The graph', () => {
             });
 
             const ids = await Promise.all(edges.map(async e => e.idAttr()));
-            const expectedIds = ['d34c37e0-e45e-4cfe-a76f-0e9274ed8e60'];
+            const expectedIds = ['edge_task_Push_fork_1'];
 
             expect(ids.length).toBe(expectedIds.length);
             for await (const [index, id] of ids.entries()) {

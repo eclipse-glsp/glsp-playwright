@@ -33,11 +33,11 @@ test.describe('The edge accessor of a connectable element', () => {
     });
 
     test('should allow accessing all edges of a type', async () => {
-        const task = await graph.getNodeBySelector('[id$="task0"]', TaskManual);
+        const task = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
         const edges = await task.edges().outgoingEdgesOfType(Edge);
 
         const ids = await Promise.all(edges.map(async e => e.idAttr()));
-        const expectedIds = ['d34c37e0-e45e-4cfe-a76f-0e9274ed8e60'];
+        const expectedIds = ['edge_task_Push_fork_1'];
 
         expect(ids.length).toBe(expectedIds.length);
         ids.forEach(id => {
@@ -48,26 +48,26 @@ test.describe('The edge accessor of a connectable element', () => {
     });
 
     test('should return typed sources on access', async () => {
-        const task = await graph.getNodeBySelector('[id$="task0"]', TaskManual);
+        const task = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
         const edges = await task.edges().outgoingEdgesOfType(Edge);
         expect(edges.length).toBe(1);
 
         const source = await edges[0].source();
-        expect(await source.idAttr()).toContain('task0');
+        expect(await source.idAttr()).toContain('task_Push');
         expect(source instanceof TaskManual).toBeTruthy();
     });
 
     test('should allow accessing all edges of a type against a target type', async () => {
-        const task = await graph.getNodeBySelector('[id$="task0"]', TaskManual);
+        const task = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
         const edges = await task.edges().outgoingEdgesOfType(Edge, { targetConstructor: ActivityNodeFork });
         expect(edges.length).toBe(1);
 
         const source = await edges[0].source();
-        expect(await source.idAttr()).toContain('task0');
+        expect(await source.idAttr()).toContain('task_Push');
         expect(source instanceof TaskManual).toBeTruthy();
 
         const target = await edges[0].target();
-        expect(await target.idAttr()).toContain('bb2709f5-0ff0-4438-8853-b7e934b506d7');
+        expect(await target.idAttr()).toContain('fork_1');
         expect(target instanceof ActivityNodeFork).toBeTruthy();
     });
 

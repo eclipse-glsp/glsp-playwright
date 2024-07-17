@@ -13,29 +13,13 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { Marker, createParameterizedIntegrationData, expect, test } from '@eclipse-glsp/glsp-playwright';
+import { Marker, expect, test } from '@eclipse-glsp/glsp-playwright';
 import { WorkflowApp } from '../../../src/app/workflow-app';
 import { WorkflowToolPalette } from '../../../src/features/tool-palette/workflow-tool-palette';
 import { Edge } from '../../../src/graph/elements/edge.po';
 import { TaskAutomated } from '../../../src/graph/elements/task-automated.po';
 import { TaskManual } from '../../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../../src/graph/workflow.graph';
-
-const integrationData = createParameterizedIntegrationData<{
-    nodes: string;
-    edges: string;
-}>({
-    default: {
-        edges: 'Edges',
-        nodes: 'Nodes'
-    },
-    override: {
-        VSCode: {
-            edges: 'EDGES',
-            nodes: 'NODES'
-        }
-    }
-});
 
 test.describe('The tool palette', () => {
     let app: WorkflowApp;
@@ -56,8 +40,8 @@ test.describe('The tool palette', () => {
 
         const groups = await toolPalette.content.toolGroups();
         expect(groups.length).toBe(2);
-        expect(await groups[0].header()).toBe(integrationData[integration.type].nodes);
-        expect(await groups[1].header()).toBe(integrationData[integration.type].edges);
+        expect(await groups[0].header()).toBe('Nodes');
+        expect(await groups[1].header()).toBe('Edges');
 
         const elements0 = await groups[0].items();
         expect(elements0.length).toBe(7);
@@ -68,7 +52,7 @@ test.describe('The tool palette', () => {
         expect(await elements1[1].text()).toBe('Weighted edge');
 
         const headerGroup = await toolPalette.content.toolGroupByHeaderText('Edges');
-        expect(await headerGroup.header()).toBe(integrationData[integration.type].edges);
+        expect(await headerGroup.header()).toBe('Edges');
 
         const headerElements = await headerGroup.items();
         expect(headerElements.length).toBe(2);
@@ -106,7 +90,7 @@ test.describe('The tool palette', () => {
 
         const groups = await toolPalette.content.toolGroups();
         expect(groups.length).toBe(1);
-        expect(await groups[0].header()).toBe(integrationData[integration.type].nodes);
+        expect(await groups[0].header()).toBe('Nodes');
 
         const elements0 = await groups[0].items();
         expect(elements0.length).toBe(1);
@@ -114,8 +98,8 @@ test.describe('The tool palette', () => {
     });
 
     test('should allow creating edges in the graph', async () => {
-        const source = await graph.getNodeBySelector('[id$="task0"]', TaskManual);
-        const target = await graph.getNodeBySelector('[id$="task0_automated"]', TaskAutomated);
+        const source = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
+        const target = await graph.getNodeBySelector('[id$="task_ChkWt"]', TaskAutomated);
 
         const edges = await graph.waitForCreationOfEdgeType(Edge, async () => {
             await toolPalette.waitForVisible();
@@ -138,7 +122,7 @@ test.describe('The tool palette', () => {
     });
 
     test('should allow creating new nodes in the graph', async () => {
-        const task = await graph.getNodeBySelector('[id$="task0"]', TaskManual);
+        const task = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
         const nodes = await graph.waitForCreationOfNodeType(TaskManual, async () => {
             const paletteItem = await toolPalette.content.toolElement('Nodes', 'Manual Task');
             await paletteItem.click();
@@ -158,7 +142,7 @@ test.describe('The tool palette', () => {
     test('should allow deleting elements in the graph', async () => {
         await toolPalette.toolbar.deletionTool().click();
 
-        const task = await graph.getNodeBySelector('[id$="task0"]', TaskManual);
+        const task = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
         expect(await task.isVisible()).toBeTruthy();
 
         await task.click();
