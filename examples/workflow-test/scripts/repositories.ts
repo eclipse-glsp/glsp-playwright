@@ -28,6 +28,7 @@ interface GlobalOptions {
 interface CloneOptions extends GlobalOptions {
     override?: 'rename' | 'remove';
     branch?: string;
+    protocol: 'ssh' | 'https';
 }
 
 // ========== Constants ======================================================== //
@@ -78,7 +79,9 @@ function clone(repository: string, options: CloneOptions): void {
         }
     }
 
-    exec('git', ['clone', `git@github.com:eclipse-glsp/${repository}.git`, ...branch, destination]);
+    const remote =
+        options.protocol === 'ssh' ? `git@github.com:eclipse-glsp/${repository}.git` : `https://github.com/eclipse-glsp/${repository}.git`;
+    exec('git', ['clone', remote, ...branch, destination]);
 }
 
 function log(repository: string, options: GlobalOptions): void {
@@ -124,24 +127,34 @@ async function main(): Promise<void> {
             'prepare',
             'Clones and builds all projects',
             b =>
-                b.options('override', {
-                    choices: ['rename', 'remove'],
-                    description: 'Rename or remove if the folder already exists',
-                    type: 'string'
-                } as const),
+                b
+                    .options('override', {
+                        choices: ['rename', 'remove'],
+                        description: 'Rename or remove if the folder already exists',
+                        type: 'string'
+                    } as const)
+                    .options('protocol', {
+                        choices: ['ssh', 'https'],
+                        description: 'Protocol to use for cloning',
+                        type: 'string',
+                        default: 'ssh'
+                    } as const),
             argv => {
-                const { folder, override } = argv;
+                const { folder, override, protocol } = argv;
                 clone(clientRepository, {
                     folder,
-                    override
+                    override,
+                    protocol
                 });
                 clone(theiaRepository, {
                     folder,
-                    override
+                    override,
+                    protocol
                 });
                 clone(vsCodeRepository, {
                     folder,
-                    override
+                    override,
+                    protocol
                 });
                 buildClient(argv);
                 buildTheia(argv);
@@ -170,11 +183,12 @@ async function main(): Promise<void> {
             'Client',
             subCommands([
                 cloneCommand(argv => {
-                    const { folder, branch, override } = argv;
+                    const { folder, branch, override, protocol } = argv;
                     clone(clientRepository, {
                         folder,
                         branch,
-                        override
+                        override,
+                        protocol
                     });
                 }),
                 buildCommand(argv => {
@@ -187,11 +201,12 @@ async function main(): Promise<void> {
             'Theia integration',
             subCommands([
                 cloneCommand(argv => {
-                    const { folder, branch, override } = argv;
+                    const { folder, branch, override, protocol } = argv;
                     clone(theiaRepository, {
                         folder,
                         branch,
-                        override
+                        override,
+                        protocol
                     });
                 }),
                 buildCommand(argv => {
@@ -215,11 +230,12 @@ async function main(): Promise<void> {
             'VSCode integration',
             subCommands([
                 cloneCommand(argv => {
-                    const { folder, branch, override } = argv;
+                    const { folder, branch, override, protocol } = argv;
                     clone(vsCodeRepository, {
                         folder,
                         branch,
-                        override
+                        override,
+                        protocol
                     });
                 }),
                 buildCommand(argv => {
@@ -254,6 +270,12 @@ function cloneCommand(handler: (argv: CloneCommandArgv) => void) {
                         choices: ['rename', 'remove'],
                         description: 'Rename or remove if the folder already exists',
                         type: 'string'
+                    } as const)
+                    .options('protocol', {
+                        choices: ['ssh', 'https'],
+                        description: 'Protocol to use for cloning',
+                        type: 'string',
+                        default: 'ssh'
                     } as const)
                     .positional('branch', { describe: 'Branch or tag', type: 'string' }),
             argv => {

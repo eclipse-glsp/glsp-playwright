@@ -38,6 +38,7 @@
   },
   "devDependencies": {
     "@eclipse-glsp/dev": "next",
+    "@estruyf/github-actions-reporter": "^1.7.0",
     "@types/node": "16.x",
     "concurrently": "^8.2.2",
     "eslint-import-resolver-typescript": "^3.5.3",
