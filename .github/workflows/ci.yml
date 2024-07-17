@@ -11,6 +11,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4.1.7
       - uses: actions/setup-node@v4.0.2
@@ -26,6 +27,7 @@ jobs:
           fi
   lint:
     name: Lint
+    timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.1.7
@@ -47,6 +49,7 @@ jobs:
 
   playwright:
     name: Playwright Tests
+    timeout-minutes: 120
     runs-on: ubuntu-latest
     env:
       STANDALONE_URL: 'file://${{ github.workspace }}/examples/workflow-test/repositories/glsp-client/examples/workflow-standalone/app/diagram.html'
