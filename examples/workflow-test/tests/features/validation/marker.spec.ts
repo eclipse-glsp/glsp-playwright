@@ -18,7 +18,7 @@ import { WorkflowApp } from '../../../src/app/workflow-app';
 import { TaskAutomated } from '../../../src/graph/elements/task-automated.po';
 import { WorkflowGraph } from '../../../src/graph/workflow.graph';
 
-const automatedSelector = '[id$="task_ChkWt"]';
+const label = 'ChkWt';
 const expectedAutomatedPopupText = 'INFO: This is an automated task';
 
 test.describe('The marker', () => {
@@ -35,7 +35,7 @@ test.describe('The marker', () => {
 
     test('should be shown after validation', async () => {
         await app.toolPalette.toolbar.validateTool().trigger();
-        const task = await graph.getNodeBySelector(automatedSelector, TaskAutomated);
+        const task = await graph.getNodeByLabel(label, TaskAutomated);
 
         const marker = task.marker();
         await expect(marker.locate()).toBeVisible();
@@ -43,13 +43,13 @@ test.describe('The marker', () => {
 
     test('should show a popup on hover', async () => {
         await app.toolPalette.toolbar.validateTool().trigger();
-        const task = await graph.getNodeBySelector(automatedSelector, TaskAutomated);
+        const task = await graph.getNodeByLabel(label, TaskAutomated);
         expect(await task.marker().popupText()).toBe(expectedAutomatedPopupText);
     });
 
     test('should be still visible after resizing', async () => {
         await app.toolPalette.toolbar.validateTool().trigger();
-        const task = await graph.getNodeBySelector(automatedSelector, TaskAutomated);
+        const task = await graph.getNodeByLabel(label, TaskAutomated);
         expect(await task.marker().popupText()).toBe(expectedAutomatedPopupText);
 
         await app.popup.close();

@@ -13,8 +13,11 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+export * from './change-bounds';
 export * from './command-palette';
 export * from './context-menu';
 export * from './label-editor';
 export * from './popup';
+export * from './routing';
 export * from './tool-palette';
+export * from './validation';

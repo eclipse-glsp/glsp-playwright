@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2023 Business Informatics Group (TU Wien) and others.
+ * Copyright (c) 2024 EclipseSource and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -13,5 +13,20 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-export * from './marker.capability';
-export * from './marker.po';
+
+import { Locator } from '@playwright/test';
+import { waitForFunction } from '~/integration/wait.fixes';
+
+export async function waitForClassRemoval(locator: Locator, className: string, timeout: number = 30000): Promise<void> {
+    await locator.waitFor({
+        timeout,
+        state: 'attached'
+    });
+
+    const element = await locator.elementHandle();
+
+    await waitForFunction(async () => {
+        const contains = (await element?.evaluate((e, c) => e.classList.contains(c), className)) ?? false;
+        return !contains;
+    });
+}

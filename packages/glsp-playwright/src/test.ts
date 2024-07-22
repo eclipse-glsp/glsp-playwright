@@ -172,5 +172,5 @@ export function skipIntegration(integrationOptions?: IntegrationOptions, ...inte
     return integrationOptions === undefined || integration.includes(integrationOptions.type);
 }
 
-export { expect } from '@playwright/test';
+export { expect } from './test/assertions';
 export { test as setup };

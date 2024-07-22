@@ -13,15 +13,19 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+import type { Hoverable } from '~/extension/flows';
 import type { GLSPApp } from '~/glsp';
 import type { GLSPLocator } from '~/remote';
-import { Locateable } from '~/remote/locateable';
+import { Locateable } from '~/remote';
 import { definedGLSPAttr } from '~/utils/ts.utils';
 
 export interface GLSPPopupOptions {
     locator: GLSPLocator;
 }
 
+/**
+ * The container for all popups
+ */
 export class GLSPPopup extends Locateable {
     static locate(app: GLSPApp): GLSPLocator {
         return app.rootLocator.child('[id="sprotty-popup"]');
@@ -38,5 +42,18 @@ export class GLSPPopup extends Locateable {
     async close(): Promise<void> {
         await this.app.graph.focus();
         await this.waitForHidden();
+    }
+}
+
+/**
+ * The popup itself
+ */
+export class Popup extends Locateable {
+    constructor(public readonly element: Locateable & Hoverable) {
+        super(element.app.popup.locator.child('[id$="_sprotty-popup"]'));
+    }
+
+    async innerText(): Promise<string> {
+        return this.locate().innerText();
     }
 }

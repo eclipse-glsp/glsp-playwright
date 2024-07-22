@@ -20,7 +20,7 @@ import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as platformPath from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import { SVGMetadataUtils } from '~/glsp';
+import { SVGMetadataUtils } from '~/glsp/graph';
 import { Integration } from '../integration.base';
 import type { IntegrationArgs } from '../integration.type';
 import { VSCodeWorkbenchActivitybar } from './po/workbench-activitybar.po';

@@ -63,6 +63,7 @@ export class GLSPGraph extends Locateable {
     ): Promise<TElement> {
         const element = new constructor({ locator: this.locator.override(locator) });
         await assertEqualType(element);
+        await element.snapshot();
         return element;
     }
 

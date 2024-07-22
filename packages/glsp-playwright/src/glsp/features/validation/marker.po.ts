@@ -13,5 +13,25 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-export * from './popup.capability';
-export * from './popup.po';
+import { Mix } from '~/extension';
+import { useHoverableFlow } from '~/extension/flows';
+import { ModelElementMetadata, PModelElement, PModelElementData, SVGMetadataUtils } from '~/glsp/graph';
+import { usePopupCapability } from '../popup/popup.capability';
+
+export interface MarkerData extends PModelElementData {
+    /**
+     * The marker can be accessed either directly or as a child from an element.
+     */
+    isParentLocator?: boolean;
+}
+
+const MarkerMixin = Mix(PModelElement).flow(useHoverableFlow).capability(usePopupCapability).build();
+
+@ModelElementMetadata({
+    type: 'marker'
+})
+export class Marker extends MarkerMixin {
+    constructor(data: MarkerData) {
+        super({ locator: data.isParentLocator ? data.locator.child(SVGMetadataUtils.typeAttrOf(Marker)) : data.locator });
+    }
+}

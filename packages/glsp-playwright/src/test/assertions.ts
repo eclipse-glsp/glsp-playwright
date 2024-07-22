@@ -1,0 +1,98 @@
+/********************************************************************************
+ * Copyright (c) 2024 EclipseSource and others.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v. 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * This Source Code may also be made available under the following Secondary
+ * Licenses when the conditions for such availability set forth in the Eclipse
+ * Public License v. 2.0 are satisfied: GNU General Public License, version 2
+ * with the GNU Classpath Exception which is available at
+ * https://www.gnu.org/software/classpath/license.html.
+ *
+ * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+ ********************************************************************************/
+import { expect as baseExpect, ExpectMatcherState } from '@playwright/test';
+import { Selectable } from '../extension';
+import { GLSPSemanticGraph, PModelElement } from '../glsp';
+import { ConstructorT } from '../types';
+
+export { test } from '@playwright/test';
+
+interface MatcherReturnType {
+    message: () => string;
+    pass: boolean;
+    name?: string;
+    expected?: unknown;
+    actual?: any;
+    log?: string[];
+}
+
+/* eslint-disable no-invalid-this */
+async function toHaveSelected(
+    this: ExpectMatcherState,
+    graph: GLSPSemanticGraph,
+    expected: { type: ConstructorT<PModelElement>; elements: PModelElement[] }
+): Promise<MatcherReturnType> {
+    const assertionName = 'toHaveSelected';
+    let pass: boolean;
+    let matcherResult: any;
+
+    try {
+        const nodes = await graph.getSelectedElements(expected.type);
+        baseExpect(nodes).toHaveLength(expected.elements.length);
+
+        const nodeIds = await Promise.all(nodes.map(n => n.idAttr()));
+        const expectedIds = await Promise.all(expected.elements.map(n => n.idAttr()));
+
+        baseExpect(nodeIds.sort()).toEqual(expectedIds.sort());
+        pass = true;
+    } catch (e: any) {
+        matcherResult = e.matcherResult;
+        pass = false;
+    }
+
+    return {
+        message: () =>
+            this.utils.matcherHint(assertionName, undefined, undefined, { isNot: this.isNot }) +
+            '\n\n' +
+            'SemanticGraph Selected Elements - Assertions\n' +
+            matcherResult.message,
+        pass,
+        name: assertionName,
+        expected,
+        actual: matcherResult?.actual
+    };
+}
+
+async function toBeUnselected(this: ExpectMatcherState, graph: GLSPSemanticGraph): Promise<MatcherReturnType> {
+    const assertionName = 'toBeUnselected';
+    let pass: boolean;
+    let matcherResult: any;
+
+    try {
+        await Promise.all((await graph.locate().locator(`.${Selectable.CSS}`).all()).map(l => l.waitFor({ state: 'detached' })));
+        await toHaveSelected.call(this, graph, { type: PModelElement, elements: [] });
+        pass = true;
+    } catch (e: any) {
+        matcherResult = e.matcherResult;
+        pass = false;
+    }
+
+    return {
+        message: () =>
+            this.utils.matcherHint(assertionName, undefined, undefined, { isNot: this.isNot }) +
+            '\n\n' +
+            'SemanticGraph toBeUnselected - Assertions\n' +
+            matcherResult.message,
+        pass,
+        name: assertionName
+    };
+}
+/* eslint-enable no-invalid-this */
+
+export const expect = baseExpect.extend({
+    toHaveSelected,
+    toBeUnselected
+});

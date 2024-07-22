@@ -44,6 +44,10 @@ export const TaskAutomatedMixin = Mix(PNode)
 })
 export class TaskAutomated extends TaskAutomatedMixin {
     override readonly children = new TaskAutomatedChildren(this);
+
+    get label(): Promise<string> {
+        return this.children.label().then(label => label.textContent());
+    }
 }
 
 export class TaskAutomatedChildren extends ChildrenAccessor {

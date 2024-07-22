@@ -14,13 +14,12 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import type { Locator } from '@playwright/test';
-import { ModelElementMetadata, PEdge, PMetadata, PModelElement, PModelElementData, SVGMetadata } from '~/glsp';
+import type { AutoPrepareOptions, AutoWaitOptions } from '~/extension';
+import { Clickable, Mix, useDraggableFlow } from '~/extension';
+import { ModelElementMetadata, PEdge, PMetadata, PModelElement, PModelElementData, SVGMetadata } from '~/glsp/graph';
 import type { GLSPLocator } from '~/remote';
 import type { Position } from '~/types';
 import { definedAttr, definedGLSPAttr } from '~/utils/ts.utils';
-import { Clickable, useDraggableFlow } from '../../flows';
-import { Mix } from '../../mixin';
-import type { AutoPrepareOptions, AutoWaitOptions } from '../../types';
 
 export type RoutingPointKind = 'junction' | 'line' | 'source' | 'target';
 

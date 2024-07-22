@@ -13,15 +13,8 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { Locateable } from '~/remote';
-import type { Hoverable } from '../../flows/index';
 
-export class Popup extends Locateable {
-    constructor(public readonly element: Locateable & Hoverable) {
-        super(element.app.popup.locator.child('[id$="_sprotty-popup"]'));
-    }
-
-    async innerText(): Promise<string> {
-        return this.locate().innerText();
-    }
-}
+export * from './marker-navigator';
+export * from './marker-navigator.integration';
+export * from './marker.capability';
+export * from './marker.po';
