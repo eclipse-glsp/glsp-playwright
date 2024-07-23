@@ -1,6 +1,6 @@
 {
   "name": "@eclipse-glsp/glsp-playwright",
-  "version": "2.2.1",
+  "version": "2.3.0-next",
   "description": "Playwright-based testing framework for GLSP",
   "homepage": "https://www.eclipse.org/glsp/",
   "bugs": "https://github.com/eclipse-glsp/glsp/issues",
