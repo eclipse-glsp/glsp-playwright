@@ -58,7 +58,7 @@ jobs:
       STANDALONE_URL: 'file://${{ github.workspace }}/examples/workflow-test/repositories/glsp-client/examples/workflow-standalone/app/diagram.html'
       THEIA_URL: 'http://localhost:3000'
       VSCODE_VSIX_ID: 'eclipse-glsp.workflow-vscode-example'
-      VSCODE_VSIX_PATH: '${{ github.workspace }}/examples/workflow-test/repositories/glsp-vscode-integration/example/workflow/extension/workflow-vscode-example-2.2.0-next.vsix'
+      VSCODE_VSIX_PATH: '${{ github.workspace }}/examples/workflow-test/repositories/glsp-vscode-integration/example/workflow/extension/workflow-vscode-example-2.3.0-next.vsix'
       GLSP_SERVER_DEBUG: 'true'
       GLSP_SERVER_PORT: '8081'
       GLSP_SERVER_PLAYWRIGHT_MANAGED: 'true'
@@ -76,6 +76,7 @@ jobs:
       - name: Start theia
         run: yarn repo theia-integration start &
       - name: Run Playwright tests
+        id: run_playwright_tests
         run: xvfb-run -a yarn test
         continue-on-error: true
       - name: Upload Playwright report
@@ -83,3 +84,5 @@ jobs:
         with:
           name: playwright-report
           path: examples/workflow-test/playwright-report/
+      - if: steps.run_playwright_tests.outcome == 'failure'
+        run: exit 1
