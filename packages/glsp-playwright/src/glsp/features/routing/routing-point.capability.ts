@@ -13,37 +13,38 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import type { PNode } from '~/glsp/graph';
+import type { Capability, Clickable } from '~/extension';
+import type { PEdge } from '~/glsp/graph';
 import type { ConstructorA } from '~/types';
-import type { Clickable } from '../../flows';
-import type { Capability } from '../../types';
-import { ResizeHandles } from './resize-handle.po';
+import { RoutingPoints } from './routing-point.po';
 
 /**
- * Elements can be resized by using the resize handles.
+ * An edge may have zero or more routing points that “re-direct” the edge between the source and the target element.
+ *
+ * [Learn more about routing points](https://www.eclipse.org/glsp/documentation/protocol/).
  */
-export interface ResizeHandleCapability<TResizeHandles extends ResizeHandles = ResizeHandles> {
+export interface RoutingPointCapability<TRoutingPoints extends RoutingPoints = RoutingPoints> {
     /**
-     * Access the page object of the resize handles of the element.
+     * Access the page object of the routing points of the element.
      *
-     * @returns Page object of the resize handles
+     * @returns Page object of the routing points
      */
-    resizeHandles(): TResizeHandles;
+    routingPoints(): TRoutingPoints;
 }
 
 /**
  * The default [Extension-Provider](https://github.com/eclipse-glsp/glsp-playwright/docs/concepts/extension.md)
- * for the {@link ResizeHandleCapability}.
+ * for the {@link RoutingPointCapability}.
  *
  * @param Base Base class that should be extended
- * @returns Extended base class with the {@link ResizeHandleCapability}
+ * @returns Extended base class with the {@link RoutingPointCapability}
  */
-export function useResizeHandleCapability<TBase extends ConstructorA<PNode & Clickable>>(
+export function useRoutingPointCapability<TBase extends ConstructorA<PEdge & Clickable>>(
     Base: TBase
-): Capability<TBase, ResizeHandleCapability> {
-    abstract class Mixin extends Base implements ResizeHandleCapability {
-        resizeHandles(): ResizeHandles {
-            return new ResizeHandles(this);
+): Capability<TBase, RoutingPointCapability> {
+    abstract class Mixin extends Base implements RoutingPointCapability {
+        routingPoints(): RoutingPoints {
+            return new RoutingPoints(this);
         }
     }
 

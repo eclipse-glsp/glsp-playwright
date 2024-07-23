@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2023 Business Informatics Group (TU Wien) and others.
+ * Copyright (c) 2024 EclipseSource and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -13,4 +13,15 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-export * from './command-palette.capablity';
+
+import { MarkerNavigator } from './marker-navigator';
+
+export class StandaloneMarkerNavigator extends MarkerNavigator {
+    protected readonly forwardKey = 'Control+.';
+    protected readonly backwardKey = 'Control+,';
+}
+
+export class TheiaMarkerNavigator extends MarkerNavigator {
+    protected readonly forwardKey = 'F8';
+    protected readonly backwardKey = 'Shift+F8';
+}

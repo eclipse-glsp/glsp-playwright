@@ -66,6 +66,16 @@ export interface PModelElementData {
 
 export type PModelElementConstructor<TElement extends PModelElement = PModelElement> = ConstructorT<TElement, [PModelElementData]>;
 
+/**
+ * The state of the element at a specific time.
+ */
+export interface PModelElementSnapshot {
+    snapshotTime: number;
+    type: string;
+    id: string;
+    class: string | null;
+}
+
 @ModelElementMetadata({
     type: '*'
 })
@@ -73,10 +83,23 @@ export class PModelElement extends Locateable {
     readonly graph;
     readonly _metadata;
 
+    lastSnapshot?: PModelElementSnapshot;
+
     constructor(data: PModelElementData) {
         super(data.locator);
         this.graph = this.app.graph;
         this._metadata = PMetadata.assertOwn(this.constructor);
+    }
+
+    async snapshot(): Promise<PModelElementSnapshot> {
+        this.lastSnapshot = {
+            snapshotTime: new Date().getTime(),
+            class: await this.classAttr(),
+            id: await this.idAttr(),
+            type: await this.typeAttr()
+        };
+
+        return this.lastSnapshot;
     }
 
     async typeAttr(): Promise<string> {
@@ -98,6 +121,17 @@ export class PModelElement extends Locateable {
         console.log('Tree:');
         const tree = await extractMetaTree(this.locate());
         console.log(tree);
+    }
+
+    /**
+     * Allows prettier error logs
+     */
+    toJSON(): object {
+        return {
+            '_metadata.type': this._metadata.type,
+            'snapshot.id': this.lastSnapshot?.id,
+            'snapshot.type': this.lastSnapshot?.type
+        };
     }
 }
 

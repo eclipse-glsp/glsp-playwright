@@ -13,8 +13,9 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+import { Selectable } from '../../extension';
 import { PLabelledElement } from '../../extension/model/labelled/labelled-element.model';
-import { PNode, PNodeConstructor } from './elements';
+import { PModelElement, PModelElementConstructor, PNode, PNodeConstructor } from './elements';
 import { GLSPGraph } from './graph.po';
 
 /**
@@ -52,5 +53,9 @@ export class GLSPSemanticGraph extends GLSPGraph {
         }
 
         return elements;
+    }
+
+    async getSelectedElements<TElement extends PModelElement>(constructor: PModelElementConstructor<TElement>): Promise<TElement[]> {
+        return this.getModelElementsBySelector(`.${Selectable.CSS}`, constructor);
     }
 }

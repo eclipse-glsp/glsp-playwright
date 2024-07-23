@@ -13,11 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import {
-    downloadAndUnzipVSCode,
-    makeConsoleReporter,
-    resolveCliArgsFromVSCodeExecutablePath
-} from '@vscode/test-electron';
+import { downloadAndUnzipVSCode, makeConsoleReporter, resolveCliArgsFromVSCodeExecutablePath } from '@vscode/test-electron';
 import * as cp from 'child_process';
 import { constants } from 'fs';
 import * as fs from 'fs/promises';
@@ -46,7 +42,7 @@ export interface VSCodeSetupOptions {
  * - install extensions
  */
 export class VSCodeSetup {
-    protected readonly vscodeDownloadReporter =  makeConsoleReporter();
+    protected readonly vscodeDownloadReporter = makeConsoleReporter();
 
     constructor(
         protected readonly integrationOptions: VSCodeIntegrationOptions,
@@ -56,7 +52,7 @@ export class VSCodeSetup {
     ) {}
 
     async downloadVSCode(version: string): Promise<string> {
-        const downloadReporter= await makeConsoleReporter();
+        const downloadReporter = await makeConsoleReporter();
         return downloadAndUnzipVSCode(version, undefined, {
             report: report => {
                 if (this.setupOptions.enableLogging) {
@@ -102,7 +98,7 @@ export class VSCodeSetup {
                 const stat = await fs.stat(this.integrationOptions.vsixPath);
                 if (entry.metadata.installedTimestamp < stat.birthtimeMs) {
                     this.log(
-                        '[Extension] Older install detected.',
+                        '[Extension] Older installation detected.',
                         new Date(entry.metadata.installedTimestamp).toISOString(),
                         new Date(stat.birthtimeMs).toISOString()
                     );

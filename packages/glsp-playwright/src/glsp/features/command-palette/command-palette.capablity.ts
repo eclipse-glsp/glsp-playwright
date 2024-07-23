@@ -13,36 +13,38 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import type { PModelElement } from '~/glsp/graph';
+import type { Capability } from '~/extension';
+import type { Locateable } from '~/remote';
 import type { ConstructorA } from '~/types';
-import type { Capability } from '../../types';
-import { Marker } from './marker.po';
+import { GLSPElementCommandPalette } from './element-command-palette.po';
 
 /**
- * A marker represents the validation result for a single model element.
+ * The command palette is an "auto-complete" widget used to trigger actions.
  *
- * [Learn more about markers](https://www.eclipse.org/glsp/documentation/protocol/).
+ * [Learn more about command palettes](https://www.eclipse.org/glsp/documentation/protocol/).
  */
-export interface MarkerCapability<TMarker extends Marker = Marker> {
+export interface CommandPaletteCapability<TCommandPalette extends GLSPElementCommandPalette = GLSPElementCommandPalette> {
     /**
-     * Access the page object of the marker of the element.
+     * Access the page object of the command palette of the element.
      *
-     * @returns Page object of the marker
+     * @returns Page object of the element command palette
      */
-    marker(): TMarker;
+    commandPalette(): TCommandPalette;
 }
 
 /**
  * The default [Extension-Provider](https://github.com/eclipse-glsp/glsp-playwright/docs/concepts/extension.md)
- * for the {@link MarkerCapability}.
+ * for the {@link CommandPaletteCapability}.
  *
  * @param Base Base class that should be extended
- * @returns Extended base class with the {@link MarkerCapability}
+ * @returns Extended base class with the {@link CommandPaletteCapability}
  */
-export function useMarkerCapability<TBase extends ConstructorA<PModelElement>>(Base: TBase): Capability<TBase, MarkerCapability> {
-    abstract class Mixin extends Base implements MarkerCapability {
-        marker(): Marker {
-            return new Marker({ locator: this.locator, isParentLocator: true });
+export function useCommandPaletteCapability<TBase extends ConstructorA<Locateable>>(
+    Base: TBase
+): Capability<TBase, CommandPaletteCapability> {
+    abstract class Mixin extends Base implements CommandPaletteCapability {
+        commandPalette(): GLSPElementCommandPalette {
+            return new GLSPElementCommandPalette({ element: this, locator: this.app.globalCommandPalette.locator });
         }
     }
 

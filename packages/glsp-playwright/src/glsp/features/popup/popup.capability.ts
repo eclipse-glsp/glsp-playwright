@@ -13,10 +13,9 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+import type { Capability, Hoverable } from '~/extension';
 import type { Locateable } from '~/remote';
 import type { ConstructorA } from '~/types';
-import type { Hoverable } from '../../flows/index';
-import type { Capability } from '../../types';
 import { Popup } from './popup.po';
 
 /**

@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import type { Locator, Page } from '@playwright/test';
-import { SVGMetadataUtils } from '../glsp/index';
+import { SVGMetadataUtils } from '~/glsp/graph';
 import { hasProperty } from '../utils/ts.utils';
 import type { IntegrationArgs, IntegrationType } from './integration.type';
 

@@ -16,7 +16,7 @@
 
 import { Locator, Page } from '@playwright/test';
 import { TheiaAppLoader, TheiaWorkspace } from '@theia/playwright';
-import { SVGMetadataUtils } from '~/glsp';
+import { SVGMetadataUtils } from '~/glsp/graph';
 import { ContextMenuIntegration, Integration } from '../integration.base';
 import type { IntegrationArgs } from '../integration.type';
 import { TheiaGLSPApp } from './po/theia-glsp-app.po';
