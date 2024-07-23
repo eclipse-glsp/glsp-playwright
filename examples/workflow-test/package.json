@@ -1,6 +1,6 @@
 {
   "name": "@eclipse-glsp/workflow-test",
-  "version": "2.2.0-next",
+  "version": "2.2.1",
   "private": true,
   "description": "Example project for glsp-playwright",
   "homepage": "https://www.eclipse.org/glsp/",
@@ -44,8 +44,8 @@
     "watch": "tsc -w"
   },
   "devDependencies": {
-    "@eclipse-glsp-examples/workflow-server-bundled": "next",
-    "@eclipse-glsp/glsp-playwright": "2.2.0-next",
+    "@eclipse-glsp-examples/workflow-server-bundled": "2.2.1",
+    "@eclipse-glsp/glsp-playwright": "2.2.1",
     "@playwright/test": "^1.37.1",
     "@theia/playwright": "~1.49.1",
     "@types/yargs": "^17.0.32",
