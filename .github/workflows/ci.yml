@@ -1,5 +1,4 @@
 name: 'CI'
-
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -50,20 +49,17 @@ jobs:
           npm_config_yes=true npx github:10up/eslint-json-to-md#82ff16b --path ./eslint_report.json --output ./eslint_report.md
           cat eslint_report.md >> $GITHUB_STEP_SUMMARY
 
-  playwright:
-    name: Playwright Tests
+  playwright-node:
+    name: Playwright Tests (Node server)
     timeout-minutes: 120
     runs-on: ubuntu-latest
     env:
-      STANDALONE_URL: 'file://${{ github.workspace }}/examples/workflow-test/repositories/glsp-client/examples/workflow-standalone/app/diagram.html'
       THEIA_URL: 'http://localhost:3000'
       VSCODE_VSIX_ID: 'eclipse-glsp.workflow-vscode-example'
-      VSCODE_VSIX_PATH: '${{ github.workspace }}/examples/workflow-test/repositories/glsp-vscode-integration/example/workflow/extension/workflow-vscode-example-2.3.0-next.vsix'
       GLSP_SERVER_DEBUG: 'true'
       GLSP_SERVER_PORT: '8081'
       GLSP_SERVER_PLAYWRIGHT_MANAGED: 'true'
       GLSP_WEBSOCKET_PATH: 'workflow'
-
     steps:
       - uses: actions/checkout@v4.1.7
       - uses: actions/setup-node@v4.0.2
@@ -73,16 +69,62 @@ jobs:
         run: yarn install
       - name: Prepare repos
         run: yarn repo prepare --protocol https
+      - name: Set Environment Variables
+        run: |
+          echo "STANDALONE_URL=$(yarn -s repo client url)" >> $GITHUB_ENV
+          echo "VSCODE_VSIX_PATH=$(yarn -s repo vscode-integration vsixPath)" >> $GITHUB_ENV
+          echo "GLSP_SERVER_START_COMMAND=yarn repo node-server start" >> $GITHUB_ENV
       - name: Start theia
         run: yarn repo theia-integration start &
       - name: Run Playwright tests
         id: run_playwright_tests
         run: xvfb-run -a yarn test
-        continue-on-error: true
       - name: Upload Playwright report
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4.3.4
         with:
-          name: playwright-report
+          name: playwright-report-node
           path: examples/workflow-test/playwright-report/
-      - if: steps.run_playwright_tests.outcome == 'failure'
-        run: exit 1
+
+  playwright-java:
+    if: false
+    name: Playwright Tests (Java server)
+    timeout-minutes: 120
+    runs-on: ubuntu-latest
+    env:
+      THEIA_URL: 'http://localhost:3000'
+      VSCODE_VSIX_ID: 'eclipse-glsp.workflow-vscode-example'
+      GLSP_SERVER_DEBUG: 'true'
+      GLSP_SERVER_PORT: '8081'
+      GLSP_SERVER_PLAYWRIGHT_MANAGED: 'true'
+      GLSP_WEBSOCKET_PATH: 'workflow'
+    steps:
+      - uses: actions/checkout@v4.1.7
+      - uses: actions/setup-node@v4.0.2
+        with:
+          node-version: '18'
+      - name: Set up JDK
+        uses: actions/setup-java@v4.2.1
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Install dependencies
+        run: yarn install
+      - name: Prepare repos
+        run: yarn repo prepare --protocol https --serverType java
+      - name: Set Environment Variables
+        run: |
+          echo "STANDALONE_URL=$(yarn -s repo client url)" >> $GITHUB_ENV
+          echo "VSCODE_VSIX_PATH=$(yarn -s repo vscode-integration vsixPath)" >> $GITHUB_ENV
+          echo "GLSP_SERVER_START_COMMAND=yarn repo java-server start" >> $GITHUB_ENV
+      - name: Start theia
+        run: yarn repo theia-integration start &
+      - name: Run Playwright tests
+        id: run_playwright_tests
+        run: xvfb-run -a yarn test
+      - name: Upload Playwright report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4.3.4
+        with:
+          name: playwright-report-java
+          path: examples/workflow-test/playwright-report/
