@@ -56,7 +56,7 @@ test.describe('The popup', () => {
     });
 
     test('should be shown on hovering a task manual', async () => {
-        const task = await graph.getNodeBySelector(manualSelector, TaskManual);
+        const task = await graph.getNode(manualSelector, TaskManual);
 
         await expect(app.popup.locate()).toBeHidden();
         await task.hover();
@@ -68,7 +68,7 @@ test.describe('The popup', () => {
     });
 
     test('should allow to access the text directly in elements', async () => {
-        const task = await app.graph.getNodeBySelector(manualSelector, TaskManual);
+        const task = await app.graph.getNode(manualSelector, TaskManual);
         await expect(app.popup.locate()).toBeHidden();
         const text = await task.popupText();
         await expect(app.popup.locate()).toBeVisible();
@@ -189,7 +189,7 @@ async function assertPopup<T extends PNode & PopupCapability>(
     constructor: PNodeConstructor<T>,
     expectedText: string
 ): Promise<T> {
-    const node = await app.graph.getNodeBySelector(selector, constructor);
+    const node = await app.graph.getNode(selector, constructor);
     await expect(app.popup.locate()).toBeHidden();
     const text = await node.popupText();
     await expect(app.popup.locate()).toBeVisible();

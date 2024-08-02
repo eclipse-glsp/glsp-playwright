@@ -56,6 +56,6 @@ export class GLSPSemanticGraph extends GLSPGraph {
     }
 
     async getSelectedElements<TElement extends PModelElement>(constructor: PModelElementConstructor<TElement>): Promise<TElement[]> {
-        return this.getModelElementsBySelector(`.${Selectable.CSS}`, constructor);
+        return this.getModelElements(`.${Selectable.CSS}`, constructor);
     }
 }

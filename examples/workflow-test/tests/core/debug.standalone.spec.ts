@@ -74,7 +74,7 @@ test.describe('The debug functions', () => {
      * It is possible to extract all the accessible SVG metadata of a locator as a tree structure.
      */
     test('should allow to extract the metadata of a locator', async () => {
-        const node = await graph.getNodeBySelector(taskSelector, TaskManual);
+        const node = await graph.getNode(taskSelector, TaskManual);
 
         const metadata = await extractMetaTree(node.locate());
         expect(metadata).toMatchObject(expectedElementMetadata);
@@ -84,7 +84,7 @@ test.describe('The debug functions', () => {
      * It is possible to retrieve all the located HTML elements of a GLSPLocator and it's ascendants.
      */
     test('should allow to extract debug information of a GLSPLocator', async () => {
-        const node = await graph.getNodeBySelector(taskSelector, TaskManual);
+        const node = await graph.getNode(taskSelector, TaskManual);
 
         const extracted = await extractDebugInformationOfGLSPLocator(node.locator);
         expect(extracted).toMatchObject(expectedGLSPLocatorData);

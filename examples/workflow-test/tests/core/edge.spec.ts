@@ -33,9 +33,9 @@ test.describe('Edges', () => {
     });
 
     test('should have source and target nodes', async () => {
-        const source = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
-        const target = await graph.getNodeBySelector('[id$="fork_1"]', ActivityNodeFork);
-        const edge = await graph.getEdgeBySelector('[id$="edge_task_Push_fork_1"]', Edge);
+        const source = await graph.getNode('[id$="task_Push"]', TaskManual);
+        const target = await graph.getNode('[id$="fork_1"]', ActivityNodeFork);
+        const edge = await graph.getEdge('[id$="edge_task_Push_fork_1"]', Edge);
 
         const sourceId = await edge.sourceId();
         expect(sourceId).toBe(await source.idAttr());

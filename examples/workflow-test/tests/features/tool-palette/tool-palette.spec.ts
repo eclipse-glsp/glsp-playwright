@@ -98,10 +98,10 @@ test.describe('The tool palette', () => {
     });
 
     test('should allow creating edges in the graph', async () => {
-        const source = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
-        const target = await graph.getNodeBySelector('[id$="task_ChkWt"]', TaskAutomated);
+        const source = await graph.getNode('[id$="task_Push"]', TaskManual);
+        const target = await graph.getNode('[id$="task_ChkWt"]', TaskAutomated);
 
-        const edges = await graph.waitForCreationOfEdgeType(Edge, async () => {
+        const edges = await graph.waitForCreationOfType(Edge, async () => {
             await toolPalette.waitForVisible();
             const paletteItem = await toolPalette.content.toolElement('Edges', 'Edge');
             await paletteItem.click();
@@ -122,8 +122,8 @@ test.describe('The tool palette', () => {
     });
 
     test('should allow creating new nodes in the graph', async () => {
-        const task = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
-        const nodes = await graph.waitForCreationOfNodeType(TaskManual, async () => {
+        const task = await graph.getNode('[id$="task_Push"]', TaskManual);
+        const nodes = await graph.waitForCreationOfType(TaskManual, async () => {
             const paletteItem = await toolPalette.content.toolElement('Nodes', 'Manual Task');
             await paletteItem.click();
 
@@ -142,7 +142,7 @@ test.describe('The tool palette', () => {
     test('should allow deleting elements in the graph', async () => {
         await toolPalette.toolbar.deletionTool().click();
 
-        const task = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
+        const task = await graph.getNode('[id$="task_Push"]', TaskManual);
         expect(await task.isVisible()).toBeTruthy();
 
         await task.click();

@@ -14,6 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import type { Locator } from 'playwright-core';
+import type { ConstructorT } from '~/types';
 import { NodeMetadata } from '../decorators';
 import type { EdgeSearchOptions } from '../graph.type';
 import { SVGMetadataUtils } from '../svg-metadata-api';
@@ -22,6 +23,10 @@ import { PModelElement, PModelElementConstructor } from './element';
 import type { BothTypedEdge, SourceTypedEdge } from './typed-edge';
 
 export type PNodeConstructor<TElement extends PNode = PNode> = PModelElementConstructor<TElement>;
+
+export function isPNodeConstructor(constructor: ConstructorT): constructor is PNodeConstructor {
+    return constructor.prototype instanceof PNode;
+}
 
 @NodeMetadata({
     type: 'node'
@@ -52,7 +57,7 @@ export class ChildrenAccessor {
                 : this.parent.locate().locator(`> ${SVGMetadataUtils.typeAttrOf(constructor)}`);
         }
 
-        return this.parent.graph.getModelElementByLocator(locator, constructor);
+        return this.parent.graph.getModelElement(locator, constructor);
     }
 
     async allOfType<TElement extends PModelElement>(
@@ -63,7 +68,7 @@ export class ChildrenAccessor {
             ? this.parent.locate().locator(SVGMetadataUtils.typeAttrOf(constructor))
             : this.parent.locate().locator(`> ${SVGMetadataUtils.typeAttrOf(constructor)}`);
 
-        return this.parent.graph.getModelElementsByLocator(childrenLocator, constructor);
+        return this.parent.graph.getModelElements(childrenLocator, constructor);
     }
 }
 

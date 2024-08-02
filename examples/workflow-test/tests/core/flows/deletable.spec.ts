@@ -31,7 +31,7 @@ test.describe('Deletable flow', () => {
     });
 
     test('should delete element', async () => {
-        const task = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
+        const task = await graph.getNode('[id$="task_Push"]', TaskManual);
 
         expect(await task.locate().count()).toBe(1);
         await task.delete();

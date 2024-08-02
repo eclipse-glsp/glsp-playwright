@@ -60,6 +60,10 @@ export async function isEqualLocatorType(locator: Locator, constructor: PModelEl
     return typeAttr !== null && (constructorType === '*' || typeAttr === constructorType);
 }
 
+export function isPModelElementConstructor(constructor: ConstructorT): constructor is PModelElementConstructor {
+    return constructor.prototype instanceof PModelElement;
+}
+
 export interface PModelElementData {
     locator: GLSPLocator;
 }

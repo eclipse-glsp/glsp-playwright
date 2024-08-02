@@ -31,13 +31,13 @@ test.describe('The routing points of an edge', () => {
     });
 
     test('should be accessible', async () => {
-        const edge = await graph.getEdgeBySelector('[id$="edge_task_Push_fork_1"]', Edge);
+        const edge = await graph.getEdge('[id$="edge_task_Push_fork_1"]', Edge);
 
         const routingPoints = edge.routingPoints();
         expect((await routingPoints.points({ wait: false })).length).toBe(0);
         expect((await routingPoints.volatilePoints({ wait: false })).length).toBe(0);
 
-        await graph.waitForCreationOfType(PMetadata.getType(RoutingPoint), async () => {
+        await graph.waitForCreation(PMetadata.getType(RoutingPoint), async () => {
             await edge.click();
         });
 
@@ -46,12 +46,12 @@ test.describe('The routing points of an edge', () => {
     });
 
     test('should have the data kind attribute', async () => {
-        const edge = await graph.getEdgeBySelector('[id$="edge_task_Push_fork_1"]', Edge);
+        const edge = await graph.getEdge('[id$="edge_task_Push_fork_1"]', Edge);
 
         const routingPoints = edge.routingPoints();
         expect((await routingPoints.volatilePoints({ wait: false })).length).toBe(0);
 
-        await graph.waitForCreationOfType(PMetadata.getType(RoutingPoint), async () => {
+        await graph.waitForCreation(PMetadata.getType(RoutingPoint), async () => {
             await edge.click();
         });
 

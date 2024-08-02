@@ -34,7 +34,7 @@ test.describe('The graph', () => {
 
     test.describe('should allow accessing the edge', () => {
         test('by using a selector', async () => {
-            const edge = await graph.getEdgeBySelector('[id$="edge_task_Push_fork_1"]', Edge);
+            const edge = await graph.getEdge('[id$="edge_task_Push_fork_1"]', Edge);
             const task = await edge.sourceOfType(TaskManual);
 
             expect(await (await task.children.label()).textContent()).toBe('Push');

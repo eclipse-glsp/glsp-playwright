@@ -60,3 +60,11 @@ export class GLSPLocator {
         return new GLSPLocator(locator, this.app, this.parent);
     }
 }
+
+export function asLocator(selectorOrLocator: string | Locator, operation: (selector: string) => GLSPLocator): Locator {
+    if (typeof selectorOrLocator === 'string') {
+        return operation(selectorOrLocator).locate();
+    }
+
+    return selectorOrLocator;
+}
