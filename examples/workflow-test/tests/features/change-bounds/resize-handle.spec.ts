@@ -18,6 +18,8 @@ import { WorkflowApp } from '../../../src/app/workflow-app';
 import { TaskManual } from '../../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../../src/graph/workflow.graph';
 
+const elementLabel = 'Push';
+
 test.describe('The resizing handle', () => {
     let app: WorkflowApp;
     let graph: WorkflowGraph;
@@ -31,7 +33,7 @@ test.describe('The resizing handle', () => {
     });
 
     test('should allow resizing', async () => {
-        const task = await graph.getNode('[id$="task_Push"]', TaskManual);
+        const task = await graph.getNodeByLabel(elementLabel, TaskManual);
 
         const oldBounds = await task.bounds();
         const oldTopLeft = oldBounds.position('top_left');
@@ -50,7 +52,7 @@ test.describe('The resizing handle', () => {
     });
 
     test('should show 4 handles', async () => {
-        const task = await graph.getNode('[id$="task_Push"]', TaskManual);
+        const task = await graph.getNodeByLabel(elementLabel, TaskManual);
 
         await graph.waitForCreation(PMetadata.getType(ResizeHandle), async () => {
             await task.click();

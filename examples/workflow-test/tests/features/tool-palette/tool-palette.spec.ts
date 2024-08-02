@@ -21,6 +21,9 @@ import { TaskAutomated } from '../../../src/graph/elements/task-automated.po';
 import { TaskManual } from '../../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../../src/graph/workflow.graph';
 
+const element1Label = 'Push';
+const element2Label = 'ChkWt';
+
 test.describe('The tool palette', () => {
     let app: WorkflowApp;
     let graph: WorkflowGraph;
@@ -98,8 +101,8 @@ test.describe('The tool palette', () => {
     });
 
     test('should allow creating edges in the graph', async () => {
-        const source = await graph.getNode('[id$="task_Push"]', TaskManual);
-        const target = await graph.getNode('[id$="task_ChkWt"]', TaskAutomated);
+        const source = await graph.getNodeByLabel(element1Label, TaskManual);
+        const target = await graph.getNodeByLabel(element2Label, TaskAutomated);
 
         const edges = await graph.waitForCreationOfType(Edge, async () => {
             await toolPalette.waitForVisible();
@@ -122,7 +125,7 @@ test.describe('The tool palette', () => {
     });
 
     test('should allow creating new nodes in the graph', async () => {
-        const task = await graph.getNode('[id$="task_Push"]', TaskManual);
+        const task = await graph.getNodeByLabel(element1Label, TaskManual);
         const nodes = await graph.waitForCreationOfType(TaskManual, async () => {
             const paletteItem = await toolPalette.content.toolElement('Nodes', 'Manual Task');
             await paletteItem.click();
@@ -142,7 +145,7 @@ test.describe('The tool palette', () => {
     test('should allow deleting elements in the graph', async () => {
         await toolPalette.toolbar.deletionTool().click();
 
-        const task = await graph.getNode('[id$="task_Push"]', TaskManual);
+        const task = await graph.getNodeByLabel(element1Label, TaskManual);
         expect(await task.isVisible()).toBeTruthy();
 
         await task.click();

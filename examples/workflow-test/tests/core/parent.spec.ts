@@ -19,6 +19,8 @@ import { LabelHeading } from '../../src/graph/elements/label-heading.po';
 import { TaskManual } from '../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../src/graph/workflow.graph';
 
+const elementLabel = 'Push';
+
 test.describe('The children accessor of a parent element', () => {
     let app: WorkflowApp;
     let graph: WorkflowGraph;
@@ -32,7 +34,7 @@ test.describe('The children accessor of a parent element', () => {
     });
 
     test('should allow to access all elements by using a type', async () => {
-        const task = await graph.getNode('[id$="task_Push"]', TaskManual);
+        const task = await graph.getNodeByLabel(elementLabel, TaskManual);
         const children = task.children;
 
         const labels = await children.allOfType(LabelHeading);
@@ -43,7 +45,7 @@ test.describe('The children accessor of a parent element', () => {
     });
 
     test('should allow to access the element by using a type', async () => {
-        const task = await graph.getNode('[id$="task_Push"]', TaskManual);
+        const task = await graph.getNodeByLabel(elementLabel, TaskManual);
         const children = task.children;
 
         const label = await children.ofType(LabelHeading);
@@ -51,7 +53,7 @@ test.describe('The children accessor of a parent element', () => {
     });
 
     test('should allow to access the element by using a type and a selector', async () => {
-        const task = await graph.getNode('[id$="task_Push"]', TaskManual);
+        const task = await graph.getNodeByLabel(elementLabel, TaskManual);
         const children = task.children;
 
         const label = await children.ofType(LabelHeading, { selector: '[id$="task_Push_label"]' });
@@ -59,7 +61,7 @@ test.describe('The children accessor of a parent element', () => {
     });
 
     test('should allow to use typed elements', async () => {
-        const task = await graph.getNode('[id$="task_Push"]', TaskManual);
+        const task = await graph.getNodeByLabel(elementLabel, TaskManual);
         const children = task.children;
 
         const label = await children.label();

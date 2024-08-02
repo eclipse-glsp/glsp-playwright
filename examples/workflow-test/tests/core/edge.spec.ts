@@ -20,6 +20,8 @@ import { Edge } from '../../src/graph/elements/edge.po';
 import { TaskManual } from '../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../src/graph/workflow.graph';
 
+const elementLabel = 'Push';
+
 test.describe('Edges', () => {
     let app: WorkflowApp;
     let graph: WorkflowGraph;
@@ -33,7 +35,7 @@ test.describe('Edges', () => {
     });
 
     test('should have source and target nodes', async () => {
-        const source = await graph.getNode('[id$="task_Push"]', TaskManual);
+        const source = await graph.getNodeByLabel(elementLabel, TaskManual);
         const target = await graph.getNode('[id$="fork_1"]', ActivityNodeFork);
         const edge = await graph.getEdge('[id$="edge_task_Push_fork_1"]', Edge);
 
