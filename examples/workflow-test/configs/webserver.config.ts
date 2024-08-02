@@ -23,6 +23,10 @@ export function isManagedServer(): boolean {
     return env === undefined || env === 'true';
 }
 
+export function getServerStartCommand(): string | undefined {
+    return getEnv('GLSP_SERVER_START_COMMAND', false);
+}
+
 export function hasRunningServer(config: PlaywrightTestConfig<GLSPPlaywrightOptions>): boolean {
     const webserver = config.webServer;
 
@@ -42,9 +46,11 @@ export function createWebserver(): PlaywrightTestConfig['webServer'] {
         return [];
     }
 
+    const command = getServerStartCommand() ?? `yarn start:server -w -p ${+port}`;
+
     return [
         {
-            command: `yarn start:server -w -p ${+port}`,
+            command: command,
             port: +port,
             reuseExistingServer: !process.env.CI,
             stdout: 'ignore'

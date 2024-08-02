@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 import { SpawnOptionsWithoutStdio, spawnSync } from 'node:child_process';
-import { existsSync, renameSync, rmSync } from 'node:fs';
+import { existsSync, readdirSync, renameSync, rmSync } from 'node:fs';
 import * as path from 'node:path';
 import { cwd } from 'node:process';
 import yargs, { ArgumentsCamelCase, Argv, Omit } from 'yargs';
@@ -35,6 +35,8 @@ interface CloneOptions extends GlobalOptions {
 const clientRepository = 'glsp-client';
 const theiaRepository = 'glsp-theia-integration';
 const vsCodeRepository = 'glsp-vscode-integration';
+const nodeServerRepository = 'glsp-server-node';
+const javaServerRepository = 'glsp-server';
 
 // ========== Functions ======================================================== //
 function repositoryFolder(folder: string, glspRepository: string, ...paths: string[]): string {
@@ -85,7 +87,10 @@ function clone(repository: string, options: CloneOptions): void {
 }
 
 function log(repository: string, options: GlobalOptions): void {
-    exec('git', ['--no-pager', 'log', '-1'], { cwd: repositoryFolder(options.folder, repository) });
+    const repoPath = repositoryFolder(options.folder, repository);
+    if (existsSync(repoPath)) {
+        exec('git', ['--no-pager', 'log', '-1'], { cwd: repositoryFolder(options.folder, repository) });
+    }
 }
 
 function buildClient(options: GlobalOptions): void {
@@ -108,6 +113,14 @@ function buildVSCode(options: GlobalOptions): void {
     }
 }
 
+function buildNodeServer(options: GlobalOptions): void {
+    exec('yarn', [], { cwd: repositoryFolder(options.folder, nodeServerRepository) });
+}
+
+function buildJavaServer(options: GlobalOptions): void {
+    exec('mvn', ['clean', '--batch-mode', 'verify', '-Pm2', '-Pfatjar'], { cwd: repositoryFolder(options.folder, javaServerRepository) });
+}
+
 // ========== CLI ======================================================== //
 /**
  * This script allows to manage the necessary repositories
@@ -125,7 +138,7 @@ async function main(): Promise<void> {
         })
         .command(
             'prepare',
-            'Clones and builds all projects',
+            'Clones and builds all default projects',
             b =>
                 b
                     .options('override', {
@@ -138,27 +151,34 @@ async function main(): Promise<void> {
                         description: 'Protocol to use for cloning',
                         type: 'string',
                         default: 'ssh'
+                    } as const)
+                    .options('serverType', {
+                        choices: ['node', 'java', 'all'],
+                        description: 'GLSP server variant to clone and build',
+                        type: 'string',
+                        default: 'node'
                     } as const),
             argv => {
-                const { folder, override, protocol } = argv;
-                clone(clientRepository, {
-                    folder,
-                    override,
-                    protocol
-                });
-                clone(theiaRepository, {
-                    folder,
-                    override,
-                    protocol
-                });
-                clone(vsCodeRepository, {
-                    folder,
-                    override,
-                    protocol
-                });
+                const serverType = argv.serverType;
+                const options = { folder: argv.folder, override: argv.override, protocol: argv.protocol };
+                clone(clientRepository, options);
+                clone(theiaRepository, options);
+                clone(vsCodeRepository, options);
+                if (serverType === 'node' || serverType === 'all') {
+                    clone(nodeServerRepository, options);
+                }
+                if (serverType === 'java' || serverType === 'all') {
+                    clone(javaServerRepository, options);
+                }
                 buildClient(argv);
                 buildTheia(argv);
                 buildVSCode(argv);
+                if (serverType === 'node' || serverType === 'all') {
+                    buildNodeServer(argv);
+                }
+                if (serverType === 'java' || serverType === 'all') {
+                    buildJavaServer(argv);
+                }
             }
         )
         .command(
@@ -174,6 +194,12 @@ async function main(): Promise<void> {
                     folder
                 });
                 log(vsCodeRepository, {
+                    folder
+                });
+                log(nodeServerRepository, {
+                    folder
+                });
+                log(javaServerRepository, {
                     folder
                 });
             }
@@ -193,7 +219,18 @@ async function main(): Promise<void> {
                 }),
                 buildCommand(argv => {
                     buildClient(argv);
-                })
+                }),
+                builder => {
+                    builder.command(
+                        'url',
+                        'Prints the URL for the workflow standalone example',
+                        () => {},
+                        argv => {
+                            const repoCwd = repositoryFolder(argv.folder, clientRepository);
+                            console.log(`file://${path.resolve(repoCwd, 'examples', 'workflow-standalone', 'app', 'diagram.html')}`);
+                        }
+                    );
+                }
             ])
         )
         .command(
@@ -240,7 +277,92 @@ async function main(): Promise<void> {
                 }),
                 buildCommand(argv => {
                     buildVSCode(argv);
-                })
+                }),
+                builder => {
+                    builder.command(
+                        'vsixPath',
+                        'Prints the path to the VSIX file',
+                        () => {},
+                        argv => {
+                            const { folder } = argv;
+                            const repoCwd = repositoryFolder(folder, vsCodeRepository);
+                            const vsixDir = path.resolve(repoCwd, 'example', 'workflow', 'extension');
+                            const vsixFile = readdirSync(vsixDir).find(file => file.endsWith('.vsix'));
+                            if (vsixFile) {
+                                console.log(path.resolve(vsixDir, vsixFile));
+                            }
+                        }
+                    );
+                }
+            ])
+        )
+        .command(
+            'node-server',
+            'Node server',
+            subCommands([
+                cloneCommand(argv => {
+                    const { folder, branch, override, protocol } = argv;
+                    clone(nodeServerRepository, {
+                        folder,
+                        branch,
+                        override,
+                        protocol
+                    });
+                }),
+                buildCommand(argv => {
+                    buildNodeServer(argv);
+                }),
+                builder => {
+                    builder.command(
+                        'start',
+                        'Start the Workflow node server',
+                        b => b.options('port', { type: 'string', description: 'The server port', default: '8081' }),
+                        argv => {
+                            const { folder, port } = argv;
+                            const repoCwd = repositoryFolder(folder, nodeServerRepository);
+                            exec('node', ['./wf-glsp-server-node.js', '-w', '--port', port], {
+                                cwd: path.resolve(repoCwd, 'examples', 'workflow-server-bundled')
+                            });
+                        }
+                    );
+                }
+            ])
+        )
+        .command(
+            'java-server',
+            'Java server',
+            subCommands([
+                cloneCommand(argv => {
+                    const { folder, branch, override, protocol } = argv;
+                    clone(javaServerRepository, {
+                        folder,
+                        branch,
+                        override,
+                        protocol
+                    });
+                }),
+                buildCommand(argv => {
+                    buildJavaServer(argv);
+                }),
+                builder => {
+                    builder.command(
+                        'start',
+                        'Start the Workflow Java server',
+                        b => b.options('port', { type: 'string', description: 'The server port', default: '8081' }),
+                        argv => {
+                            const { folder, port } = argv;
+                            const repoCwd = repositoryFolder(folder, javaServerRepository);
+                            const targetDir = path.resolve(repoCwd, 'examples', 'org.eclipse.glsp.example.workflow', 'target');
+                            const jarFile = readdirSync(targetDir).find(file => file.endsWith('-glsp.jar'));
+                            if (!jarFile) {
+                                throw new Error('Could not start the server. No jar file found');
+                            }
+                            exec('java', ['-jar', path.resolve(targetDir, jarFile), '--websocket', '-p', port], {
+                                cwd: repositoryFolder(folder, javaServerRepository)
+                            });
+                        }
+                    );
+                }
             ])
         )
         .help('h')
