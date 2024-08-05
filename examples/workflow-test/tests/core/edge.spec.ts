@@ -37,7 +37,7 @@ test.describe('Edges', () => {
     test('should have source and target nodes', async () => {
         const source = await graph.getNodeByLabel(elementLabel, TaskManual);
         const target = await graph.getNode('[id$="fork_1"]', ActivityNodeFork);
-        const edge = await graph.getEdge('[id$="edge_task_Push_fork_1"]', Edge);
+        const edge = await graph.getEdgeBetween(Edge, { sourceNode: source, targetNode: target });
 
         const sourceId = await edge.sourceId();
         expect(sourceId).toBe(await source.idAttr());

@@ -13,9 +13,10 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+import { expect } from '@playwright/test';
 import { Selectable } from '../../extension';
 import { PLabelledElement } from '../../extension/model/labelled/labelled-element.model';
-import { PModelElement, PModelElementConstructor, PNode, PNodeConstructor } from './elements';
+import { PEdge, PEdgeConstructor, PModelElement, PModelElementConstructor, PNode, PNodeConstructor } from './elements';
 import { GLSPGraph } from './graph.po';
 
 /**
@@ -29,11 +30,7 @@ export class GLSPSemanticGraph extends GLSPGraph {
     ): Promise<TElement> {
         const nodes = await this.getNodesByLabel(label, constructor);
 
-        if (nodes.length > 1) {
-            throw new Error('More than one element selected');
-        } else if (nodes.length === 0) {
-            throw new Error('No element selected');
-        }
+        expect(nodes).toHaveLength(1);
 
         return nodes[0];
     }
@@ -53,6 +50,36 @@ export class GLSPSemanticGraph extends GLSPGraph {
         }
 
         return elements;
+    }
+
+    async getEdgeBetween<TElement extends PEdge>(
+        constructor: PEdgeConstructor<TElement>,
+        options: {
+            sourceNode: PNode;
+            targetNode: PNode;
+        }
+    ): Promise<TElement> {
+        const edges = await this.getEdgesOfType(constructor, {
+            sourceSelectorOrLocator: options.sourceNode.locate(),
+            targetSelectorOrLocator: options.targetNode.locate()
+        });
+
+        expect(edges).toHaveLength(1);
+
+        return edges[0];
+    }
+
+    async getEdgesBetween<TElement extends PEdge>(
+        constructor: PEdgeConstructor<TElement>,
+        options: {
+            sourceNode: PEdge;
+            targetNode: PEdge;
+        }
+    ): Promise<TElement[]> {
+        return this.getEdgesOfType(constructor, {
+            sourceSelectorOrLocator: options.sourceNode.locate(),
+            targetSelectorOrLocator: options.targetNode.locate()
+        });
     }
 
     async getSelectedElements<TElement extends PModelElement>(constructor: PModelElementConstructor<TElement>): Promise<TElement[]> {

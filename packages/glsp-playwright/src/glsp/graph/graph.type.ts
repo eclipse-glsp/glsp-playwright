@@ -13,6 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+import type { Locator } from '@playwright/test';
 import type { PEdge } from './elements/edge';
 import type { PModelElement } from './elements/element';
 import type { PNodeConstructor } from './elements/node';
@@ -24,8 +25,8 @@ export interface EdgeConstructorOptions {
 }
 
 export interface EdgeSearchOptions extends EdgeConstructorOptions {
-    sourceSelector?: string;
-    targetSelector?: string;
+    sourceSelectorOrLocator?: string | Locator;
+    targetSelectorOrLocator?: string | Locator;
 }
 
 export type TypedEdge<TElement extends PEdge, TOptions extends EdgeConstructorOptions> = TOptions extends {
@@ -34,10 +35,10 @@ export type TypedEdge<TElement extends PEdge, TOptions extends EdgeConstructorOp
 }
     ? TElement & BothTypedEdge<TSource, TTarget>
     : TOptions extends { sourceConstructor: PNodeConstructor<infer TSource> }
-    ? TElement & SourceTypedEdge<TSource>
-    : TOptions extends { targetConstructor: PNodeConstructor<infer TTarget> }
-    ? TElement & TargetTypedEdge<TTarget>
-    : TElement;
+      ? TElement & SourceTypedEdge<TSource>
+      : TOptions extends { targetConstructor: PNodeConstructor<infer TTarget> }
+        ? TElement & TargetTypedEdge<TTarget>
+        : TElement;
 
 export interface ElementQuery<TElement extends PModelElement> {
     elementType: string;

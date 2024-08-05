@@ -61,9 +61,9 @@ export class GLSPLocator {
     }
 }
 
-export function asLocator(selectorOrLocator: string | Locator, operation: (selector: string) => GLSPLocator): Locator {
+export function asLocator(selectorOrLocator: string | Locator, operation: (selector: string) => Locator): Locator {
     if (typeof selectorOrLocator === 'string') {
-        return operation(selectorOrLocator).locate();
+        return operation(selectorOrLocator);
     }
 
     return selectorOrLocator;

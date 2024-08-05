@@ -13,6 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+import { expect } from '@playwright/test';
 import type { Locator } from 'playwright-core';
 import type { ConstructorT } from '~/types';
 import { NodeMetadata } from '../decorators';
@@ -104,6 +105,17 @@ export class EdgesAccessor<TNode extends PNode> {
         this.sourceConstructor = Object.getPrototypeOf(node).constructor;
     }
 
+    async outgoingEdgeOfType<TElement extends PEdge, TOptions extends EdgesAccessor.OutgoingEdgesSearchOptions>(
+        constructor: PEdgeConstructor<TElement>,
+        options?: TOptions
+    ): Promise<EdgesAccessor.SourceFixTypedEdge<TElement, TNode, TOptions>> {
+        const edges = await this.outgoingEdgesOfType(constructor, options);
+
+        expect(edges).toHaveLength(1);
+
+        return edges[0];
+    }
+
     async outgoingEdgesOfType<TElement extends PEdge, TOptions extends EdgesAccessor.OutgoingEdgesSearchOptions>(
         constructor: PEdgeConstructor<TElement>,
         options?: TOptions
@@ -113,9 +125,20 @@ export class EdgesAccessor<TNode extends PNode> {
 
         return graph.getEdgesOfType(constructor, {
             ...options,
-            sourceSelector: `#${sourceId}`,
+            sourceSelectorOrLocator: `#${sourceId}`,
             sourceConstructor: this.sourceConstructor
         }) as any;
+    }
+
+    async incomingEdgeOfType<TElement extends PEdge, TOptions extends EdgesAccessor.IncomingEdgesSearchOptions>(
+        constructor: PEdgeConstructor<TElement>,
+        options?: TOptions
+    ): Promise<EdgesAccessor.TargetFixTypedEdge<TElement, TNode, TOptions>> {
+        const edges = await this.incomingEdgesOfType(constructor, options);
+
+        expect(edges).toHaveLength(1);
+
+        return edges[0];
     }
 
     async incomingEdgesOfType<TElement extends PEdge, TOptions extends EdgesAccessor.IncomingEdgesSearchOptions>(
@@ -127,7 +150,7 @@ export class EdgesAccessor<TNode extends PNode> {
 
         return graph.getEdgesOfType(constructor, {
             ...options,
-            targetSelector: `#${sourceId}`,
+            targetSelectorOrLocator: `#${sourceId}`,
             targetConstructor: this.sourceConstructor
         }) as any;
     }

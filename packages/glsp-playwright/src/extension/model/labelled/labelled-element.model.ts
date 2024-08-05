@@ -20,3 +20,9 @@
 export interface PLabelledElement {
     readonly label: string | Promise<string>;
 }
+
+export namespace PLabelledElement {
+    export function is(element: any): element is PLabelledElement {
+        return element && 'label' in element;
+    }
+}

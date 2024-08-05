@@ -18,6 +18,7 @@ import { extractMetaTree } from '~/debug';
 import { GLSPLocator, Locateable } from '~/remote';
 import type { ConstructorT } from '~/types/constructor';
 import { definedGLSPAttr } from '~/utils/ts.utils';
+import { PLabelledElement } from '../../../extension';
 import { ModelElementMetadata, PMetadata } from '../decorators';
 import { SVGMetadata } from '../svg-metadata-api';
 
@@ -32,9 +33,16 @@ export async function assertEqualType(element: PModelElement): Promise<void> {
             console.error(await locator.evaluate(elem => elem.outerHTML));
         }
 
+        let extra = `Id: ${await element.idAttr()}`;
+        if (PLabelledElement.is(element)) {
+            const label = await element.label;
+            extra = `\nLabel: ${label}`;
+        }
+
         throw Error(
             `Assertion failed. Locator did not find single element in the DOM. 
-            It found ${count} elements for type ${element._metadata.type}. 
+            It found ${count} elements for type ${element._metadata.type}.
+            ${extra} 
             Executed query: ${element.locate()}`
         );
     }

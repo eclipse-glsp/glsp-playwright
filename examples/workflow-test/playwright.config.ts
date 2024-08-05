@@ -16,9 +16,10 @@
 import 'reflect-metadata';
 
 import type { GLSPPlaywrightOptions } from '@eclipse-glsp/glsp-playwright';
-import type { PlaywrightTestConfig } from '@playwright/test';
+import { devices, type PlaywrightTestConfig } from '@playwright/test';
 import * as dotenv from 'dotenv';
 import { createStandaloneProject, createTheiaProject, createVSCodeProject } from './configs/project.config';
+import { getEnv } from './configs/utils';
 import { createWebserver, hasRunningServer } from './configs/webserver.config';
 
 dotenv.config();
@@ -40,7 +41,20 @@ const config: PlaywrightTestConfig<GLSPPlaywrightOptions> = {
         trace: 'on-first-retry'
     },
     webServer: createWebserver(),
-    projects: []
+    projects: [
+        // Required for VSCode Extension tests
+        {
+            name: 'standalone',
+            testMatch: ['**/*.spec.js'],
+            use: {
+                ...devices['Desktop Chrome'],
+                integrationOptions: {
+                    type: 'Standalone',
+                    url: getEnv('STANDALONE_URL')!
+                }
+            }
+        }
+    ]
 };
 
 if (hasRunningServer(config)) {

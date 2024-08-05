@@ -54,7 +54,7 @@ export class GLSPGraph extends Locateable {
         selectorOrLocator: string | Locator,
         constructor: PModelElementConstructor<TElement>
     ): Promise<TElement> {
-        const locator = asLocator(selectorOrLocator, selector => this.locator.child(selector));
+        const locator = asLocator(selectorOrLocator, selector => this.locator.child(selector).locate());
         const element = new constructor({ locator: this.locator.override(locator) });
         await assertEqualType(element);
         await element.snapshot();
@@ -69,7 +69,7 @@ export class GLSPGraph extends Locateable {
         selectorOrLocator: string | Locator,
         constructor: PModelElementConstructor<TElement>
     ): Promise<TElement[]> {
-        const locator = asLocator(selectorOrLocator, selector => this.locator.child(selector));
+        const locator = asLocator(selectorOrLocator, selector => this.locator.child(selector).locate());
         const elements: TElement[] = [];
 
         for await (const childLocator of await locator.all()) {
@@ -89,7 +89,7 @@ export class GLSPGraph extends Locateable {
     }
 
     async getNode<TElement extends PNode>(selectorOrLocator: string | Locator, constructor: PNodeConstructor<TElement>): Promise<TElement> {
-        const locator = asLocator(selectorOrLocator, selector => this.locator.child(selector));
+        const locator = asLocator(selectorOrLocator, selector => this.locator.child(selector).locate());
         const element = new constructor({
             locator: this.locator.override(locator.and(this.locate().locator(SVGMetadataUtils.typeAttrOf(constructor))))
         });
@@ -105,7 +105,7 @@ export class GLSPGraph extends Locateable {
         selectorOrLocator: string | Locator,
         constructor: PNodeConstructor<TElement>
     ): Promise<TElement[]> {
-        const locator = asLocator(selectorOrLocator, selector => this.locator.child(selector));
+        const locator = asLocator(selectorOrLocator, selector => this.locator.child(selector).locate());
         const elements: TElement[] = [];
 
         for await (const childLocator of await locator.all()) {
@@ -125,7 +125,7 @@ export class GLSPGraph extends Locateable {
         constructor: PEdgeConstructor<TElement>,
         options?: TOptions
     ): Promise<TypedEdge<TElement, TOptions>> {
-        const locator = asLocator(selectorOrLocator, selector => this.locator.child(selector));
+        const locator = asLocator(selectorOrLocator, selector => this.locator.child(selector).locate());
         const element = new constructor({
             locator: this.locator.override(locator.and(this.locate().locator(SVGMetadataUtils.typeAttrOf(constructor))))
         });
@@ -164,15 +164,17 @@ export class GLSPGraph extends Locateable {
                     );
                 }
 
-                if (options?.sourceSelector) {
+                if (options?.sourceSelectorOrLocator) {
+                    const sourceLocator = asLocator(options.sourceSelectorOrLocator, selector => this.locate().locator(selector));
                     const sourceId = await element.sourceId();
-                    const expectedId = await definedAttr(this.locate().locator(options.sourceSelector), 'id');
+                    const expectedId = await definedAttr(sourceLocator, 'id');
                     sourceChecks.push(expectedId.includes(sourceId));
                 }
 
-                if (options?.targetSelector) {
+                if (options?.targetSelectorOrLocator) {
+                    const targetLocator = asLocator(options.targetSelectorOrLocator, selector => this.locate().locator(selector));
                     const targetId = await element.targetId();
-                    const expectedId = await definedAttr(this.locate().locator(options.targetSelector), 'id');
+                    const expectedId = await definedAttr(targetLocator, 'id');
                     sourceChecks.push(expectedId.includes(targetId));
                 }
 
