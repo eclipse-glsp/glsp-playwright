@@ -13,15 +13,9 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import {
-    MarkerNavigator,
-    StandaloneMarkerNavigator,
-    TheiaMarkerNavigator,
-    createParameterizedIntegrationData,
-    expect,
-    test
-} from '@eclipse-glsp/glsp-playwright/';
+import { MarkerNavigator, StandaloneMarkerNavigator, TheiaMarkerNavigator, expect, test } from '@eclipse-glsp/glsp-playwright/';
 import { skipIntegration } from '@eclipse-glsp/glsp-playwright/src/test';
+import { IntegrationVariable } from '@eclipse-glsp/glsp-playwright/src/test/dynamic-variable';
 import { WorkflowApp } from '../../../src/app/workflow-app';
 import { TaskAutomated } from '../../../src/graph/elements/task-automated.po';
 import { WorkflowGraph } from '../../../src/graph/workflow.graph';
@@ -47,24 +41,24 @@ test.describe('The marker navigator', () => {
             integration
         });
         graph = app.graph;
-        navigator = createParameterizedIntegrationData<() => MarkerNavigator>({
-            default: () => {
-                throw new Error('Integration not supported for marker navigator');
+        const navigatorProvider = new IntegrationVariable({
+            value: {
+                Standalone: new StandaloneMarkerNavigator(app),
+                Theia: new TheiaMarkerNavigator(app)
             },
-            override: {
-                Standalone: () => new StandaloneMarkerNavigator(app),
-                Theia: () => new TheiaMarkerNavigator(app)
-            }
-        })[integration.type]();
+            integration
+        });
+
+        navigator = navigatorProvider.get();
 
         await navigator.trigger();
     });
 
     // VSCode has no support for navigation
-    test.skip(({ integrationOptions }) => skipIntegration(integrationOptions, 'VSCode'));
+    test.skip(({ integrationOptions }) => skipIntegration(integrationOptions, 'VSCode'), 'Not supported');
 
     test('should navigate to the first element', async ({ integrationOptions }) => {
-        test.skip(skipIntegration(integrationOptions, 'VSCode'));
+        test.skip(skipIntegration(integrationOptions, 'VSCode'), 'Not supported');
 
         await navigator.navigateForward();
         await app.page.pause();

@@ -23,37 +23,64 @@ import {
     test
 } from '@eclipse-glsp/glsp-playwright/';
 import { PLabelledElement } from '@eclipse-glsp/glsp-playwright/src/extension';
+import { ServerVariable } from '@eclipse-glsp/glsp-playwright/src/test/dynamic-variable';
 import { dedent } from 'ts-dedent';
 import { WorkflowApp } from '../../../src/app/workflow-app';
 import { TaskAutomated } from '../../../src/graph/elements/task-automated.po';
 import { TaskManual } from '../../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../../src/graph/workflow.graph';
+import { GLSP_SERVER_TYPE_JAVA, GLSP_SERVER_TYPE_NODE } from '../../../src/server';
 
 const manualLabel = 'Push';
-const expectedManualPopupText = dedent`Push
-Type: manual
-Duration: undefined
-Reference: undefined
+const expectedManualPopupText = new ServerVariable({
+    value: {
+        [GLSP_SERVER_TYPE_NODE]: dedent`Push
+        Type: manual
+        Duration: undefined
+        Reference: undefined
+        
+        `,
+        [GLSP_SERVER_TYPE_JAVA]: dedent`Push
 
-`;
+        Type: manual
+        Duration: 0
+        Reference: null
+        
+        `
+    }
+});
+
 const automatedLabel = 'ChkWt';
-const expectedAutomatedPopupText = dedent`ChkWt
-Type: automated
-Duration: undefined
-Reference: undefined
+const expectedAutomatedPopupText = new ServerVariable({
+    value: {
+        [GLSP_SERVER_TYPE_NODE]: dedent`ChkWt
+        Type: automated
+        Duration: undefined
+        Reference: undefined
+        
+        `,
+        [GLSP_SERVER_TYPE_JAVA]: dedent`ChkWt
 
-`;
+        Type: automated
+        Duration: 0
+        Reference: null
+        
+        `
+    }
+});
 
 test.describe('The popup', () => {
     let app: WorkflowApp;
     let graph: WorkflowGraph;
 
-    test.beforeEach(async ({ integration }) => {
+    test.beforeEach(async ({ integration, glspServer }) => {
         app = new WorkflowApp({
             type: 'integration',
-            integration
+            integration: integration
         });
         graph = app.graph;
+        expectedManualPopupText.setServer(glspServer);
+        expectedAutomatedPopupText.setServer(glspServer);
     });
 
     test('should be shown on hovering a task manual', async () => {
@@ -65,7 +92,7 @@ test.describe('The popup', () => {
         await expect(app.popup.locate()).toBeVisible();
 
         const popup = task.popup();
-        expect(await popup.innerText()).toBe(expectedManualPopupText);
+        expect(await popup.innerText()).toBe(expectedManualPopupText.get());
     });
 
     test('should allow to access the text directly in elements', async () => {
@@ -73,13 +100,13 @@ test.describe('The popup', () => {
         await expect(app.popup.locate()).toBeHidden();
         const text = await task.popupText();
         await expect(app.popup.locate()).toBeVisible();
-        expect(text).toBe(expectedManualPopupText);
+        expect(text).toBe(expectedManualPopupText.get());
     });
 
     test.describe('should be closed on', () => {
         test('escape', async () => {
             await app.graph.focus();
-            await assertPopup(app, manualLabel, TaskManual, expectedManualPopupText);
+            await assertPopup(app, manualLabel, TaskManual, expectedManualPopupText.get());
 
             await app.page.keyboard.press('Escape');
             await app.popup.waitForHidden();
@@ -88,15 +115,15 @@ test.describe('The popup', () => {
         });
 
         test('new hover', async () => {
-            await assertPopup(app, manualLabel, TaskManual, expectedManualPopupText);
+            await assertPopup(app, manualLabel, TaskManual, expectedManualPopupText.get());
 
             await app.popup.close();
 
-            await assertPopup(app, automatedLabel, TaskAutomated, expectedAutomatedPopupText);
+            await assertPopup(app, automatedLabel, TaskAutomated, expectedAutomatedPopupText.get());
         });
 
         test('mouse moved away', async () => {
-            await assertPopup(app, manualLabel, TaskManual, expectedManualPopupText);
+            await assertPopup(app, manualLabel, TaskManual, expectedManualPopupText.get());
 
             const bounds = await app.graph.bounds();
             await bounds.position('middle_center').move();
@@ -106,7 +133,7 @@ test.describe('The popup', () => {
         });
 
         test('focus lost', async () => {
-            const task = await assertPopup(app, manualLabel, TaskManual, expectedManualPopupText);
+            const task = await assertPopup(app, manualLabel, TaskManual, expectedManualPopupText.get());
 
             await app.graph.locate().click();
             await app.popup.waitForHidden();
@@ -116,7 +143,7 @@ test.describe('The popup', () => {
 
         test('context menu', async ({ integrationOptions }) => {
             test.skip(skipNonIntegration(integrationOptions, 'Theia'), 'Only within Theia supported');
-            await assertPopup(app, manualLabel, TaskManual, expectedManualPopupText);
+            await assertPopup(app, manualLabel, TaskManual, expectedManualPopupText.get());
 
             await app.contextMenu.open();
             await app.popup.waitForHidden();
@@ -125,7 +152,7 @@ test.describe('The popup', () => {
         });
 
         test('center command', async ({ integration }) => {
-            await assertPopup(app, manualLabel, TaskManual, expectedManualPopupText);
+            await assertPopup(app, manualLabel, TaskManual, expectedManualPopupText.get());
             await graph.focus();
             await runInIntegration(
                 integration,
@@ -143,7 +170,7 @@ test.describe('The popup', () => {
         });
 
         test('fit to screen command', async ({ integration }) => {
-            await assertPopup(app, manualLabel, TaskManual, expectedManualPopupText);
+            await assertPopup(app, manualLabel, TaskManual, expectedManualPopupText.get());
             await graph.focus();
             await runInIntegration(
                 integration,
@@ -161,7 +188,7 @@ test.describe('The popup', () => {
         });
 
         test('layout command', async ({ integration }) => {
-            await assertPopup(app, manualLabel, TaskManual, expectedManualPopupText);
+            await assertPopup(app, manualLabel, TaskManual, expectedManualPopupText.get());
             await graph.focus();
             await runInIntegration(
                 integration,
