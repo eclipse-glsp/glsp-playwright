@@ -43,24 +43,20 @@ function repositoryFolder(folder: string, glspRepository: string, ...paths: stri
     return path.resolve(`${folder}/${glspRepository}`, ...paths);
 }
 
-function exec(command: string, args: readonly string[], options?: SpawnOptionsWithoutStdio): boolean {
+/**
+ * Custom function to execute a command. Similar to `exec` but with better logging.
+ */
+function execute(command: string, args: readonly string[], options?: SpawnOptionsWithoutStdio): boolean {
     console.log(`[Execute][${options?.cwd ?? '.'}] ${command} ${args.join(' ')}`);
-    try {
-        const result = spawnSync(command, args, {
-            encoding: 'utf-8',
-            stdio: 'inherit',
-            ...options
-        });
-        if (result.error) {
-            console.error(result.error);
-            return false;
-        }
-        return true;
-    } catch (error) {
-        console.error(error);
+    const spawn = spawnSync(command, args, {
+        encoding: 'utf-8',
+        stdio: ['inherit', 'inherit', 'pipe'],
+        ...options
+    });
+    if (spawn.status !== 0) {
+        throw spawn.stderr;
     }
-
-    return false;
+    return true;
 }
 
 function clone(repository: string, options: CloneOptions): void {
@@ -83,42 +79,44 @@ function clone(repository: string, options: CloneOptions): void {
 
     const remote =
         options.protocol === 'ssh' ? `git@github.com:eclipse-glsp/${repository}.git` : `https://github.com/eclipse-glsp/${repository}.git`;
-    exec('git', ['clone', remote, ...branch, destination]);
+    execute('git', ['clone', remote, ...branch, destination]);
 }
 
 function log(repository: string, options: GlobalOptions): void {
     const repoPath = repositoryFolder(options.folder, repository);
     if (existsSync(repoPath)) {
-        exec('git', ['--no-pager', 'log', '-1'], { cwd: repositoryFolder(options.folder, repository) });
+        execute('git', ['--no-pager', 'log', '-1'], { cwd: repositoryFolder(options.folder, repository) });
     }
 }
 
 function buildClient(options: GlobalOptions): void {
-    exec('yarn', [], { cwd: repositoryFolder(options.folder, clientRepository) });
+    execute('yarn', [], { cwd: repositoryFolder(options.folder, clientRepository) });
 }
 
 function buildTheia(options: GlobalOptions): void {
-    if (exec('yarn', [], { cwd: repositoryFolder(options.folder, theiaRepository) })) {
-        exec('yarn', ['browser', 'build'], { cwd: repositoryFolder(options.folder, theiaRepository) });
+    if (execute('yarn', [], { cwd: repositoryFolder(options.folder, theiaRepository) })) {
+        execute('yarn', ['browser', 'build'], { cwd: repositoryFolder(options.folder, theiaRepository) });
     }
 }
 
 function buildVSCode(options: GlobalOptions): void {
     const repoCwd = repositoryFolder(options.folder, vsCodeRepository);
-    if (exec('yarn', [], { cwd: repoCwd })) {
+    if (execute('yarn', [], { cwd: repoCwd })) {
         // Lerna fails to execute those commands as we have a repo within a repo
-        exec('yarn', ['build'], { cwd: path.resolve(repoCwd, 'example', 'workflow', 'webview') });
-        exec('yarn', ['workflow', 'build'], { cwd: path.resolve(repoCwd) });
-        exec('yarn', ['workflow', 'package'], { cwd: repoCwd });
+        execute('yarn', ['build'], { cwd: path.resolve(repoCwd, 'example', 'workflow', 'webview') });
+        execute('yarn', ['workflow', 'build'], { cwd: path.resolve(repoCwd) });
+        execute('yarn', ['workflow', 'package'], { cwd: repoCwd });
     }
 }
 
 function buildNodeServer(options: GlobalOptions): void {
-    exec('yarn', [], { cwd: repositoryFolder(options.folder, nodeServerRepository) });
+    execute('yarn', [], { cwd: repositoryFolder(options.folder, nodeServerRepository) });
 }
 
 function buildJavaServer(options: GlobalOptions): void {
-    exec('mvn', ['clean', '--batch-mode', 'verify', '-Pm2', '-Pfatjar'], { cwd: repositoryFolder(options.folder, javaServerRepository) });
+    execute('mvn', ['clean', '--batch-mode', 'verify', '-Pm2', '-Pfatjar'], {
+        cwd: repositoryFolder(options.folder, javaServerRepository)
+    });
 }
 
 // ========== CLI ======================================================== //
@@ -256,7 +254,7 @@ async function main(): Promise<void> {
                         () => {},
                         argv => {
                             const { folder } = argv;
-                            exec('yarn', ['browser', 'start:ws:debug'], { cwd: repositoryFolder(folder, theiaRepository) });
+                            execute('yarn', ['browser', 'start:ws:debug'], { cwd: repositoryFolder(folder, theiaRepository) });
                         }
                     );
                 }
@@ -320,7 +318,7 @@ async function main(): Promise<void> {
                         argv => {
                             const { folder, port } = argv;
                             const repoCwd = repositoryFolder(folder, nodeServerRepository);
-                            exec('node', ['./wf-glsp-server-node.js', '-w', '--port', port], {
+                            execute('node', ['./wf-glsp-server-node.js', '-w', '--port', port], {
                                 cwd: path.resolve(repoCwd, 'examples', 'workflow-server-bundled')
                             });
                         }
@@ -357,7 +355,7 @@ async function main(): Promise<void> {
                             if (!jarFile) {
                                 throw new Error('Could not start the server. No jar file found');
                             }
-                            exec('java', ['-jar', path.resolve(targetDir, jarFile), '--websocket', '-p', port], {
+                            execute('java', ['-jar', path.resolve(targetDir, jarFile), '--websocket', '-p', port], {
                                 cwd: repositoryFolder(folder, javaServerRepository)
                             });
                         }
@@ -366,6 +364,7 @@ async function main(): Promise<void> {
             ])
         )
         .help('h')
+        .strict()
         .demandCommand(1)
         .parse();
 }
@@ -421,4 +420,8 @@ function buildCommand(handler: (argv: BuildCommandArgv) => void) {
     };
 }
 
-main().catch(console.error);
+main().catch(error => {
+    console.error('=== An error occurred ===');
+    console.error(error);
+    process.exit(1);
+});
