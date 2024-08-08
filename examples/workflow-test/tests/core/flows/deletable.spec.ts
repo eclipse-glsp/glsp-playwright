@@ -18,6 +18,8 @@ import { WorkflowApp } from '../../../src/app/workflow-app';
 import { TaskManual } from '../../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../../src/graph/workflow.graph';
 
+const elementLabel = 'Push';
+
 test.describe('Deletable flow', () => {
     let app: WorkflowApp;
     let graph: WorkflowGraph;
@@ -31,7 +33,7 @@ test.describe('Deletable flow', () => {
     });
 
     test('should delete element', async () => {
-        const task = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
+        const task = await graph.getNodeByLabel(elementLabel, TaskManual);
 
         expect(await task.locate().count()).toBe(1);
         await task.delete();

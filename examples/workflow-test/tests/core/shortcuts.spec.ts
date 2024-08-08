@@ -18,6 +18,8 @@ import { WorkflowApp } from '../../src/app/workflow-app';
 import { TaskManual } from '../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../src/graph/workflow.graph';
 
+const elementLabel = 'Push';
+
 test.describe('Shortcuts', () => {
     let app: WorkflowApp;
     let graph: WorkflowGraph;
@@ -31,7 +33,7 @@ test.describe('Shortcuts', () => {
     });
 
     test('should allow deleting the element in the graph', async ({ integration }) => {
-        const task = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
+        const task = await graph.getNodeByLabel(elementLabel, TaskManual);
         expect(await task.isVisible()).toBeTruthy();
 
         await task.click();

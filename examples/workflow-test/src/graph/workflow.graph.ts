@@ -13,18 +13,22 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { GLSPSemanticGraph, PNode, PNodeConstructor, waitForFunction } from '@eclipse-glsp/glsp-playwright/';
+import { GLSPSemanticGraph, waitForFunction } from '@eclipse-glsp/glsp-playwright/';
+import { isPNodeConstructor, PModelElement, PModelElementConstructor } from '@eclipse-glsp/glsp-playwright/src/glsp';
 
 export class WorkflowGraph extends GLSPSemanticGraph {
-    override async waitForCreationOfNodeType<TElement extends PNode>(
-        constructor: PNodeConstructor<TElement>,
+    override async waitForCreationOfType<TElement extends PModelElement>(
+        constructor: PModelElementConstructor<TElement>,
         creator: () => Promise<void>
     ): Promise<TElement[]> {
-        const elements = await super.waitForCreationOfNodeType(constructor, creator);
+        const elements = await super.waitForCreationOfType(constructor, creator);
 
-        await waitForFunction(async () =>
-            elements.every(element => element.locate().evaluate(node => node?.classList.contains('selected')))
-        );
+        if (isPNodeConstructor(constructor)) {
+            await waitForFunction(async () =>
+                elements.every(element => element.locate().evaluate(node => node?.classList.contains('selected')))
+            );
+        }
+
         return elements;
     }
 }

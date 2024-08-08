@@ -20,6 +20,8 @@ import { Edge } from '../../src/graph/elements/edge.po';
 import { TaskManual } from '../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../src/graph/workflow.graph';
 
+const elementLabel = 'Push';
+
 test.describe('Edges', () => {
     let app: WorkflowApp;
     let graph: WorkflowGraph;
@@ -33,9 +35,9 @@ test.describe('Edges', () => {
     });
 
     test('should have source and target nodes', async () => {
-        const source = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
-        const target = await graph.getNodeBySelector('[id$="fork_1"]', ActivityNodeFork);
-        const edge = await graph.getEdgeBySelector('[id$="edge_task_Push_fork_1"]', Edge);
+        const source = await graph.getNodeByLabel(elementLabel, TaskManual);
+        const target = await graph.getNode('[id$="fork_1"]', ActivityNodeFork);
+        const edge = await graph.getEdgeBetween(Edge, { sourceNode: source, targetNode: target });
 
         const sourceId = await edge.sourceId();
         expect(sourceId).toBe(await source.idAttr());

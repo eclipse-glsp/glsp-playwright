@@ -16,6 +16,7 @@
 import { PMetadata, RoutingPoint, expect, test } from '@eclipse-glsp/glsp-playwright/';
 import { WorkflowApp } from '../../../src/app/workflow-app';
 import { Edge } from '../../../src/graph/elements/edge.po';
+import { TaskManual } from '../../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../../src/graph/workflow.graph';
 
 test.describe('The routing points of an edge', () => {
@@ -31,13 +32,14 @@ test.describe('The routing points of an edge', () => {
     });
 
     test('should be accessible', async () => {
-        const edge = await graph.getEdgeBySelector('[id$="edge_task_Push_fork_1"]', Edge);
+        const node = await graph.getNodeByLabel('Push', TaskManual);
+        const edge = await node.edges().outgoingEdgeOfType(Edge);
 
         const routingPoints = edge.routingPoints();
         expect((await routingPoints.points({ wait: false })).length).toBe(0);
         expect((await routingPoints.volatilePoints({ wait: false })).length).toBe(0);
 
-        await graph.waitForCreationOfType(PMetadata.getType(RoutingPoint), async () => {
+        await graph.waitForCreation(PMetadata.getType(RoutingPoint), async () => {
             await edge.click();
         });
 
@@ -46,12 +48,13 @@ test.describe('The routing points of an edge', () => {
     });
 
     test('should have the data kind attribute', async () => {
-        const edge = await graph.getEdgeBySelector('[id$="edge_task_Push_fork_1"]', Edge);
+        const node = await graph.getNodeByLabel('Push', TaskManual);
+        const edge = await node.edges().outgoingEdgeOfType(Edge);
 
         const routingPoints = edge.routingPoints();
         expect((await routingPoints.volatilePoints({ wait: false })).length).toBe(0);
 
-        await graph.waitForCreationOfType(PMetadata.getType(RoutingPoint), async () => {
+        await graph.waitForCreation(PMetadata.getType(RoutingPoint), async () => {
             await edge.click();
         });
 

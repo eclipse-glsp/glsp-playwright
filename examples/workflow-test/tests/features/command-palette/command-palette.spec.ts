@@ -20,6 +20,9 @@ import { TaskAutomated } from '../../../src/graph/elements/task-automated.po';
 import { TaskManual } from '../../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../../src/graph/workflow.graph';
 
+const element1Label = 'Push';
+const element2Label = 'ChkWt';
+
 test.describe('The command palette', () => {
     let app: WorkflowApp;
     let graph: WorkflowGraph;
@@ -75,7 +78,7 @@ test.describe('The command palette', () => {
         test('should allow to confirm suggestions', async () => {
             const before = await graph.getNodesOfType(TaskManual);
 
-            await graph.waitForCreationOfNodeType(TaskManual, async () => {
+            await graph.waitForCreationOfType(TaskManual, async () => {
                 await globalCommandPalette.open();
                 await globalCommandPalette.search('Create');
                 await globalCommandPalette.confirm('Create Manual Task');
@@ -94,7 +97,7 @@ test.describe('The command palette', () => {
         });
 
         test('should allow creating new elements in the diagram', async () => {
-            const nodes = await graph.waitForCreationOfNodeType(TaskManual, async () => {
+            const nodes = await graph.waitForCreationOfType(TaskManual, async () => {
                 const command = await app.globalCommandPalette;
                 await command.open();
                 await command.search('Create Manual Task', { confirm: true });
@@ -111,7 +114,7 @@ test.describe('The command palette', () => {
 
     test.describe('in the element context', () => {
         test('should allow to search suggestions', async () => {
-            const task = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
+            const task = await graph.getNodeByLabel(element1Label, TaskManual);
 
             const elementCommandPalette = await task.commandPalette();
             await elementCommandPalette.open();
@@ -179,9 +182,9 @@ test.describe('The command palette', () => {
         });
 
         test('should allow creating new elements in the diagram', async () => {
-            const task = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
+            const task = await graph.getNodeByLabel(element1Label, TaskManual);
 
-            const nodes = await graph.waitForCreationOfNodeType(TaskManual, async () => {
+            const nodes = await graph.waitForCreationOfType(TaskManual, async () => {
                 const command = task.commandPalette();
                 await command.open();
                 await command.search('Create Manual Task', { confirm: true });
@@ -196,10 +199,10 @@ test.describe('The command palette', () => {
         });
 
         test('should allow creating edges in the graph', async () => {
-            const source = await graph.getNodeBySelector('[id$="task_Push"]', TaskManual);
-            const target = await graph.getNodeBySelector('[id$="task_ChkWt"]', TaskAutomated);
+            const source = await graph.getNodeByLabel(element1Label, TaskManual);
+            const target = await graph.getNodeByLabel(element2Label, TaskAutomated);
 
-            const edges = await graph.waitForCreationOfEdgeType(Edge, async () => {
+            const edges = await graph.waitForCreationOfType(Edge, async () => {
                 const command = source.commandPalette();
                 await command.open();
 

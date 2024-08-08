@@ -13,7 +13,9 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+import { expect } from '@playwright/test';
 import type { Locator } from 'playwright-core';
+import type { ConstructorT } from '~/types';
 import { NodeMetadata } from '../decorators';
 import type { EdgeSearchOptions } from '../graph.type';
 import { SVGMetadataUtils } from '../svg-metadata-api';
@@ -22,6 +24,10 @@ import { PModelElement, PModelElementConstructor } from './element';
 import type { BothTypedEdge, SourceTypedEdge } from './typed-edge';
 
 export type PNodeConstructor<TElement extends PNode = PNode> = PModelElementConstructor<TElement>;
+
+export function isPNodeConstructor(constructor: ConstructorT): constructor is PNodeConstructor {
+    return constructor.prototype instanceof PNode;
+}
 
 @NodeMetadata({
     type: 'node'
@@ -52,7 +58,7 @@ export class ChildrenAccessor {
                 : this.parent.locate().locator(`> ${SVGMetadataUtils.typeAttrOf(constructor)}`);
         }
 
-        return this.parent.graph.getModelElementByLocator(locator, constructor);
+        return this.parent.graph.getModelElement(locator, constructor);
     }
 
     async allOfType<TElement extends PModelElement>(
@@ -63,7 +69,7 @@ export class ChildrenAccessor {
             ? this.parent.locate().locator(SVGMetadataUtils.typeAttrOf(constructor))
             : this.parent.locate().locator(`> ${SVGMetadataUtils.typeAttrOf(constructor)}`);
 
-        return this.parent.graph.getModelElementsByLocator(childrenLocator, constructor);
+        return this.parent.graph.getModelElements(childrenLocator, constructor);
     }
 }
 
@@ -99,6 +105,17 @@ export class EdgesAccessor<TNode extends PNode> {
         this.sourceConstructor = Object.getPrototypeOf(node).constructor;
     }
 
+    async outgoingEdgeOfType<TElement extends PEdge, TOptions extends EdgesAccessor.OutgoingEdgesSearchOptions>(
+        constructor: PEdgeConstructor<TElement>,
+        options?: TOptions
+    ): Promise<EdgesAccessor.SourceFixTypedEdge<TElement, TNode, TOptions>> {
+        const edges = await this.outgoingEdgesOfType(constructor, options);
+
+        expect(edges).toHaveLength(1);
+
+        return edges[0];
+    }
+
     async outgoingEdgesOfType<TElement extends PEdge, TOptions extends EdgesAccessor.OutgoingEdgesSearchOptions>(
         constructor: PEdgeConstructor<TElement>,
         options?: TOptions
@@ -108,9 +125,20 @@ export class EdgesAccessor<TNode extends PNode> {
 
         return graph.getEdgesOfType(constructor, {
             ...options,
-            sourceSelector: `#${sourceId}`,
+            sourceSelectorOrLocator: `#${sourceId}`,
             sourceConstructor: this.sourceConstructor
         }) as any;
+    }
+
+    async incomingEdgeOfType<TElement extends PEdge, TOptions extends EdgesAccessor.IncomingEdgesSearchOptions>(
+        constructor: PEdgeConstructor<TElement>,
+        options?: TOptions
+    ): Promise<EdgesAccessor.TargetFixTypedEdge<TElement, TNode, TOptions>> {
+        const edges = await this.incomingEdgesOfType(constructor, options);
+
+        expect(edges).toHaveLength(1);
+
+        return edges[0];
     }
 
     async incomingEdgesOfType<TElement extends PEdge, TOptions extends EdgesAccessor.IncomingEdgesSearchOptions>(
@@ -122,7 +150,7 @@ export class EdgesAccessor<TNode extends PNode> {
 
         return graph.getEdgesOfType(constructor, {
             ...options,
-            targetSelector: `#${sourceId}`,
+            targetSelectorOrLocator: `#${sourceId}`,
             targetConstructor: this.sourceConstructor
         }) as any;
     }

@@ -14,6 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { definedGLSPAttr } from '~/utils/ts.utils';
+import { ConstructorT } from '../../../types';
 import { EdgeMetadata } from '../decorators';
 import { SVGMetadata, SVGMetadataUtils } from '../svg-metadata-api';
 import type { PModelElementConstructor } from './element';
@@ -21,6 +22,10 @@ import { assertEqualType, PModelElement } from './element';
 import { PNode, PNodeConstructor } from './node';
 
 export type PEdgeConstructor<TElement extends PEdge = PEdge> = PModelElementConstructor<TElement>;
+
+export function isPEdgeConstructor(constructor: ConstructorT): constructor is PEdgeConstructor {
+    return constructor.prototype instanceof PEdge;
+}
 
 @EdgeMetadata({
     type: 'edge'

@@ -34,7 +34,7 @@ test.describe('The graph', () => {
 
     test.describe('should allow accessing the edge', () => {
         test('by using a selector', async () => {
-            const edge = await graph.getEdgeBySelector('[id$="edge_task_Push_fork_1"]', Edge);
+            const edge = await graph.getEdge('[id$="edge_task_Push_fork_1"]', Edge);
             const task = await edge.sourceOfType(TaskManual);
 
             expect(await (await task.children.label()).textContent()).toBe('Push');
@@ -55,11 +55,12 @@ test.describe('The graph', () => {
         });
 
         test('by using a source selector', async () => {
-            const edges = await graph.getEdgesOfType(Edge, { sourceSelector: '[id$="task_Push"]' });
+            const sourceNode = await graph.getNodeByLabel('Push', TaskManual);
+            const edges = await graph.getEdgesOfType(Edge, { sourceSelectorOrLocator: sourceNode.locate() });
             expect(edges.length).toBe(1);
 
             const source = await edges[0].sourceOfType(TaskManual);
-            expect(await source.idAttr()).toContain('task_Push');
+            expect(await source.idAttr()).toContain(await sourceNode.idAttr());
         });
 
         test('by using the source type with multiple elements', async () => {
