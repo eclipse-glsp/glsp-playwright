@@ -14,45 +14,47 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
+import { Integration, IntegrationType } from '~/integration';
 import type { GLSPServer } from '../glsp-server';
-import { Integration } from '../integration';
 
-export interface DynamicVariableOptions<T> {
-    defaultValue?: T;
-    value?: Record<string, T>;
+type RecordKey = string | number | symbol;
+
+export interface DynamicVariableOptions<TKey extends RecordKey, TValue> {
+    defaultValue?: TValue;
+    value?: Partial<Record<TKey, TValue | undefined>>;
 }
 
-export interface DynamicVariable<T> {
-    getOrThrow(key: string): T;
+export interface DynamicVariable<TKey extends RecordKey, TValue> {
+    getOrThrow(key: TKey): TValue;
 }
 
-export abstract class BaseDynamicVariable<T> {
-    protected readonly value: Record<string, T>;
-    protected readonly defaultValue?: T;
+export abstract class BaseDynamicVariable<TKey extends RecordKey, TValue> {
+    protected readonly value: Partial<Record<TKey, TValue | undefined>>;
+    protected readonly defaultValue?: TValue;
 
-    constructor(protected readonly options: DynamicVariableOptions<T>) {
+    constructor(protected readonly options: DynamicVariableOptions<TKey, TValue>) {
         this.defaultValue = options?.defaultValue;
         this.value = options?.value ?? {};
     }
 
-    getOrThrow(key: string): T {
+    getOrThrow(key: TKey): TValue {
         const value = this.value[key] ?? this.defaultValue;
         if (value === undefined) {
-            throw new Error(`No value found for key ${key}`);
+            throw new Error(`No value found for key ${String(key)}`);
         }
         return value;
     }
 }
 
-export class IntegrationVariable<T> extends BaseDynamicVariable<T> {
+export class IntegrationVariable<TValue> extends BaseDynamicVariable<IntegrationType, TValue> {
     protected integration?: Integration;
 
-    constructor(options: DynamicVariableOptions<T> & { integration?: Integration }) {
+    constructor(options: DynamicVariableOptions<IntegrationType, TValue> & { integration?: Integration }) {
         super(options);
         this.integration = options.integration;
     }
 
-    get(): T {
+    get(): TValue {
         if (this.integration === undefined) {
             throw new Error('No integration set');
         }
@@ -65,15 +67,15 @@ export class IntegrationVariable<T> extends BaseDynamicVariable<T> {
     }
 }
 
-export class ServerVariable<T> extends BaseDynamicVariable<T> {
+export class ServerVariable<TValue> extends BaseDynamicVariable<string, TValue> {
     protected server?: GLSPServer;
 
-    constructor(options: DynamicVariableOptions<T> & { server?: GLSPServer }) {
+    constructor(options: DynamicVariableOptions<string, TValue> & { server?: GLSPServer }) {
         super(options);
         this.server = options.server;
     }
 
-    get(): T {
+    get(): TValue {
         if (this.server === undefined) {
             throw new Error('No GLSP server set');
         }

@@ -41,7 +41,7 @@ test.describe('The marker navigator', () => {
             integration
         });
         graph = app.graph;
-        const navigatorProvider = new IntegrationVariable({
+        const navigatorProvider = new IntegrationVariable<MarkerNavigator>({
             value: {
                 Standalone: new StandaloneMarkerNavigator(app),
                 Theia: new TheiaMarkerNavigator(app)

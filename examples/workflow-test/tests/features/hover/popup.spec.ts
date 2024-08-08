@@ -76,7 +76,7 @@ test.describe('The popup', () => {
     test.beforeEach(async ({ integration, glspServer }) => {
         app = new WorkflowApp({
             type: 'integration',
-            integration: integration
+            integration
         });
         graph = app.graph;
         expectedManualPopupText.setServer(glspServer);
