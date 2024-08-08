@@ -25,6 +25,7 @@ import {
     VSCodeIntegration,
     VSCodeSetup
 } from '~/integration';
+import { GLSP_SERVER_TYPE_UNKNWON, GLSPServer } from './glsp-server';
 
 /**
  * GLSP-Playwright specific options
@@ -56,6 +57,7 @@ export interface GLSPPlaywrightFixtures {
      * ```
      */
     integration: Integration;
+    glspServer: GLSPServer;
     vscodeSetup?: VSCodeSetup;
 }
 
@@ -68,6 +70,14 @@ export const test = base.extend<GLSPPlaywrightOptions & GLSPPlaywrightFixtures>(
         } else {
             use(undefined);
         }
+    },
+
+    glspServer: async ({ page }, use) => {
+        const server: GLSPServer = {
+            type: process.env.GLSP_SERVER_TYPE ?? GLSP_SERVER_TYPE_UNKNWON
+        };
+
+        await use(server);
     },
 
     integration: async ({ playwright, browser, page, integrationOptions }, use) => {
@@ -110,21 +120,6 @@ export const test = base.extend<GLSPPlaywrightOptions & GLSPPlaywrightFixtures>(
         }
     }
 });
-
-// https://playwright.dev/docs/test-parameterize
-
-export type ParameterizedIntegrationData<T> = Record<IntegrationType, T>;
-export function createParameterizedIntegrationData<T>(options: {
-    default: T;
-    override?: Partial<ParameterizedIntegrationData<T>>;
-}): ParameterizedIntegrationData<T> {
-    return {
-        Page: options.override?.Page ?? options.default,
-        Standalone: options.override?.Standalone ?? options.default,
-        Theia: options.override?.Theia ?? options.default,
-        VSCode: options.override?.VSCode ?? options.default
-    };
-}
 
 /**
  * Runs the given callback if the active integration is the same as the provided integration type
@@ -173,4 +168,5 @@ export function skipIntegration(integrationOptions?: IntegrationOptions, ...inte
 }
 
 export { expect } from './test/assertions';
+export { DynamicVariable } from './test/dynamic-variable';
 export { test as setup };

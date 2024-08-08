@@ -21,6 +21,7 @@ jobs:
     env:
       THEIA_URL: 'http://localhost:3000'
       VSCODE_VSIX_ID: 'eclipse-glsp.workflow-vscode-example'
+      GLSP_SERVER_TYPE: 'node'
       GLSP_SERVER_DEBUG: 'true'
       GLSP_SERVER_PORT: '8081'
       GLSP_SERVER_PLAYWRIGHT_MANAGED: 'true'

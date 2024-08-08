@@ -14,11 +14,14 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { GLSPGlobalCommandPalette, expect, test } from '@eclipse-glsp/glsp-playwright/';
+import { GLSPServer } from '@eclipse-glsp/glsp-playwright/src/glsp-server';
+import { ServerVariable } from '@eclipse-glsp/glsp-playwright/src/test/dynamic-variable';
 import { WorkflowApp } from '../../../src/app/workflow-app';
 import { Edge } from '../../../src/graph/elements/edge.po';
 import { TaskAutomated } from '../../../src/graph/elements/task-automated.po';
 import { TaskManual } from '../../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../../src/graph/workflow.graph';
+import { GLSP_SERVER_TYPE_JAVA, GLSP_SERVER_TYPE_NODE } from '../../../src/server';
 
 const element1Label = 'Push';
 const element2Label = 'ChkWt';
@@ -27,14 +30,16 @@ test.describe('The command palette', () => {
     let app: WorkflowApp;
     let graph: WorkflowGraph;
     let globalCommandPalette: GLSPGlobalCommandPalette;
+    let server: GLSPServer;
 
-    test.beforeEach(async ({ integration }) => {
+    test.beforeEach(async ({ integration, glspServer }) => {
         app = new WorkflowApp({
             type: 'integration',
             integration
         });
         graph = app.graph;
         globalCommandPalette = app.globalCommandPalette;
+        server = glspServer;
     });
 
     test.describe('in the global context', () => {
@@ -45,23 +50,43 @@ test.describe('The command palette', () => {
             expect(await globalCommandPalette.isVisible()).toBeTruthy();
 
             const suggestions = await globalCommandPalette.suggestions();
-            const expectedSuggestions = [
-                'Create Manual Task',
-                'Create Category',
-                'Create Automated Task',
-                'Create Merge Node',
-                'Create Decision Node',
-                'Delete All',
-                'Reveal Push',
-                'Reveal ChkWt',
-                'Reveal WtOK',
-                'Reveal RflWt',
-                'Reveal Brew',
-                'Reveal ChkTp',
-                'Reveal KeepTp',
-                'Reveal PreHeat'
-            ];
-            expect(suggestions.sort()).toEqual(expectedSuggestions.sort());
+            const expectedSuggestions = new ServerVariable({
+                server,
+                value: {
+                    [GLSP_SERVER_TYPE_NODE]: [
+                        'Create Manual Task',
+                        'Create Category',
+                        'Create Automated Task',
+                        'Create Merge Node',
+                        'Create Decision Node',
+                        'Delete All',
+                        'Reveal Push',
+                        'Reveal ChkWt',
+                        'Reveal WtOK',
+                        'Reveal RflWt',
+                        'Reveal Brew',
+                        'Reveal ChkTp',
+                        'Reveal KeepTp',
+                        'Reveal PreHeat'
+                    ],
+                    [GLSP_SERVER_TYPE_JAVA]: [
+                        'Create Manual Task',
+                        'Create Category',
+                        'Create Automated Task',
+                        'Create Merge Node',
+                        'Create Decision Node',
+                        'Reveal Push',
+                        'Reveal ChkWt',
+                        'Reveal WtOK',
+                        'Reveal RflWt',
+                        'Reveal Brew',
+                        'Reveal ChkTp',
+                        'Reveal KeepTp',
+                        'Reveal PreHeat'
+                    ]
+                }
+            });
+            expect(suggestions.sort()).toEqual(expectedSuggestions.get().sort());
 
             await globalCommandPalette.search('Create');
             const createSuggestions = await globalCommandPalette.suggestions();
