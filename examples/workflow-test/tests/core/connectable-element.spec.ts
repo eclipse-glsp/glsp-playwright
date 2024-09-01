@@ -19,8 +19,7 @@ import { ActivityNodeFork } from '../../src/graph/elements/activity-node-fork.po
 import { Edge } from '../../src/graph/elements/edge.po';
 import { TaskManual } from '../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../src/graph/workflow.graph';
-
-const elementLabel = 'Push';
+import { TaskManualNodes } from '../nodes';
 
 test.describe('The edge accessor of a connectable element', () => {
     let app: WorkflowApp;
@@ -35,7 +34,7 @@ test.describe('The edge accessor of a connectable element', () => {
     });
 
     test('should allow accessing all edges of a type', async () => {
-        const task = await graph.getNodeByLabel(elementLabel, TaskManual);
+        const task = await graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
         const edges = await task.edges().outgoingEdgesOfType(Edge);
 
         const ids = await Promise.all(edges.map(async e => e.idAttr()));
@@ -50,7 +49,7 @@ test.describe('The edge accessor of a connectable element', () => {
     });
 
     test('should return typed sources on access', async () => {
-        const task = await graph.getNodeByLabel(elementLabel, TaskManual);
+        const task = await graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
         const edges = await task.edges().outgoingEdgesOfType(Edge);
         expect(edges.length).toBe(1);
 
@@ -60,7 +59,7 @@ test.describe('The edge accessor of a connectable element', () => {
     });
 
     test('should allow accessing all edges of a type against a target type', async () => {
-        const task = await graph.getNodeByLabel(elementLabel, TaskManual);
+        const task = await graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
         const edges = await task.edges().outgoingEdgesOfType(Edge, { targetConstructor: ActivityNodeFork });
         expect(edges.length).toBe(1);
 

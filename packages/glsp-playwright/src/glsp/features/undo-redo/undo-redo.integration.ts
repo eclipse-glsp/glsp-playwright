@@ -16,24 +16,30 @@
 
 import type { Integration } from '~/integration';
 import { IntegrationVariable } from '~/test';
-import type { GLSPSemanticApp } from '../../app';
-import { MarkerNavigator } from './marker-navigator';
+import type { GLSPApp } from '../../app';
+import { UndoRedoTrigger } from './undo-redo';
 
-export class StandaloneMarkerNavigator extends MarkerNavigator {
-    protected readonly forwardKey = 'Control+.';
-    protected readonly backwardKey = 'Control+,';
+export class StandaloneUndoRedoTrigger extends UndoRedoTrigger {
+    protected readonly undoKey = 'ControlOrMeta+z';
+    protected readonly redoKey = 'ControlOrMeta+Shift+z';
 }
 
-export class TheiaMarkerNavigator extends MarkerNavigator {
-    protected readonly forwardKey = 'F8';
-    protected readonly backwardKey = 'Shift+F8';
+export class TheiaUndoRedoTrigger extends UndoRedoTrigger {
+    protected readonly undoKey = 'ControlOrMeta+z';
+    protected readonly redoKey = 'ControlOrMeta+Shift+z';
 }
 
-export const provideMarkerNavigatorVariable = (integration: Integration, app: GLSPSemanticApp): IntegrationVariable<MarkerNavigator> =>
-    new IntegrationVariable<MarkerNavigator>({
+export class VscodeUndoRedoTrigger extends UndoRedoTrigger {
+    protected readonly undoKey = 'ControlOrMeta+z';
+    protected readonly redoKey = 'ControlOrMeta+Shift+z';
+}
+
+export const provideUndoRedoTriggerVariable = (integration: Integration, app: GLSPApp): IntegrationVariable<UndoRedoTrigger> =>
+    new IntegrationVariable<UndoRedoTrigger>({
         value: {
-            Standalone: new StandaloneMarkerNavigator(app),
-            Theia: new TheiaMarkerNavigator(app)
+            Standalone: new StandaloneUndoRedoTrigger(app),
+            Theia: new TheiaUndoRedoTrigger(app),
+            VSCode: new VscodeUndoRedoTrigger(app)
         },
         integration
     });

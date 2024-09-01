@@ -21,16 +21,16 @@ This package contains code examples that demonstrate how to test diagram editors
 | Element Hover                                                                        |          ✓           |         ✓         |          ✓          |
 | Element Validation                                                                   |          ✓           |         ✓         |          ✓          |
 | Element Navigation                                                                   |          ✓           |         ✓         |          x          |
-| Element Type Hints                                                                   |          -           |         -         |          -          |
-| Element Creation and Deletion                                                        |          -           |         -         |          -          |
-| Node Change Bounds<br>- Move<br>- Resize                                             |      <br>-<br>-      |    <br>-<br>-     |     <br>-<br>-      |
+| Element Type Hints                                                                   |          ✓           |         ✓         |          ✓          |
+| Element Creation and Deletion                                                        |          ✓           |         ✓         |          ✓          |
+| Node Change Bounds<br>- Move<br>- Resize                                             |      <br>✓<br>✓      |    <br>✓<br>✓     |     <br>✓<br>✓      |
 | Node Change Container                                                                |          -           |         -         |          -          |
-| Edge Reconnect                                                                       |          -           |         -         |          -          |
-| Edge Routing Points                                                                  |          -           |         -         |          -          |
+| Edge Reconnect                                                                       |          ✓           |         ✓         |          ✓          |
+| Edge Routing Points                                                                  |          ✓           |         ✓         |          ✓          |
 | Ghost Elements                                                                       |          -           |         -         |          -          |
-| Element Text Editing                                                                 |          -           |         -         |          -          |
+| Element Text Editing                                                                 |          ✓           |         ✓         |          ✓          |
 | Clipboard (Cut, Copy, Paste)                                                         |          -           |         -         |          -          |
-| Undo / Redo                                                                          |          -           |         -         |          -          |
+| Undo / Redo                                                                          |          ✓           |         ✓         |          x          |
 | Contexts<br>- Context Menu<br>- Command Palette<br>- Tool Palette                    |    <br><br>-<br>-    |  <br>-<br>-<br>-  |   <br>-<br>-<br>-   |
 | Accessibility Features (experimental) <br>- Search<br>- Move <br>- Zoom <br>- Resize | <br>-<br>-<br>-<br>- |                   |                     |
 | Helper Lines (experimental)                                                          |          -           |         -         |          -          |

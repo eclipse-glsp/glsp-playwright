@@ -25,7 +25,7 @@ module.exports = {
                             "The sprotty-protocol default exports are customized and reexported by GLSP. Please use '@eclipse-glsp/client' instead"
                     }
                 ],
-                patterns: ['../../../../*', '**/../index']
+                patterns: ['**/../index']
             }
         ]
     }

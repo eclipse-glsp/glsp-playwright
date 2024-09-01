@@ -63,9 +63,9 @@ export class ChildrenAccessor {
 
     async allOfType<TElement extends PModelElement>(
         constructor: PModelElementConstructor<TElement>,
-        options?: { deep?: boolean }
+        options: { deep?: boolean } = { deep: true }
     ): Promise<TElement[]> {
-        const childrenLocator = options?.deep
+        const childrenLocator = options.deep
             ? this.parent.locate().locator(SVGMetadataUtils.typeAttrOf(constructor))
             : this.parent.locate().locator(`> ${SVGMetadataUtils.typeAttrOf(constructor)}`);
 
@@ -125,7 +125,7 @@ export class EdgesAccessor<TNode extends PNode> {
 
         return graph.getEdgesOfType(constructor, {
             ...options,
-            sourceSelectorOrLocator: `#${sourceId}`,
+            sourceId,
             sourceConstructor: this.sourceConstructor
         }) as any;
     }
@@ -150,7 +150,7 @@ export class EdgesAccessor<TNode extends PNode> {
 
         return graph.getEdgesOfType(constructor, {
             ...options,
-            targetSelectorOrLocator: `#${sourceId}`,
+            targetId: sourceId,
             targetConstructor: this.sourceConstructor
         }) as any;
     }

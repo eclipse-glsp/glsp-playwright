@@ -16,7 +16,7 @@
 import type { Locator } from '@playwright/test';
 import type { AutoPrepareOptions, AutoWaitOptions } from '~/extension';
 import { Clickable, Mix, useDraggableFlow } from '~/extension';
-import { ModelElementMetadata, PEdge, PMetadata, PModelElement, PModelElementData, SVGMetadata } from '~/glsp/graph';
+import { ModelElementMetadata, PEdge, PMetadata, PModelElement, PModelElementData, PModelElementSnapshot, SVGMetadata } from '~/glsp/graph';
 import type { GLSPLocator } from '~/remote';
 import type { Position } from '~/types';
 import { definedAttr, definedGLSPAttr } from '~/utils/ts.utils';
@@ -41,6 +41,12 @@ export class RoutingPoints {
         await this.volatilePointsLocator.nth(0).waitFor({ state: 'visible', timeout: options?.timeout });
     }
 
+    async enable(): Promise<void> {
+        await this.element.graph.waitForCreation(PMetadata.getType(RoutingPoint), async () => {
+            await this.element.click({ dispatch: true });
+        });
+    }
+
     async points(options?: AutoWaitOptions): Promise<RoutingPoint[]> {
         await this.autoWait(options);
 
@@ -49,7 +55,9 @@ export class RoutingPoints {
         for await (const childLocator of await this.pointsLocator.all()) {
             const id = await definedAttr(childLocator, 'id');
 
-            elements.push(new RoutingPoint(this.element.locator.child(`#${id}`), this));
+            const routingPoint = new RoutingPoint(this.element.locator.child(`#${id}`), this);
+            await routingPoint.snapshot();
+            elements.push(routingPoint);
         }
 
         return elements;
@@ -63,21 +71,40 @@ export class RoutingPoints {
         for await (const childLocator of await this.volatilePointsLocator.all()) {
             const id = await definedAttr(childLocator, 'id');
 
-            elements.push(new RoutingPoint(this.element.locator.child(`#${id}`), this));
+            const routingPoint = new RoutingPoint(this.element.locator.child(`#${id}`), this);
+            await routingPoint.snapshot();
+            elements.push(routingPoint);
         }
 
         return elements;
     }
 }
 
+export interface RoutingPointSnapshot extends PModelElementSnapshot {
+    kind: RoutingPointKind;
+}
+
 const BaseRoutingPointMixin = Mix(PModelElement).flow(useDraggableFlow).build();
 export abstract class BaseRoutingPoint extends BaseRoutingPointMixin {
     readonly routingPoints;
+    override lastSnapshot?: RoutingPointSnapshot | undefined;
 
     constructor(data: PModelElementData & { routingPoints: RoutingPoints }) {
         super(data);
 
         this.routingPoints = data.routingPoints;
+    }
+
+    override async snapshot(): Promise<RoutingPointSnapshot> {
+        this.lastSnapshot = {
+            snapshotTime: new Date().getTime(),
+            class: await this.classAttr(),
+            id: await this.idAttr(),
+            type: await this.typeAttr(),
+            kind: await this.dataKindAttr()
+        } as RoutingPointSnapshot;
+
+        return this.lastSnapshot;
     }
 
     protected async autoPrepare(options?: AutoPrepareOptions): Promise<void> {
@@ -99,14 +126,12 @@ export abstract class BaseRoutingPoint extends BaseRoutingPointMixin {
         await this.autoPrepare(options);
 
         await super.dragToAbsolutePosition(position);
-        await this.routingPoints.element.graph.focus();
     }
 
     override async dragToRelativePosition(position: Position, options?: AutoPrepareOptions): Promise<void> {
         await this.autoPrepare(options);
 
         await super.dragToRelativePosition(position);
-        await this.routingPoints.element.graph.focus();
     }
 
     override async dragTo(
@@ -122,8 +147,7 @@ export abstract class BaseRoutingPoint extends BaseRoutingPointMixin {
     ): Promise<void> {
         await this.autoPrepare();
 
-        await this.dragTo(target, options);
-        await this.routingPoints.element.graph.focus();
+        await super.dragTo(target, options);
     }
 }
 

@@ -13,12 +13,12 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { EdgeMetadata, Mix, PEdge, useClickableFlow, useRoutingPointCapability } from '@eclipse-glsp/glsp-playwright/';
-import { useReconnectCapability } from '@eclipse-glsp/glsp-playwright/src/glsp/features/reconnect';
+import { NodeMetadata, PNode } from '@eclipse-glsp/glsp-playwright';
+import { Mix, useClickableFlow } from '@eclipse-glsp/glsp-playwright/src/extension';
 
-const EdgeMixin = Mix(PEdge).flow(useClickableFlow).capability(useRoutingPointCapability).capability(useReconnectCapability).build();
+export const ActivityNodeDecisionMixin = Mix(PNode).flow(useClickableFlow).build();
 
-@EdgeMetadata({
-    type: 'edge'
+@NodeMetadata({
+    type: 'activityNode:decision'
 })
-export class Edge extends EdgeMixin {}
+export class ActivityNodeDecision extends ActivityNodeDecisionMixin {}

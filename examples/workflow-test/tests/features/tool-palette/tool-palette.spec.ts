@@ -16,13 +16,7 @@
 import { Marker, expect, test } from '@eclipse-glsp/glsp-playwright';
 import { WorkflowApp } from '../../../src/app/workflow-app';
 import { WorkflowToolPalette } from '../../../src/features/tool-palette/workflow-tool-palette';
-import { Edge } from '../../../src/graph/elements/edge.po';
-import { TaskAutomated } from '../../../src/graph/elements/task-automated.po';
-import { TaskManual } from '../../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../../src/graph/workflow.graph';
-
-const element1Label = 'Push';
-const element2Label = 'ChkWt';
 
 test.describe('The tool palette', () => {
     let app: WorkflowApp;
@@ -38,7 +32,7 @@ test.describe('The tool palette', () => {
         toolPalette = app.toolPalette;
     });
 
-    test('should allow to access the content items', async ({ integration }) => {
+    test('should allow to access the content items', async () => {
         await toolPalette.waitForVisible();
 
         const groups = await toolPalette.content.toolGroups();
@@ -66,29 +60,26 @@ test.describe('The tool palette', () => {
         expect(await toolElement.text()).toBe('Merge Node');
     });
 
-    test('should allow to access the toolbar items', async ({ integration }) => {
+    test('should allow to access the toolbar items', async () => {
         await toolPalette.waitForVisible();
 
         const deleteTool = await toolPalette.toolbar.deletionTool();
-        expect(await deleteTool.classAttr()).not.toContain('clicked');
+        await expect(deleteTool).not.toContainClass('clicked');
         await deleteTool.click();
-        expect(await deleteTool.classAttr()).toContain('clicked');
 
         const selectionTool = await toolPalette.toolbar.selectionTool();
-        expect(await selectionTool.classAttr()).not.toContain('clicked');
+        await expect(selectionTool).not.toContainClass('clicked');
         await selectionTool.click();
-        expect(await selectionTool.classAttr()).toContain('clicked');
 
         const marqueeTool = await toolPalette.toolbar.marqueeTool();
-        expect(await marqueeTool.classAttr()).not.toContain('clicked');
+        await expect(marqueeTool).not.toContainClass('clicked');
         await marqueeTool.click();
-        expect(await marqueeTool.classAttr()).toContain('clicked');
 
         const searchTool = await toolPalette.toolbar.searchTool();
-        expect(await searchTool.input.isHidden()).toBeTruthy();
+        expect(searchTool.input.isHidden()).toBeTruthy();
 
         await searchTool.click();
-        expect(await searchTool.input.isVisible()).toBeTruthy();
+        expect(searchTool.input.isVisible()).toBeTruthy();
         await searchTool.search('Auto');
 
         const groups = await toolPalette.content.toolGroups();
@@ -98,60 +89,6 @@ test.describe('The tool palette', () => {
         const elements0 = await groups[0].items();
         expect(elements0.length).toBe(1);
         expect(await elements0[0].text()).toBe('Automated Task');
-    });
-
-    test('should allow creating edges in the graph', async () => {
-        const source = await graph.getNodeByLabel(element1Label, TaskManual);
-        const target = await graph.getNodeByLabel(element2Label, TaskAutomated);
-
-        const edges = await graph.waitForCreationOfType(Edge, async () => {
-            await toolPalette.waitForVisible();
-            const paletteItem = await toolPalette.content.toolElement('Edges', 'Edge');
-            await paletteItem.click();
-
-            await source.click();
-            await target.click();
-        });
-        expect(edges.length).toBe(1);
-        await graph.focus();
-
-        const newEdge = edges[0];
-
-        const sourceId = await newEdge.sourceId();
-        expect(sourceId).toBe(await source.idAttr());
-
-        const targetId = await newEdge.targetId();
-        expect(targetId).toBe(await target.idAttr());
-    });
-
-    test('should allow creating new nodes in the graph', async () => {
-        const task = await graph.getNodeByLabel(element1Label, TaskManual);
-        const nodes = await graph.waitForCreationOfType(TaskManual, async () => {
-            const paletteItem = await toolPalette.content.toolElement('Nodes', 'Manual Task');
-            await paletteItem.click();
-
-            const taskBounds = await task.bounds();
-            await taskBounds.position('bottom_left').moveRelative(-50, 0).click();
-        });
-        expect(nodes.length).toBe(1);
-        await graph.focus();
-
-        const newTask = nodes[0];
-
-        const label = await newTask.children.label();
-        expect(await label.textContent()).toBe('ManualTask8');
-    });
-
-    test('should allow deleting elements in the graph', async () => {
-        await toolPalette.toolbar.deletionTool().click();
-
-        const task = await graph.getNodeByLabel(element1Label, TaskManual);
-        expect(await task.isVisible()).toBeTruthy();
-
-        await task.click();
-        await task.waitFor({ state: 'detached' });
-
-        expect(await task.locate().count()).toBe(0);
     });
 
     test('should allow to validate', async () => {

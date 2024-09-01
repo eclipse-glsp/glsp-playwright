@@ -25,6 +25,8 @@
       "url": "https://me.big.tuwien.ac.at/"
     }
   ],
+  "main": "lib/index",
+  "types": "lib/index",
   "files": [
     "src",
     "tests"
@@ -42,6 +44,9 @@
     "test:vscode": "yarn test --project=vscode",
     "test:vscode-setup": "yarn test --project=vscode-setup",
     "watch": "tsc -w"
+  },
+  "dependencies": {
+    "@eclipse-glsp/client": "next"
   },
   "devDependencies": {
     "@eclipse-glsp-examples/workflow-server-bundled": "next",

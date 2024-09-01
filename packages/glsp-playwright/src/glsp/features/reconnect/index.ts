@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2023 Business Informatics Group (TU Wien) and others.
+ * Copyright (c) 2024 EclipseSource and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -13,12 +13,5 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { EdgeMetadata, Mix, PEdge, useClickableFlow, useRoutingPointCapability } from '@eclipse-glsp/glsp-playwright/';
-import { useReconnectCapability } from '@eclipse-glsp/glsp-playwright/src/glsp/features/reconnect';
 
-const EdgeMixin = Mix(PEdge).flow(useClickableFlow).capability(useRoutingPointCapability).capability(useReconnectCapability).build();
-
-@EdgeMetadata({
-    type: 'edge'
-})
-export class Edge extends EdgeMixin {}
+export * from './reconnect.capability';

@@ -37,31 +37,16 @@ export namespace PMetadata {
     export function assert(target: PEdgeConstructor): EdgeMetadata;
     export function assert(target: PModelElementConstructor): ModelElementMetadata;
     export function assert(target: ConstructorT<any, any>): ModelElementMetadata;
-    export function assert(target: ConstructorT<any, any>): ModelElementMetadata {
+    export function assert(target: PNode): NodeMetadata;
+    export function assert(target: PEdge): EdgeMetadata;
+    export function assert(target: PModelElement): ModelElementMetadata;
+    export function assert(target: object): ModelElementMetadata;
+    export function assert(target: object): ModelElementMetadata {
         if (!Reflect.hasMetadata(metadataKey, target)) {
-            throw Error(`Provided target "${target.name ?? target}" has no metadata. Did you use the class decorator?`);
+            throw Error(`Provided target "${target}" has no metadata. Did you use the class decorator?`);
         }
 
         return Reflect.getMetadata(metadataKey, target);
-    }
-
-    /**
-     * Returns the `metadata` of a target.
-     * It throws an error if the metadata does not exist.
-     *
-     * @param target Object with the `metadata`
-     * @returns Metadata of the page object
-     */
-    export function assertOwn(target: PNode): NodeMetadata;
-    export function assertOwn(target: PEdge): EdgeMetadata;
-    export function assertOwn(target: PModelElement): ModelElementMetadata;
-    export function assertOwn(target: object): ModelElementMetadata;
-    export function assertOwn(target: object): ModelElementMetadata {
-        if (!Reflect.hasOwnMetadata(metadataKey, target)) {
-            throw Error(`Provided target "${target.constructor.name ?? target}" has no own metadata. Did you use the class decorator?`);
-        }
-
-        return Reflect.getOwnMetadata(metadataKey, target);
     }
 
     /**

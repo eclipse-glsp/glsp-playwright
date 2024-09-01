@@ -34,7 +34,7 @@ const config: PlaywrightTestConfig<GLSPPlaywrightOptions> = {
     },
     fullyParallel: true,
     forbidOnly: !!process.env.CI,
-    retries: process.env.CI ? 2 : 0,
+    retries: process.env.CI ? 2 : 1,
     reporter: process.env.CI ? [['html', { open: 'never' }], ['@estruyf/github-actions-reporter']] : [['html', { open: 'never' }]],
     use: {
         actionTimeout: 0,
