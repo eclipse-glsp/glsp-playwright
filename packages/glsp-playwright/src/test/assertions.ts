@@ -13,12 +13,12 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { expect as baseExpect, ExpectMatcherState } from '@playwright/test';
+import { expect as baseExpect, ExpectMatcherState, Locator } from '@playwright/test';
 import { Selectable } from '../extension';
-import { GLSPSemanticGraph, PModelElement } from '../glsp';
+import { GLSPSemanticGraph, PModelElement, SVGMetadataUtils } from '../glsp';
+import { GLSPLocator, Locateable } from '../remote';
 import { ConstructorT } from '../types';
-
-export { test } from '@playwright/test';
+import { unwrapLocator } from '../utils';
 
 interface MatcherReturnType {
     message: () => string;
@@ -30,23 +30,13 @@ interface MatcherReturnType {
 }
 
 /* eslint-disable no-invalid-this */
-async function toHaveSelected(
-    this: ExpectMatcherState,
-    graph: GLSPSemanticGraph,
-    expected: { type: ConstructorT<PModelElement>; elements: PModelElement[] }
-): Promise<MatcherReturnType> {
-    const assertionName = 'toHaveSelected';
+async function toBeSelected(this: ExpectMatcherState, element: PModelElement): Promise<MatcherReturnType> {
+    const assertionName = 'toBeSelected';
     let pass: boolean;
     let matcherResult: any;
 
     try {
-        const nodes = await graph.getSelectedElements(expected.type);
-        baseExpect(nodes).toHaveLength(expected.elements.length);
-
-        const nodeIds = await Promise.all(nodes.map(n => n.idAttr()));
-        const expectedIds = await Promise.all(expected.elements.map(n => n.idAttr()));
-
-        baseExpect(nodeIds.sort()).toEqual(expectedIds.sort());
+        await toContainClass.call(this, element, Selectable.CSS);
         pass = true;
     } catch (e: any) {
         matcherResult = e.matcherResult;
@@ -57,7 +47,89 @@ async function toHaveSelected(
         message: () =>
             this.utils.matcherHint(assertionName, undefined, undefined, { isNot: this.isNot }) +
             '\n\n' +
-            'SemanticGraph Selected Elements - Assertions\n' +
+            assertionName +
+            ' - Assertions\n' +
+            matcherResult.message,
+        pass,
+        name: assertionName,
+        expected: Selectable.CSS,
+        actual: matcherResult?.actual
+    };
+}
+
+async function toHaveSelected(
+    this: ExpectMatcherState,
+    graph: GLSPSemanticGraph,
+    expected: { type: ConstructorT<PModelElement>; elements: PModelElement[] | (() => PModelElement[]) }
+): Promise<MatcherReturnType> {
+    const assertionName = 'toHaveSelected';
+    let pass: boolean;
+    let matcherResult: any;
+
+    try {
+        await baseExpect(graph.locate().locator(`.${Selectable.CSS}`).first()).toBeAttached();
+        const nodes = await graph.getSelectedElements(expected.type);
+        const elements = typeof expected.elements === 'function' ? expected.elements() : expected.elements;
+        baseExpect(nodes).toHaveLength(elements.length);
+
+        const nodeIds = await Promise.all(nodes.map(n => n.idAttr()));
+        const expectedIds = await Promise.all(elements.map(n => n.idAttr()));
+
+        baseExpect(nodeIds.sort()).toEqual(expectedIds.sort());
+        pass = true;
+    } catch (e: any) {
+        matcherResult = e.matcherResult ?? e.error.message;
+        pass = false;
+    }
+
+    return {
+        message: () =>
+            this.utils.matcherHint(assertionName, undefined, undefined, { isNot: this.isNot }) +
+            '\n\n' +
+            assertionName +
+            ' - Assertions\n' +
+            matcherResult.message,
+        pass,
+        name: assertionName,
+        expected,
+        actual: matcherResult?.actual
+    };
+}
+
+async function toContainElement(
+    this: ExpectMatcherState,
+    graph: GLSPSemanticGraph,
+    expected: { type: ConstructorT<PModelElement>; query: { label: string } }
+): Promise<MatcherReturnType> {
+    const assertionName = 'toHaveSelected';
+    let pass: boolean;
+    let matcherResult: any;
+
+    try {
+        const element = await graph.getModelElement(
+            `${SVGMetadataUtils.typeAttrOf(expected.type)}:has-text("${expected.query.label}")`,
+            expected.type,
+            { assert: false }
+        );
+
+        if (this.isNot) {
+            await baseExpect(element.locate()).toBeAttached({ attached: false });
+            pass = false;
+        } else {
+            await baseExpect(element.locate()).toBeAttached();
+            pass = true;
+        }
+    } catch (e: any) {
+        matcherResult = e.matcherResult ?? e.error.message;
+        pass = false;
+    }
+
+    return {
+        message: () =>
+            this.utils.matcherHint(assertionName, undefined, undefined, { isNot: this.isNot }) +
+            '\n\n' +
+            assertionName +
+            ' - Assertions\n' +
             matcherResult.message,
         pass,
         name: assertionName,
@@ -76,7 +148,7 @@ async function toBeUnselected(this: ExpectMatcherState, graph: GLSPSemanticGraph
         await toHaveSelected.call(this, graph, { type: PModelElement, elements: [] });
         pass = true;
     } catch (e: any) {
-        matcherResult = e.matcherResult;
+        matcherResult = e.matcherResult ?? e.error.message;
         pass = false;
     }
 
@@ -84,15 +156,58 @@ async function toBeUnselected(this: ExpectMatcherState, graph: GLSPSemanticGraph
         message: () =>
             this.utils.matcherHint(assertionName, undefined, undefined, { isNot: this.isNot }) +
             '\n\n' +
-            'SemanticGraph toBeUnselected - Assertions\n' +
+            assertionName +
+            ' - Assertions\n' +
             matcherResult.message,
         pass,
         name: assertionName
     };
 }
+
+async function toContainClass(
+    this: ExpectMatcherState,
+    target: Locator | GLSPLocator | Locateable,
+    expected: string
+): Promise<MatcherReturnType> {
+    const assertionName = 'toContainClass';
+    let pass: boolean;
+    let matcherResult: any;
+
+    try {
+        const locator = unwrapLocator(target);
+
+        if (this.isNot) {
+            await baseExpect(locator).not.toHaveClass(new RegExp(expected));
+            pass = false;
+        } else {
+            await baseExpect(locator).toHaveClass(new RegExp(expected));
+            pass = true;
+        }
+    } catch (e: any) {
+        matcherResult = e.matcherResult ?? e.error.message;
+        pass = false;
+    }
+
+    return {
+        message: () =>
+            this.utils.matcherHint(assertionName, undefined, undefined, { isNot: this.isNot }) +
+            '\n\n' +
+            assertionName +
+            ' - Assertions\n' +
+            matcherResult.message,
+        pass,
+        name: assertionName,
+        expected,
+        actual: matcherResult?.actual
+    };
+}
+
 /* eslint-enable no-invalid-this */
 
 export const expect = baseExpect.extend({
     toHaveSelected,
-    toBeUnselected
+    toBeUnselected,
+    toContainClass,
+    toBeSelected,
+    toContainElement
 });

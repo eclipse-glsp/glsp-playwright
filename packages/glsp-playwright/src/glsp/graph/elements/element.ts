@@ -100,7 +100,7 @@ export class PModelElement extends Locateable {
     constructor(data: PModelElementData) {
         super(data.locator);
         this.graph = this.app.graph;
-        this._metadata = PMetadata.assertOwn(this.constructor);
+        this._metadata = PMetadata.assert(this.constructor);
     }
 
     async snapshot(): Promise<PModelElementSnapshot> {

@@ -29,7 +29,7 @@ export interface Clickable {
      *
      * @see {@link Locator.click}
      */
-    click(options?: Parameters<Locator['click']>[0]): Promise<void>;
+    click(options?: Parameters<Locator['click']>[0] & { dispatch?: boolean }): Promise<void>;
 
     /**
      * Double click the element.
@@ -69,7 +69,15 @@ export function useClickableFlow<TBase extends ConstructorA<Locateable>>(Base: T
          *
          * @see {@link Locator.click}
          */
-        click(options?: Parameters<Locator['click']>[0]): Promise<void> {
+        async click(options?: Parameters<Locator['click']>[0] & { dispatch?: boolean }): Promise<void> {
+            this.locate().dispatchEvent('mouseover', { bubbles: true });
+
+            if (options?.dispatch) {
+                this.locate().dispatchEvent('mousedown', { bubbles: true });
+                this.locate().dispatchEvent('mouseup', { bubbles: true });
+                return;
+            }
+
             return this.locate().click(options);
         }
 

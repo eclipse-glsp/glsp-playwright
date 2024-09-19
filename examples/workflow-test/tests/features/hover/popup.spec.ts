@@ -14,16 +14,16 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import {
+    PLabelledElement,
     PNode,
     PNodeConstructor,
     PopupCapability,
+    ServerVariable,
     expect,
     runInIntegration,
     skipNonIntegration,
     test
-} from '@eclipse-glsp/glsp-playwright/';
-import { PLabelledElement } from '@eclipse-glsp/glsp-playwright/src/extension';
-import { ServerVariable } from '@eclipse-glsp/glsp-playwright/src/test/dynamic-variable';
+} from '@eclipse-glsp/glsp-playwright';
 import { dedent } from 'ts-dedent';
 import { WorkflowApp } from '../../../src/app/workflow-app';
 import { TaskAutomated } from '../../../src/graph/elements/task-automated.po';

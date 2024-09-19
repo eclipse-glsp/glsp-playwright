@@ -17,8 +17,7 @@ import { PMetadata, ResizeHandle, expect, test } from '@eclipse-glsp/glsp-playwr
 import { WorkflowApp } from '../../../src/app/workflow-app';
 import { TaskManual } from '../../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../../src/graph/workflow.graph';
-
-const elementLabel = 'Push';
+import { TaskManualNodes } from '../../nodes';
 
 test.describe('The resizing handle', () => {
     let app: WorkflowApp;
@@ -33,7 +32,7 @@ test.describe('The resizing handle', () => {
     });
 
     test('should allow resizing', async () => {
-        const task = await graph.getNodeByLabel(elementLabel, TaskManual);
+        const task = await graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
 
         const oldBounds = await task.bounds();
         const oldTopLeft = oldBounds.position('top_left');
@@ -52,7 +51,7 @@ test.describe('The resizing handle', () => {
     });
 
     test('should show 4 handles', async () => {
-        const task = await graph.getNodeByLabel(elementLabel, TaskManual);
+        const task = await graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
 
         await graph.waitForCreation(PMetadata.getType(ResizeHandle), async () => {
             await task.click();

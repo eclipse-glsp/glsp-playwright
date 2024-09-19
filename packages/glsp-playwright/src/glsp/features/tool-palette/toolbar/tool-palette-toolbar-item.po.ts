@@ -13,10 +13,12 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+import { Locator } from '@playwright/test';
 import { useClickableFlow } from '~/extension/flows';
 import { Mix } from '~/extension/mixin';
 import type { GLSPLocator } from '~/remote';
 import { Input } from '~/remote';
+import { expect } from '~/test';
 import type { ConstructorT } from '~/types';
 import { definedGLSPAttr } from '~/utils/ts.utils';
 import { Marker } from '../../validation';
@@ -30,6 +32,8 @@ export type ToolPaletteToolbarItemConstructor<TElement extends ToolPaletteToolba
 
 const ToolPaletteToolbarItemMixin = Mix(BaseToolPaletteItem).flow(useClickableFlow).build();
 export class ToolPaletteToolbarItem extends ToolPaletteToolbarItemMixin {
+    protected isHighlightable = true;
+
     async classAttr(): Promise<string> {
         return definedGLSPAttr(this.locator, 'class');
     }
@@ -37,10 +41,19 @@ export class ToolPaletteToolbarItem extends ToolPaletteToolbarItemMixin {
     async titleAttr(): Promise<string> {
         return definedGLSPAttr(this.locator, 'title');
     }
+
+    override async click(options?: Parameters<Locator['click']>[0] & { dispatch?: boolean }): Promise<void> {
+        await super.click(options);
+
+        if (this.isHighlightable) {
+            await expect(this.locator).toContainClass('clicked');
+        }
+    }
 }
 
 export class SearchToolbarItem extends ToolPaletteToolbarItem {
     readonly input;
+    protected override isHighlightable = false;
 
     constructor(locator: GLSPLocator, toolPalette: GLSPToolPalette) {
         super(locator, toolPalette);
@@ -60,6 +73,7 @@ export class SearchToolbarItem extends ToolPaletteToolbarItem {
 
 export class ValidationToolbarItem extends ToolPaletteToolbarItem {
     readonly input;
+    protected override isHighlightable = false;
 
     constructor(locator: GLSPLocator, toolPalette: GLSPToolPalette) {
         super(locator, toolPalette);

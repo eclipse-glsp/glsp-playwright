@@ -16,6 +16,7 @@
 import type { GLSPApp } from '~/glsp';
 import type { GLSPLocator } from '~/remote';
 import { Locateable } from '~/remote';
+import { expect } from '../../../test';
 
 export interface GLSPLabelEditorOptions {
     locator: GLSPLocator;
@@ -28,5 +29,10 @@ export class GLSPLabelEditor extends Locateable {
 
     constructor(protected readonly options: GLSPLabelEditorOptions) {
         super(options.locator);
+    }
+
+    async getWarning(): Promise<string | undefined> {
+        await expect(this.locate()).toHaveAttribute('data-balloon');
+        return (await this.locate().getAttribute('data-balloon')) ?? undefined;
     }
 }

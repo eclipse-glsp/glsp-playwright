@@ -13,14 +13,13 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { expect, test } from '@eclipse-glsp/glsp-playwright/';
+import { expect, test } from '@eclipse-glsp/glsp-playwright';
 import { WorkflowApp } from '../../../src/app/workflow-app';
 import { TaskManual } from '../../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../../src/graph/workflow.graph';
+import { TaskManualNodes } from '../../nodes';
 
-const elementLabel = 'Push';
-
-test.describe('Deletable flow', () => {
+test.describe('The label edit tool', () => {
     let app: WorkflowApp;
     let graph: WorkflowGraph;
 
@@ -32,12 +31,34 @@ test.describe('Deletable flow', () => {
         graph = app.graph;
     });
 
-    test('should delete element', async () => {
-        const task = await graph.getNodeByLabel(elementLabel, TaskManual);
+    test('should allow nodes to be renamed', async () => {
+        const node = await graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
 
-        expect(await task.locate().count()).toBe(1);
-        await task.delete();
-        expect(await task.locate().count()).toBe(0);
+        await node.rename('New Label');
+        expect(await node.label).toBe('New Label');
+    });
+
+    test('should allow nodes to be renamed by using the keyboard', async () => {
+        const node = await graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
+
+        await node.click();
+        await node.page.keyboard.press('F2');
+        await node.page.keyboard.type('New Label');
+        await node.page.keyboard.press('Enter');
+
+        expect(await node.label).toBe('New Label');
+    });
+
+    test('should not allow empty text', async () => {
+        const node = await graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
+
+        await node.click();
+        await node.page.keyboard.press('F2');
+        await node.page.keyboard.type(' ');
+        await node.page.keyboard.press('Backspace');
+        await node.page.keyboard.press('Enter');
+
+        await expect(await app.labelEditor.getWarning()).toBe('Name must not be empty');
     });
 
     test.afterEach(async ({ integration }) => {

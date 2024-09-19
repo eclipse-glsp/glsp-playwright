@@ -15,33 +15,12 @@
  ********************************************************************************/
 
 import { Locator } from '@playwright/test';
-import { waitForFunction } from '~/integration/wait.fixes';
 import { GLSPLocator, Locateable } from '../remote';
 
-export async function waitForClassRemoval(
-    target: Locator | Locateable | GLSPLocator,
-    className: string,
-    timeout: number = 30000
-): Promise<void> {
-    let locator: Locator;
-
-    if (target instanceof GLSPLocator) {
-        locator = target.locate();
-    } else if (target instanceof Locateable) {
-        locator = target.locate();
-    } else {
-        locator = target;
+export function unwrapLocator(target: Locator | GLSPLocator | Locateable): Locator {
+    if ('locate' in target) {
+        return target.locate();
     }
 
-    await locator.waitFor({
-        timeout,
-        state: 'attached'
-    });
-
-    const element = await locator.elementHandle();
-
-    await waitForFunction(async () => {
-        const contains = (await element?.evaluate((e, c) => e.classList.contains(c), className)) ?? false;
-        return !contains;
-    });
+    return target;
 }

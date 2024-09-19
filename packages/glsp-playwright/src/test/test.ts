@@ -25,7 +25,7 @@ import {
     VSCodeIntegration,
     VSCodeSetup
 } from '~/integration';
-import { GLSP_SERVER_TYPE_UNKNWON, GLSPServer } from './glsp-server';
+import { GLSP_SERVER_TYPE_UNKNWON, GLSPServer } from '../glsp-server';
 
 /**
  * GLSP-Playwright specific options
@@ -167,6 +167,4 @@ export function skipIntegration(integrationOptions?: IntegrationOptions, ...inte
     return integrationOptions === undefined || integration.includes(integrationOptions.type);
 }
 
-export { expect } from './test/assertions';
-export { DynamicVariable } from './test/dynamic-variable';
 export { test as setup };

@@ -14,8 +14,11 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { NodeMetadata, PNode } from '@eclipse-glsp/glsp-playwright';
+import { Mix, useClickableFlow } from '@eclipse-glsp/glsp-playwright/src/extension';
+
+export const ActivityNodeForkMixin = Mix(PNode).flow(useClickableFlow).build();
 
 @NodeMetadata({
     type: 'activityNode:fork'
 })
-export class ActivityNodeFork extends PNode {}
+export class ActivityNodeFork extends ActivityNodeForkMixin {}

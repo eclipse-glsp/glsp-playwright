@@ -19,12 +19,21 @@ import type { PModelElement } from './elements/element';
 import type { PNodeConstructor } from './elements/node';
 import type { BothTypedEdge, SourceTypedEdge, TargetTypedEdge } from './elements/typed-edge/typed-edge.type';
 
-export interface EdgeConstructorOptions {
+export interface GraphConstructorOptions {
+    /**
+     * If any assertions should be triggered
+     */
+    assert?: boolean;
+}
+
+export interface EdgeConstructorOptions extends GraphConstructorOptions {
     sourceConstructor?: PNodeConstructor<any>;
     targetConstructor?: PNodeConstructor<any>;
 }
 
 export interface EdgeSearchOptions extends EdgeConstructorOptions {
+    sourceId?: string;
+    targetId?: string;
     sourceSelectorOrLocator?: string | Locator;
     targetSelectorOrLocator?: string | Locator;
 }

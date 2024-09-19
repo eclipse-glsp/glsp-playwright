@@ -14,14 +14,16 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { expect, test } from '@eclipse-glsp/glsp-playwright';
-import { WorkflowApp } from '../../src/app/workflow-app';
-import { TaskManual } from '../../src/graph/elements/task-manual.po';
-import { WorkflowGraph } from '../../src/graph/workflow.graph';
-import { TaskManualNodes } from '../nodes';
+import { WorkflowApp } from '../../../../src/app/workflow-app';
+import { WorkflowToolPalette } from '../../../../src/features/tool-palette/workflow-tool-palette';
+import { TaskManual } from '../../../../src/graph/elements/task-manual.po';
+import { WorkflowGraph } from '../../../../src/graph/workflow.graph';
+import { TaskManualNodes } from '../../../nodes';
 
-test.describe('Shortcuts', () => {
+test.describe('The deletion tool', () => {
     let app: WorkflowApp;
     let graph: WorkflowGraph;
+    let toolPalette: WorkflowToolPalette;
 
     test.beforeEach(async ({ integration }) => {
         app = new WorkflowApp({
@@ -29,16 +31,34 @@ test.describe('Shortcuts', () => {
             integration
         });
         graph = app.graph;
+        toolPalette = app.toolPalette;
     });
 
-    test('should allow deleting the element in the graph', async ({ integration }) => {
+    test('should allow deleting elements in the graph by mouse', async () => {
+        await toolPalette.toolbar.deletionTool().click();
+
         const task = await graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
         expect(await task.isVisible()).toBeTruthy();
 
         await task.click();
-        await integration.page.keyboard.press('Delete');
         await task.waitFor({ state: 'detached' });
 
+        expect(await task.locate().count()).toBe(0);
+    });
+
+    test('should allow deleting elements in the graph by keyboard', async () => {
+        const task = await graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
+
+        expect(await task.locate().count()).toBe(1);
+        await task.delete();
+        expect(await task.locate().count()).toBe(0);
+    });
+
+    test('should allow deleting elements in the graph', async () => {
+        const task = await graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
+
+        expect(await task.locate().count()).toBe(1);
+        await task.delete();
         expect(await task.locate().count()).toBe(0);
     });
 

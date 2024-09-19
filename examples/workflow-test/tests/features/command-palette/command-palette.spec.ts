@@ -13,18 +13,14 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { GLSPGlobalCommandPalette, expect, test } from '@eclipse-glsp/glsp-playwright/';
-import { GLSPServer } from '@eclipse-glsp/glsp-playwright/src/glsp-server';
-import { ServerVariable } from '@eclipse-glsp/glsp-playwright/src/test/dynamic-variable';
+import { GLSPGlobalCommandPalette, GLSPServer, ServerVariable, expect, test } from '@eclipse-glsp/glsp-playwright/';
 import { WorkflowApp } from '../../../src/app/workflow-app';
 import { Edge } from '../../../src/graph/elements/edge.po';
 import { TaskAutomated } from '../../../src/graph/elements/task-automated.po';
 import { TaskManual } from '../../../src/graph/elements/task-manual.po';
 import { WorkflowGraph } from '../../../src/graph/workflow.graph';
 import { GLSP_SERVER_TYPE_JAVA, GLSP_SERVER_TYPE_NODE } from '../../../src/server';
-
-const element1Label = 'Push';
-const element2Label = 'ChkWt';
+import { TaskAutomatedNodes, TaskManualNodes } from '../../nodes';
 
 test.describe('The command palette', () => {
     let app: WorkflowApp;
@@ -127,7 +123,7 @@ test.describe('The command palette', () => {
                 await command.open();
                 await command.search('Create Manual Task', { confirm: true });
             });
-            expect(nodes.length).toBe(1);
+            expect(nodes).toHaveLength(1);
             await graph.focus();
 
             const newTask = nodes[0];
@@ -139,7 +135,7 @@ test.describe('The command palette', () => {
 
     test.describe('in the element context', () => {
         test('should allow to search suggestions', async () => {
-            const task = await graph.getNodeByLabel(element1Label, TaskManual);
+            const task = await graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
 
             const elementCommandPalette = await task.commandPalette();
             await elementCommandPalette.open();
@@ -207,14 +203,14 @@ test.describe('The command palette', () => {
         });
 
         test('should allow creating new elements in the diagram', async () => {
-            const task = await graph.getNodeByLabel(element1Label, TaskManual);
+            const task = await graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
 
             const nodes = await graph.waitForCreationOfType(TaskManual, async () => {
                 const command = task.commandPalette();
                 await command.open();
                 await command.search('Create Manual Task', { confirm: true });
             });
-            expect(nodes.length).toBe(1);
+            expect(nodes).toHaveLength(1);
             await graph.focus();
 
             const newTask = nodes[0];
@@ -224,8 +220,8 @@ test.describe('The command palette', () => {
         });
 
         test('should allow creating edges in the graph', async () => {
-            const source = await graph.getNodeByLabel(element1Label, TaskManual);
-            const target = await graph.getNodeByLabel(element2Label, TaskAutomated);
+            const source = await graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
+            const target = await graph.getNodeByLabel(TaskAutomatedNodes.chkwtLabel, TaskAutomated);
 
             const edges = await graph.waitForCreationOfType(Edge, async () => {
                 const command = source.commandPalette();

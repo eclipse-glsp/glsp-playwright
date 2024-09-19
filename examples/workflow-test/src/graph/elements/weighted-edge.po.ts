@@ -14,11 +14,10 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { EdgeMetadata, Mix, PEdge, useClickableFlow, useRoutingPointCapability } from '@eclipse-glsp/glsp-playwright/';
-import { useReconnectCapability } from '@eclipse-glsp/glsp-playwright/src/glsp/features/reconnect';
 
-const EdgeMixin = Mix(PEdge).flow(useClickableFlow).capability(useRoutingPointCapability).capability(useReconnectCapability).build();
+const EdgeMixin = Mix(PEdge).flow(useClickableFlow).capability(useRoutingPointCapability).build();
 
 @EdgeMetadata({
-    type: 'edge'
+    type: 'edge:weighted'
 })
-export class Edge extends EdgeMixin {}
+export class WeightedEdge extends EdgeMixin {}

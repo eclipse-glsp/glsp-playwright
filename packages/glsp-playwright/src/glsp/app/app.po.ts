@@ -21,6 +21,7 @@ import { GLSPGlobalCommandPalette } from '../features/command-palette';
 import { GLSPLabelEditor } from '../features/label-editor/label-editor.po';
 import { GLSPPopup } from '../features/popup/popup.po';
 import { GLSPToolPalette } from '../features/tool-palette/tool-palette.po';
+import { GLSPSemanticGraph } from '../graph';
 import { GLSPGraph } from '../graph/graph.po';
 
 /**
@@ -127,7 +128,7 @@ export class GLSPApp {
     }
 
     protected createGraph(_options: GLSPAppOptions): GLSPGraph {
-        return new GLSPGraph({ locator: GLSPGraph.locate(this) });
+        return new GLSPSemanticGraph({ locator: GLSPGraph.locate(this) });
     }
 
     protected createLabelEditor(_options: GLSPAppOptions): GLSPLabelEditor {

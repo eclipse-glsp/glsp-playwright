@@ -14,6 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { expect } from '@playwright/test';
+import { GraphConstructorOptions, SVGMetadataUtils } from '.';
 import { Selectable } from '../../extension';
 import { PLabelledElement } from '../../extension/model/labelled/labelled-element.model';
 import { PEdge, PEdgeConstructor, PModelElement, PModelElementConstructor, PNode, PNodeConstructor } from './elements';
@@ -26,9 +27,10 @@ import { GLSPGraph } from './graph.po';
 export class GLSPSemanticGraph extends GLSPGraph {
     async getNodeByLabel<TElement extends PNode & PLabelledElement>(
         label: string,
-        constructor: PNodeConstructor<TElement>
+        constructor: PNodeConstructor<TElement>,
+        options?: GraphConstructorOptions
     ): Promise<TElement> {
-        const nodes = await this.getNodesByLabel(label, constructor);
+        const nodes = await this.getNodesByLabel(label, constructor, options);
 
         expect(nodes).toHaveLength(1);
 
@@ -37,9 +39,10 @@ export class GLSPSemanticGraph extends GLSPGraph {
 
     async getNodesByLabel<TElement extends PNode & PLabelledElement>(
         label: string,
-        constructor: PNodeConstructor<TElement>
+        constructor: PNodeConstructor<TElement>,
+        options?: GraphConstructorOptions
     ): Promise<TElement[]> {
-        const nodes = await this.getNodesOfType(constructor);
+        const nodes = await this.getNodes(`${SVGMetadataUtils.typeAttrOf(constructor)}:has-text("${label}")`, constructor, options);
         const elements: TElement[] = [];
 
         for (const node of nodes) {

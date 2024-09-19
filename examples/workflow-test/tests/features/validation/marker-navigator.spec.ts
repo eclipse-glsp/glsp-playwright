@@ -13,19 +13,19 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { MarkerNavigator, StandaloneMarkerNavigator, TheiaMarkerNavigator, expect, test } from '@eclipse-glsp/glsp-playwright/';
-import { skipIntegration } from '@eclipse-glsp/glsp-playwright/src/test';
-import { IntegrationVariable } from '@eclipse-glsp/glsp-playwright/src/test/dynamic-variable';
+import { MarkerNavigator, expect, skipIntegration, test } from '@eclipse-glsp/glsp-playwright';
+import { provideMarkerNavigatorVariable } from '@eclipse-glsp/glsp-playwright/src/glsp';
 import { WorkflowApp } from '../../../src/app/workflow-app';
 import { TaskAutomated } from '../../../src/graph/elements/task-automated.po';
 import { WorkflowGraph } from '../../../src/graph/workflow.graph';
+import { TaskAutomatedNodes } from '../../nodes';
 
-const element1 = 'ChkWt';
-const element2 = 'WtOK';
-const element3 = 'Brew';
-const element4 = 'KeepTp';
-const element5 = 'ChkTp';
-const element6 = 'PreHeat';
+const element1 = TaskAutomatedNodes.chkwtLabel;
+const element2 = TaskAutomatedNodes.wtokLabel;
+const element3 = TaskAutomatedNodes.brewLabel;
+const element4 = TaskAutomatedNodes.keepTpLabel;
+const element5 = TaskAutomatedNodes.chktpLabel;
+const element6 = TaskAutomatedNodes.preheatLabel;
 
 const forwardOrder = [element1, element2, element3, element4, element5, element6, element1];
 const backwardOrder = [element1, element6, element5, element4, element3, element2, element1, element6];
@@ -41,16 +41,7 @@ test.describe('The marker navigator', () => {
             integration
         });
         graph = app.graph;
-        const navigatorProvider = new IntegrationVariable<MarkerNavigator>({
-            value: {
-                Standalone: new StandaloneMarkerNavigator(app),
-                Theia: new TheiaMarkerNavigator(app)
-            },
-            integration
-        });
-
-        navigator = navigatorProvider.get();
-
+        navigator = provideMarkerNavigatorVariable(integration, app).get();
         await navigator.trigger();
     });
 
@@ -61,7 +52,6 @@ test.describe('The marker navigator', () => {
         test.skip(skipIntegration(integrationOptions, 'VSCode'), 'Not supported');
 
         await navigator.navigateForward();
-        await app.page.pause();
         await expect(graph).toHaveSelected({
             type: TaskAutomated,
             elements: [await graph.getNodeByLabel(element1, TaskAutomated)]

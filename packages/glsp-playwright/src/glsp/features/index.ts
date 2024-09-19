@@ -20,4 +20,5 @@ export * from './label-editor';
 export * from './popup';
 export * from './routing';
 export * from './tool-palette';
+export * from './undo-redo';
 export * from './validation';
