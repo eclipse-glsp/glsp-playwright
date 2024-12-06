@@ -55,7 +55,6 @@
     "@theia/playwright": "~1.49.1",
     "@types/yargs": "^17.0.32",
     "dotenv": "^16.0.3",
-    "ts-dedent": "^2.2.0",
     "yargs": "^17.7.2"
   },
   "publishConfig": {

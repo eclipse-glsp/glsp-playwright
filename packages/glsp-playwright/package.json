@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@vscode/test-electron": "^2.3.2",
+    "ts-dedent": "^2.2.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
