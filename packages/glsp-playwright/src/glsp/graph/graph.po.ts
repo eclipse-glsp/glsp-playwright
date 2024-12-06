@@ -87,7 +87,7 @@ export class GLSPGraph extends PModelElement {
             if ((await childLocator.count()) > 0) {
                 const id = await childLocator.getAttribute('id');
                 if (id !== null && (await isEqualLocatorType(childLocator, constructor))) {
-                    elements.push(await this.getModelElement(`#${id}`, constructor, options));
+                    elements.push(await this.getModelElement(`id=${id}`, constructor, options));
                 }
             }
         }
@@ -133,7 +133,7 @@ export class GLSPGraph extends PModelElement {
             if ((await childLocator.count()) > 0) {
                 const id = await childLocator.getAttribute('id');
                 if (id !== null && (await isEqualLocatorType(childLocator, constructor))) {
-                    elements.push(await this.getNode(`#${id}`, constructor, options));
+                    elements.push(await this.getNode(`id=${id}`, constructor, options));
                 }
             }
         }
@@ -170,7 +170,7 @@ export class GLSPGraph extends PModelElement {
         for await (const locator of await this.locate().locator(query).all()) {
             const id = await locator.getAttribute('id');
             if (id !== null && (await isEqualLocatorType(locator, constructor))) {
-                const element = await this.getEdge(`#${id}`, constructor, options);
+                const element = await this.getEdge(`id=${id}`, constructor, options);
                 const sourceChecks = [];
                 const targetChecks = [];
 
@@ -237,7 +237,7 @@ export class GLSPGraph extends PModelElement {
             retriever = this.getEdge.bind(this) as any;
         }
 
-        return Promise.all(ids.map(id => retriever(`#${id}`, constructor)));
+        return Promise.all(ids.map(id => retriever(`id=${id}`, constructor)));
     }
 
     async waitForCreation(elementType: string, creator: () => Promise<void>): Promise<string[]> {

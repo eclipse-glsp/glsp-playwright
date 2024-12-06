@@ -45,7 +45,7 @@ export class GLSPToolPaletteContent {
         id: string,
         constructor: ToolPaletteContentGroupConstructor<TToolGroup>
     ): TToolGroup {
-        const toolGroupLocator = this.paletteLocator.child(`#${id}.tool-group`);
+        const toolGroupLocator = this.paletteLocator.child(`[id=${id}].tool-group`);
 
         return new constructor(toolGroupLocator, this.toolPalette);
     }

@@ -75,8 +75,8 @@ export class GLSPSemanticGraph extends GLSPGraph {
     async getEdgesBetween<TElement extends PEdge>(
         constructor: PEdgeConstructor<TElement>,
         options: {
-            sourceNode: PEdge;
-            targetNode: PEdge;
+            sourceNode: PNode;
+            targetNode: PNode;
         }
     ): Promise<TElement[]> {
         return this.getEdgesOfType(constructor, {

@@ -55,7 +55,7 @@ export class RoutingPoints {
         for await (const childLocator of await this.pointsLocator.all()) {
             const id = await definedAttr(childLocator, 'id');
 
-            const routingPoint = new RoutingPoint(this.element.locator.child(`#${id}`), this);
+            const routingPoint = new RoutingPoint(this.element.locator.child(`id=${id}`), this);
             await routingPoint.snapshot();
             elements.push(routingPoint);
         }
@@ -71,7 +71,7 @@ export class RoutingPoints {
         for await (const childLocator of await this.volatilePointsLocator.all()) {
             const id = await definedAttr(childLocator, 'id');
 
-            const routingPoint = new RoutingPoint(this.element.locator.child(`#${id}`), this);
+            const routingPoint = new RoutingPoint(this.element.locator.child(`id=${id}`), this);
             await routingPoint.snapshot();
             elements.push(routingPoint);
         }
