@@ -1,6 +1,23 @@
 # Eclipse GLSP Playwright Changelog
 
-## [v2.2.1 - 23/07/2024](<(https://github.com/eclipse-glsp/glsp-playwright/releases/tag/v2.2.1)>)
+## [2.3.0 -18/02/2024](https://github.com/eclipse-glsp/glsp-playwright/releases/tag/v2.3.0)
+
+### Changes
+
+-   [example] Update workflow example tests to handle differences between the java and node server implementation accordingly [#22](https://github.com/eclipse-glsp/glsp-playwright/pull/22)
+    -   New assertions:
+        -   `toContainClass` - Checks if the element has the css class
+        -   `toContainElement` - Checks if the graph contains the element
+        -   `toBeSelected` - Checks that the element is selected
+-   [example] Introduce/improve test cases for GLSP core functionality [#23](https://github.com/eclipse-glsp/glsp-playwright/pull/23)
+-   Use playwright id selectors over plain # selectors [#25](https://github.com/eclipse-glsp/glsp-playwright/pull/25)
+
+### Potentially Breaking Changes
+
+-   Combine `get<ModelElement>BySelector` and `get<ModelElement>ByLocator` methods [#21](https://github.com/eclipse-glsp/glsp-playwright/pull/21)
+    -   e.g. `getNodesBySelector`/`getNodesByLocator` -> `getNodes`
+
+## [v2.2.1 - 23/07/2024](https://github.com/eclipse-glsp/glsp-playwright/releases/tag/v2.2.1)
 
 ### Changes
 
@@ -9,7 +26,7 @@
 -   Ensure that the `GLSPGraphLocator` can be used generically for any graph view representation [#10](https://github.com/eclipse-glsp/glsp-playwright/pull/10)
 -   Add a page object for validation marker testing and introduce custom selection assertions for the `GLSPGraph` [#15](https://github.com/eclipse-glsp/glsp-playwright/pull/15)
 
-## [v2.0.0 - 24/10/2023](<(https://github.com/eclipse-glsp/glsp-playwright/releases/tag/v2.0.0)>)
+## [v2.0.0 - 24/10/2023](https://github.com/eclipse-glsp/glsp-playwright/releases/tag/v2.0.0)
 
 Inception of the GLSP Playwright project.
 This project provides a Playwright-based page object framework for testing GLSP diagrams in different tool platform integration scenarios.
