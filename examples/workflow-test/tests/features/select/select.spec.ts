@@ -28,6 +28,7 @@ test.describe('The select feature', () => {
             type: 'integration',
             integration
         });
+        await app.waitForReady();
         graph = app.graph;
     });
 
@@ -77,7 +78,7 @@ test.describe('The select feature', () => {
         await app.page.keyboard.press('Control+A');
         await expect(graph).toHaveSelected({
             type: PModelElement,
-            elements: await graph.getAllModelElements()
+            elements: () => graph.getAllModelElements()
         });
     });
 

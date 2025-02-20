@@ -46,7 +46,7 @@ const expectedElementMetadata = {
 const expectedGLSPLocatorData = [
     {
         locator:
-            "locator('body').locator('div.sprotty:not(.sprotty-hidden)').locator('[data-svg-metadata-type=\"graph\"]').locator('[id$=\"task_Push\"]').and(locator('body').locator('div.sprotty:not(.sprotty-hidden)').locator('[data-svg-metadata-type=\"graph\"]').locator('[data-svg-metadata-type=\"task:manual\"]'))",
+            "locator('body').locator('div.sprotty:not(.sprotty-hidden)').locator('[data-svg-metadata-type=\"graph\"]').locator('[id$=\"task_Push\"]').and(locator('body').locator('[data-svg-metadata-type=\"task:manual\"]'))",
         children: [
             '<g id="sprotty_task_Push" transform="translate(70, 100)" data-svg-metadata-type="task:manual" data-svg-metadata-parent-id="sprotty_sprotty" class="node task manual">...</g>'
         ]
@@ -67,6 +67,7 @@ test.describe('The debug functions', () => {
             type: 'integration',
             integration
         });
+        await app.waitForReady();
         graph = app.graph;
     });
 

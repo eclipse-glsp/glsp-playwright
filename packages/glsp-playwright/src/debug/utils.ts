@@ -22,6 +22,7 @@ export interface DebugNode {
     type: string | null;
     parent: string | null;
     html: string | null;
+    class: string | null;
     children: DebugNode[];
 }
 
@@ -57,7 +58,8 @@ export async function extractElement(locator: Locator): Promise<DebugNode> {
         type: await locator.getAttribute(SVGMetadata.type),
         parent: await locator.getAttribute(SVGMetadata.parentId),
         children: [],
-        html: await (await locator.allTextContents()).join(',')
+        html: (await locator.allTextContents()).join(','),
+        class: await locator.getAttribute('class')
     };
 }
 

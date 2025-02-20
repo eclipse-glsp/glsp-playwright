@@ -15,15 +15,15 @@
  ********************************************************************************/
 import type { Locator } from '@playwright/test';
 import type { GLSPApp } from '~/glsp';
-import { asLocator, type GLSPLocator } from '~/remote';
+import { GLSPLocator, type LocateContext } from '~/remote';
 import { definedAttr, isUndefinedOrValue } from '~/utils/ts.utils';
+import { expect } from '../../test';
 import { ModelElementMetadata, PMetadata } from './decorators';
 import { assertEqualType, createTypedEdgeProxy, getPModelElementConstructorOfType } from './elements';
 import { isPEdgeConstructor, PEdge, PEdgeConstructor } from './elements/edge';
 import { isEqualLocatorType, PModelElement, PModelElementConstructor } from './elements/element';
 import { isPNodeConstructor, PNode, PNodeConstructor } from './elements/node';
-import type { EdgeConstructorOptions, EdgeSearchOptions, ElementQuery, GraphConstructorOptions, TypedEdge } from './graph.type';
-import { waitForElementChanges, waitForElementIncrease } from './graph.wait';
+import type { EdgeConstructorOptions, EdgeSearchOptions, GraphConstructorOptions, TypedEdge } from './graph.type';
 import { SVGMetadata, SVGMetadataUtils } from './svg-metadata-api';
 
 export interface GLSPGraphOptions {
@@ -54,12 +54,16 @@ export class GLSPGraph extends PModelElement {
         });
     }
 
+    protected getLocatorForType(constructor: PModelElementConstructor, context: LocateContext = 'self'): Locator {
+        return this.locate(context).locator(SVGMetadataUtils.typeAttrOf(constructor));
+    }
+
     async getModelElement<TElement extends PModelElement>(
         selectorOrLocator: string | Locator,
         constructor: PModelElementConstructor<TElement>,
         options?: GraphConstructorOptions
     ): Promise<TElement> {
-        const locator = asLocator(selectorOrLocator, selector => this.locator.child(selector).locate());
+        const locator = GLSPLocator.asLocator(selectorOrLocator, selector => this.locator.child(selector).locate());
         const element = new constructor({ locator: this.locator.override(locator) });
         if (options === undefined || isUndefinedOrValue(options.assert, true)) {
             await assertEqualType(element);
@@ -72,7 +76,7 @@ export class GLSPGraph extends PModelElement {
         constructor: PModelElementConstructor<TElement>,
         options?: GraphConstructorOptions
     ): Promise<TElement[]> {
-        return this.getModelElements(this.locate().locator(SVGMetadataUtils.typeAttrOf(constructor)), constructor, options);
+        return this.getModelElements(this.getLocatorForType(constructor), constructor, options);
     }
 
     async getModelElements<TElement extends PModelElement>(
@@ -80,7 +84,7 @@ export class GLSPGraph extends PModelElement {
         constructor: PModelElementConstructor<TElement>,
         options?: GraphConstructorOptions
     ): Promise<TElement[]> {
-        const locator = asLocator(selectorOrLocator, selector => this.locator.child(selector).locate());
+        const locator = GLSPLocator.asLocator(selectorOrLocator, selector => this.locator.child(selector).locate());
         const elements: TElement[] = [];
 
         for await (const childLocator of await locator.all()) {
@@ -104,9 +108,9 @@ export class GLSPGraph extends PModelElement {
         constructor: PNodeConstructor<TElement>,
         options?: GraphConstructorOptions
     ): Promise<TElement> {
-        const locator = asLocator(selectorOrLocator, selector => this.locator.child(selector).locate());
+        const locator = GLSPLocator.asLocator(selectorOrLocator, selector => this.locator.child(selector).locate());
         const element = new constructor({
-            locator: this.locator.override(locator.and(this.locate().locator(SVGMetadataUtils.typeAttrOf(constructor))))
+            locator: this.locator.override(locator.and(this.getLocatorForType(constructor, 'root')))
         });
         if (options === undefined || isUndefinedOrValue(options.assert, true)) {
             await assertEqualType(element);
@@ -118,7 +122,7 @@ export class GLSPGraph extends PModelElement {
         constructor: PNodeConstructor<TElement>,
         options?: GraphConstructorOptions
     ): Promise<TElement[]> {
-        return this.getNodes(this.locate().locator(SVGMetadataUtils.typeAttrOf(constructor)), constructor, options);
+        return this.getNodes(this.getLocatorForType(constructor), constructor, options);
     }
 
     async getNodes<TElement extends PNode>(
@@ -126,7 +130,7 @@ export class GLSPGraph extends PModelElement {
         constructor: PNodeConstructor<TElement>,
         options?: GraphConstructorOptions
     ): Promise<TElement[]> {
-        const locator = asLocator(selectorOrLocator, selector => this.locator.child(selector).locate());
+        const locator = GLSPLocator.asLocator(selectorOrLocator, selector => this.locator.child(selector).locate());
         const elements: TElement[] = [];
 
         for await (const childLocator of await locator.all()) {
@@ -146,9 +150,9 @@ export class GLSPGraph extends PModelElement {
         constructor: PEdgeConstructor<TElement>,
         options?: TOptions
     ): Promise<TypedEdge<TElement, TOptions>> {
-        const locator = asLocator(selectorOrLocator, selector => this.locator.child(selector).locate());
+        const locator = GLSPLocator.asLocator(selectorOrLocator, selector => this.locator.child(selector).locate());
         const element = new constructor({
-            locator: this.locator.override(locator.and(this.locate().locator(SVGMetadataUtils.typeAttrOf(constructor))))
+            locator: this.locator.override(locator.and(this.getLocatorForType(constructor, 'root')))
         });
         await assertEqualType(element);
         return createTypedEdgeProxy<TElement, TOptions>(element, options);
@@ -193,14 +197,18 @@ export class GLSPGraph extends PModelElement {
                 }
 
                 if (options?.sourceSelectorOrLocator) {
-                    const sourceLocator = asLocator(options.sourceSelectorOrLocator, selector => this.locate().locator(selector));
+                    const sourceLocator = GLSPLocator.asLocator(options.sourceSelectorOrLocator, selector =>
+                        this.locate().locator(selector)
+                    );
                     const sourceId = await element.sourceId();
                     const expectedId = await definedAttr(sourceLocator, 'id');
                     sourceChecks.push(expectedId.includes(sourceId));
                 }
 
                 if (options?.targetSelectorOrLocator) {
-                    const targetLocator = asLocator(options.targetSelectorOrLocator, selector => this.locate().locator(selector));
+                    const targetLocator = GLSPLocator.asLocator(options.targetSelectorOrLocator, selector =>
+                        this.locate().locator(selector)
+                    );
                     const targetId = await element.targetId();
                     const expectedId = await definedAttr(targetLocator, 'id');
                     sourceChecks.push(expectedId.includes(targetId));
@@ -222,6 +230,10 @@ export class GLSPGraph extends PModelElement {
         await this.locate().click();
     }
 
+    /**
+     * Waits for the creation of an element of a specific type.
+     * The creation is detected by waiting for a new element to be visible.
+     */
     async waitForCreationOfType<TElement extends PModelElement>(
         constructor: PModelElementConstructor<TElement>,
         creator: () => Promise<void>
@@ -230,6 +242,79 @@ export class GLSPGraph extends PModelElement {
 
         const ids = await this.waitForCreation(elementType, creator);
 
+        return this.idsAsElements(ids, constructor);
+    }
+
+    /**
+     * Waits for the creation of an element of a specific type.
+     * The creation is detected by waiting for a new element to be visible.
+     */
+    async waitForCreation(elementType: string, creator: () => Promise<void>): Promise<string[]> {
+        const nodes = await this.getModelElementsOfType(getPModelElementConstructorOfType(elementType));
+        const ids = await Promise.all(nodes.map(n => n.idAttr()));
+
+        await expect(async () => {
+            await creator();
+        }).toPass();
+
+        const ignore = ['.ghost-element', ...ids.map(id => `[id="${id}"]`)];
+        const createdLocator = this.locate().locator(`[data-svg-metadata-type="${elementType}"]:not(${ignore.join(',')})`);
+
+        await expect(createdLocator.first()).toBeVisible();
+        await expect(createdLocator.last()).toBeVisible();
+
+        const newIds: string[] = [];
+        for (const locator of await createdLocator.all()) {
+            newIds.push(await definedAttr(locator, 'id'));
+        }
+
+        return newIds;
+    }
+
+    /**
+     * Waits for the replacement of an element of a specific type.
+     * The replacement is detected by waiting for the removal of the element and the creation of a new one.
+     */
+    async waitForReplacement(elementType: string, run: () => Promise<void>): Promise<string[]>;
+    async waitForReplacement<TElement extends PModelElement>(
+        constructor: PModelElementConstructor<TElement>,
+        run: () => Promise<void>
+    ): Promise<TElement[]>;
+    async waitForReplacement(
+        elementTypeOrConstructor: string | PModelElementConstructor,
+        run: () => Promise<void>
+    ): Promise<string[] | PModelElement[]> {
+        const elementType =
+            typeof elementTypeOrConstructor === 'string' ? elementTypeOrConstructor : PMetadata.getType(elementTypeOrConstructor);
+
+        const nodes = await this.getModelElementsOfType(getPModelElementConstructorOfType(elementType));
+        const removal = GLSPLocator.or(...nodes.map(n => n.locate()));
+
+        const ids = await this.waitForCreation(elementType, run);
+
+        await expect(removal).toBeHidden();
+
+        if (typeof elementTypeOrConstructor === 'string') {
+            return ids;
+        }
+
+        return this.idsAsElements(ids, elementTypeOrConstructor);
+    }
+
+    async waitForHide(selectorOrLocator: string | Locator | GLSPLocator, run: () => Promise<void>): Promise<void> {
+        const locator = GLSPLocator.asLocator(selectorOrLocator, selector => this.locate().locator(selector));
+        await expect(locator).toBeVisible();
+        await run();
+        await expect(locator).toBeHidden();
+    }
+
+    /**
+     * Converts a list of ids to elements of a specific type.
+     */
+    async idsAsElements<TElement extends PModelElement>(
+        ids: string[],
+        constructor: PModelElementConstructor<TElement>
+    ): Promise<TElement[]> {
         let retriever = this.getModelElement.bind(this);
         if (isPNodeConstructor(constructor)) {
             retriever = this.getNode.bind(this) as any;
@@ -238,31 +323,5 @@ export class GLSPGraph extends PModelElement {
         }
 
         return Promise.all(ids.map(id => retriever(`id=${id}`, constructor)));
-    }
-
-    async waitForCreation(elementType: string, creator: () => Promise<void>): Promise<string[]> {
-        const query: ElementQuery<PModelElement> = {
-            elementType,
-            all: () => this.getModelElementsOfType(getPModelElementConstructorOfType(elementType)),
-            filter: async elements => {
-                const filtered: PModelElement[] = [];
-
-                for (const element of elements) {
-                    const css = await element.classAttr();
-                    if (css && !css.includes('ghost-element')) {
-                        filtered.push(element);
-                    }
-                }
-
-                return filtered;
-            }
-        };
-
-        const { before, after } = await waitForElementChanges(query, creator, b => waitForElementIncrease(this.locator, query, b.length));
-
-        const beforeIds = await Promise.all(before.map(async element => element.idAttr()));
-        const afterIds = await Promise.all(after.map(async element => element.idAttr()));
-
-        return afterIds.filter(id => !beforeIds.includes(id));
     }
 }

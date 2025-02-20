@@ -31,6 +31,7 @@ test.describe('The undo redo trigger', () => {
             type: 'integration',
             integration
         });
+        await app.waitForReady();
         graph = app.graph;
         trigger = provideUndoRedoTriggerVariable(integration, app).get();
     });

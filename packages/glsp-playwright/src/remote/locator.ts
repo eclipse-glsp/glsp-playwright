@@ -16,6 +16,8 @@
 import type { Locator, Page } from '@playwright/test';
 import type { GLSPApp } from '~/glsp/app';
 
+export type LocateContext = 'self' | 'root';
+
 /**
  * Locators represent a way to find element(s) on the page at any moment.
  * They also have access to the {@link GLSPApp}.
@@ -35,8 +37,19 @@ export class GLSPLocator {
     /**
      * Returns the Playwright {@link Locator}
      */
-    locate(): Locator {
+    locate(context: LocateContext = 'self'): Locator {
+        if (context === 'root') {
+            return this.root().locator;
+        }
+
         return this.locator;
+    }
+
+    /**
+     * Returns the root {@link GLSPLocator} of the current locator.
+     */
+    root(): GLSPLocator {
+        return this.parent?.root() ?? this;
     }
 
     /**
@@ -61,10 +74,24 @@ export class GLSPLocator {
     }
 }
 
-export function asLocator(selectorOrLocator: string | Locator, operation: (selector: string) => Locator): Locator {
-    if (typeof selectorOrLocator === 'string') {
-        return operation(selectorOrLocator);
+export namespace GLSPLocator {
+    export function asLocator(selectorOrLocator: string | Locator | GLSPLocator, transform?: (selector: string) => Locator): Locator {
+        if (typeof selectorOrLocator === 'string') {
+            if (!transform) {
+                throw new Error('Transform is required when passing a selector string');
+            }
+
+            return transform(selectorOrLocator);
+        } else if (selectorOrLocator instanceof GLSPLocator) {
+            return selectorOrLocator.locate();
+        }
+
+        return selectorOrLocator;
     }
 
-    return selectorOrLocator;
+    // Chains multiple locators with a logical OR
+    export function or(...locators: (Locator | GLSPLocator)[]): Locator {
+        const loc = locators.map(locator => GLSPLocator.asLocator(locator));
+        return loc.reduce((acc, locator) => acc.or(locator), loc[0]);
+    }
 }

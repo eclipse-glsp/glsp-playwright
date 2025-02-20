@@ -28,6 +28,7 @@ test.describe('The routing points of an edge', () => {
             type: 'integration',
             integration
         });
+        await app.waitForReady();
         graph = app.graph;
     });
 

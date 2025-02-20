@@ -18,5 +18,4 @@ export * from './elements';
 export * from './graph-semantic.po';
 export * from './graph.po';
 export * from './graph.type';
-export * from './graph.wait';
 export * from './svg-metadata-api';

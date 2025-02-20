@@ -17,7 +17,6 @@ import type { Locator } from '@playwright/test';
 import type { AutoPrepareOptions, AutoWaitOptions } from '~/extension';
 import { Clickable, Mix, useDraggableFlow } from '~/extension';
 import { ModelElementMetadata, PEdge, PMetadata, PModelElement, PModelElementData, PModelElementSnapshot, SVGMetadata } from '~/glsp/graph';
-import type { GLSPLocator } from '~/remote';
 import type { Position } from '~/types';
 import { definedAttr, definedGLSPAttr } from '~/utils/ts.utils';
 
@@ -55,9 +54,9 @@ export class RoutingPoints {
         for await (const childLocator of await this.pointsLocator.all()) {
             const id = await definedAttr(childLocator, 'id');
 
-            const routingPoint = new RoutingPoint(this.element.locator.child(`id=${id}`), this);
-            await routingPoint.snapshot();
-            elements.push(routingPoint);
+            const point = new RoutingPoint({ locator: this.element.locator.child(`id=${id}`), routingPoints: this });
+            await point.snapshot();
+            elements.push(point);
         }
 
         return elements;
@@ -66,14 +65,17 @@ export class RoutingPoints {
     async volatilePoints(options?: AutoWaitOptions): Promise<VolatileRoutingPoint[]> {
         await this.autoWait(options);
 
-        const elements: RoutingPoint[] = [];
+        const elements: VolatileRoutingPoint[] = [];
 
         for await (const childLocator of await this.volatilePointsLocator.all()) {
             const id = await definedAttr(childLocator, 'id');
 
-            const routingPoint = new RoutingPoint(this.element.locator.child(`id=${id}`), this);
-            await routingPoint.snapshot();
-            elements.push(routingPoint);
+            const point = new VolatileRoutingPoint({
+                locator: this.element.locator.child(`id=${id}`),
+                routingPoints: this
+            });
+            await point.snapshot();
+            elements.push(point);
         }
 
         return elements;
@@ -84,12 +86,16 @@ export interface RoutingPointSnapshot extends PModelElementSnapshot {
     kind: RoutingPointKind;
 }
 
+export interface BaseRoutingPointData extends PModelElementData {
+    routingPoints: RoutingPoints;
+}
+
 const BaseRoutingPointMixin = Mix(PModelElement).flow(useDraggableFlow).build();
 export abstract class BaseRoutingPoint extends BaseRoutingPointMixin {
     readonly routingPoints;
     override lastSnapshot?: RoutingPointSnapshot | undefined;
 
-    constructor(data: PModelElementData & { routingPoints: RoutingPoints }) {
+    constructor(data: BaseRoutingPointData) {
         super(data);
 
         this.routingPoints = data.routingPoints;
@@ -155,11 +161,8 @@ export abstract class BaseRoutingPoint extends BaseRoutingPointMixin {
     type: 'routing-point'
 })
 export class RoutingPoint extends BaseRoutingPoint {
-    constructor(locator: GLSPLocator, routingPoints: RoutingPoints) {
-        super({
-            routingPoints,
-            locator
-        });
+    constructor(data: BaseRoutingPointData) {
+        super(data);
     }
 }
 
@@ -167,10 +170,7 @@ export class RoutingPoint extends BaseRoutingPoint {
     type: 'volatile-routing-point'
 })
 export class VolatileRoutingPoint extends BaseRoutingPoint {
-    constructor(locator: GLSPLocator, routingPoints: RoutingPoints) {
-        super({
-            routingPoints,
-            locator
-        });
+    constructor(data: BaseRoutingPointData) {
+        super(data);
     }
 }

@@ -16,7 +16,7 @@
 import type { Locator, Page } from '@playwright/test';
 import type { GLSPApp } from '../glsp/app/app.po';
 import { InteractableBoundingBox, interactableBoundsOf } from './browser/interactable';
-import type { GLSPLocator } from './locator';
+import type { GLSPLocator, LocateContext } from './locator';
 
 /**
  * Root class of all locateable page objects.
@@ -35,8 +35,8 @@ export class Locateable {
     /**
      * Returns the Playwright {@link Locator}
      */
-    locate(): Locator {
-        return this.locator.locate();
+    locate(context: LocateContext = 'self'): Locator {
+        return this.locator.locate(context);
     }
 
     /**

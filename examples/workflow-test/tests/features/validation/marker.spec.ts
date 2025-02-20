@@ -30,6 +30,7 @@ test.describe('The marker', () => {
             type: 'integration',
             integration
         });
+        await app.waitForReady();
         graph = app.graph;
     });
 

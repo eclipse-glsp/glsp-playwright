@@ -14,6 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { SVGMetadataUtils } from '~/glsp/graph';
+import { expect } from '../../test';
 import { Integration } from '../integration.base';
 import type { IntegrationArgs } from '../integration.type';
 import type { StandaloneIntegrationOptions } from './standalone.options';
@@ -40,6 +41,6 @@ export class StandaloneIntegration extends Integration {
     protected override async launch(): Promise<void> {
         await this.page.goto(this.options.url);
         await this.assertMetadataAPI();
-        await this.page.waitForSelector(`${SVGMetadataUtils.typeAttrOf('graph')} svg.sprotty-graph > g`);
+        await expect(this.page.locator(`${SVGMetadataUtils.typeAttrOf('graph')} svg.sprotty-graph > g`)).toBeVisible();
     }
 }

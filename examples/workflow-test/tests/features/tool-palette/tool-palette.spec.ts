@@ -28,6 +28,7 @@ test.describe('The tool palette', () => {
             type: 'integration',
             integration
         });
+        await app.waitForReady();
         graph = app.graph;
         toolPalette = app.toolPalette;
     });

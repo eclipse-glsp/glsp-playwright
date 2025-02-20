@@ -13,11 +13,13 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
+import { type Locator } from '@playwright/test';
 import { useClickableFlow } from '~/extension/flows';
 import { Mix } from '~/extension/mixin';
 import type { GLSPLocator } from '~/remote/locator';
 import type { ConstructorT } from '~/types';
 import { definedGLSPAttr } from '~/utils/ts.utils';
+import { expect } from '../../../../test';
 import { BaseToolPaletteItem } from '../tool-palette-item.base';
 import type { ToolPaletteContentGroup } from './tool-palette-content-group.po';
 
@@ -28,7 +30,10 @@ export type ToolPaletteContentItemConstructor<
 
 const ToolPaletteContentItemMixin = Mix(BaseToolPaletteItem).flow(useClickableFlow).build();
 export class ToolPaletteContentItem<TToolGroup extends ToolPaletteContentGroup> extends ToolPaletteContentItemMixin {
-    constructor(locator: GLSPLocator, public readonly toolGroup: TToolGroup) {
+    constructor(
+        locator: GLSPLocator,
+        public readonly toolGroup: TToolGroup
+    ) {
         super(locator, toolGroup.toolPalette);
     }
 
@@ -42,5 +47,10 @@ export class ToolPaletteContentItem<TToolGroup extends ToolPaletteContentGroup> 
 
     async text(): Promise<string> {
         return this.locate().innerText();
+    }
+
+    override async click(options?: Parameters<Locator['click']>[0] & { dispatch?: boolean }): Promise<void> {
+        await super.click(options);
+        await expect(this.locate()).toContainClass('clicked');
     }
 }

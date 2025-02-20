@@ -30,6 +30,7 @@ test.describe('The edge accessor of a connectable element', () => {
             type: 'integration',
             integration
         });
+        await app.waitForReady();
         graph = app.graph;
     });
 

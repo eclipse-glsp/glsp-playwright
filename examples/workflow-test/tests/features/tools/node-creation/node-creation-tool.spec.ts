@@ -36,6 +36,7 @@ test.describe('The node creation tool', () => {
             type: 'integration',
             integration
         });
+        await app.waitForReady();
         graph = app.graph;
         toolPalette = app.toolPalette;
         taskManualCreatedLabel = TaskManualNodes.createdLabel(glspServer);
@@ -69,6 +70,7 @@ test.describe('The node creation tool', () => {
             await paletteItem.click();
 
             await expect(graph).toContainClass(CursorCSS.NODE_CREATION);
+
             const node = await graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
             const bounds = await node.bounds();
             await bounds.position('bottom_left').moveRelative(0, 60).click();

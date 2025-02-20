@@ -60,7 +60,7 @@ async function toBeSelected(this: ExpectMatcherState, element: PModelElement): P
 async function toHaveSelected(
     this: ExpectMatcherState,
     graph: GLSPSemanticGraph,
-    expected: { type: ConstructorT<PModelElement>; elements: PModelElement[] | (() => PModelElement[]) }
+    expected: { type: ConstructorT<PModelElement>; elements: PModelElement[] | (() => Promise<PModelElement[]>) }
 ): Promise<MatcherReturnType> {
     const assertionName = 'toHaveSelected';
     let pass: boolean;
@@ -68,14 +68,16 @@ async function toHaveSelected(
 
     try {
         await baseExpect(graph.locate().locator(`.${Selectable.CSS}`).first()).toBeAttached();
-        const nodes = await graph.getSelectedElements(expected.type);
-        const elements = typeof expected.elements === 'function' ? expected.elements() : expected.elements;
-        baseExpect(nodes).toHaveLength(elements.length);
+        await baseExpect(graph.locate().locator(`.${Selectable.CSS}`).last()).toBeAttached();
 
-        const nodeIds = await Promise.all(nodes.map(n => n.idAttr()));
-        const expectedIds = await Promise.all(elements.map(n => n.idAttr()));
+        const receivedElements = await graph.getSelectedElements(expected.type);
+        const expectedElements = typeof expected.elements === 'function' ? await expected.elements() : expected.elements;
 
-        baseExpect(nodeIds.sort()).toEqual(expectedIds.sort());
+        const receivedIds = await Promise.all(receivedElements.map(n => n.idAttr()));
+        const expectedIds = await Promise.all(expectedElements.map(n => n.idAttr()));
+
+        baseExpect(receivedIds).toHaveLength(expectedIds.length);
+        baseExpect(receivedIds.sort()).toEqual(expectedIds.sort());
         pass = true;
     } catch (e: any) {
         matcherResult = e.matcherResult ?? e.error.message;
