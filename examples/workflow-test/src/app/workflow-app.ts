@@ -14,6 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { GLSPSemanticApp } from '@eclipse-glsp/glsp-playwright';
+import { expect } from '@eclipse-glsp/glsp-playwright/lib/test';
 import { WorkflowToolPalette } from '../features/tool-palette/workflow-tool-palette';
 import { WorkflowGraph } from '../graph/workflow.graph';
 
@@ -27,5 +28,13 @@ export class WorkflowApp extends GLSPSemanticApp {
 
     protected override createToolPalette(): WorkflowToolPalette {
         return new WorkflowToolPalette({ locator: WorkflowToolPalette.locate(this) });
+    }
+
+    /**
+     * Wait for the application to be ready.
+     * The server can take some time to send the data.
+     */
+    async waitForReady(): Promise<void> {
+        await expect(this.locate().getByText('Push')).toBeVisible();
     }
 }

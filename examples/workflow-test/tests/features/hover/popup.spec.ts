@@ -78,6 +78,7 @@ test.describe('The popup', () => {
             type: 'integration',
             integration
         });
+        await app.waitForReady();
         graph = app.graph;
         expectedManualPopupText.setServer(glspServer);
         expectedAutomatedPopupText.setServer(glspServer);

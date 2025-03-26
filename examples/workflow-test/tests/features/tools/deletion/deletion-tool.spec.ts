@@ -30,6 +30,7 @@ test.describe('The deletion tool', () => {
             type: 'integration',
             integration
         });
+        await app.waitForReady();
         graph = app.graph;
         toolPalette = app.toolPalette;
     });

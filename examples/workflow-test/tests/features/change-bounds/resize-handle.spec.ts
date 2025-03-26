@@ -28,6 +28,7 @@ test.describe('The resizing handle', () => {
             type: 'integration',
             integration
         });
+        await app.waitForReady();
         graph = app.graph;
     });
 

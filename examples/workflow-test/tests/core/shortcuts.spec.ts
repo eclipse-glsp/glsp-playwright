@@ -28,6 +28,7 @@ test.describe('Shortcuts', () => {
             type: 'integration',
             integration
         });
+        await app.waitForReady();
         graph = app.graph;
     });
 

@@ -28,6 +28,7 @@ test.describe('The label edit tool', () => {
             type: 'integration',
             integration
         });
+        await app.waitForReady();
         graph = app.graph;
     });
 
@@ -45,6 +46,7 @@ test.describe('The label edit tool', () => {
         await node.page.keyboard.press('F2');
         await node.page.keyboard.type('New Label');
         await node.page.keyboard.press('Enter');
+        await app.labelEditor.waitForHidden();
 
         expect(await node.label).toBe('New Label');
     });
@@ -58,7 +60,7 @@ test.describe('The label edit tool', () => {
         await node.page.keyboard.press('Backspace');
         await node.page.keyboard.press('Enter');
 
-        await expect(await app.labelEditor.getWarning()).toBe('Name must not be empty');
+        expect(await app.labelEditor.getWarning()).toBe('Name must not be empty');
     });
 
     test.afterEach(async ({ integration }) => {

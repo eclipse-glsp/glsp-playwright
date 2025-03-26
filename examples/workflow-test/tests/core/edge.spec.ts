@@ -30,6 +30,7 @@ test.describe('Edges', () => {
             type: 'integration',
             integration
         });
+        await app.waitForReady();
         graph = app.graph;
     });
 

@@ -25,6 +25,7 @@ test.describe('The context menu', () => {
             type: 'integration',
             integration
         });
+        await app.waitForReady();
         contextMenu = app.contextMenu;
     });
 

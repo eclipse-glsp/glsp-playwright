@@ -29,6 +29,7 @@ test.describe('The graph', () => {
             type: 'integration',
             integration
         });
+        await app.waitForReady();
         graph = app.graph;
     });
 

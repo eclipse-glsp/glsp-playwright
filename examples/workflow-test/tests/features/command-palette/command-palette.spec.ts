@@ -33,6 +33,7 @@ test.describe('The command palette', () => {
             type: 'integration',
             integration
         });
+        await app.waitForReady();
         graph = app.graph;
         globalCommandPalette = app.globalCommandPalette;
         server = glspServer;

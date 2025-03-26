@@ -14,6 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { expect, test } from '@eclipse-glsp/glsp-playwright';
+import { PMetadata, VolatileRoutingPoint } from '@eclipse-glsp/glsp-playwright/src/glsp';
 import { WorkflowApp } from '../../../../src/app/workflow-app';
 import { Edge } from '../../../../src/graph/elements/edge.po';
 import { TaskAutomated } from '../../../../src/graph/elements/task-automated.po';
@@ -30,6 +31,7 @@ test.describe('The edge edit tool', () => {
             type: 'integration',
             integration
         });
+        await app.waitForReady();
         graph = app.graph;
     });
 
@@ -59,7 +61,9 @@ test.describe('The edge edit tool', () => {
         expect(volatilePoints).toHaveLength(1);
 
         const volatilePoint = volatilePoints[0];
-        await volatilePoint.dragToRelativePosition({ x: 50, y: 50 });
+        await app.graph.waitForReplacement(PMetadata.getType(VolatileRoutingPoint), async () => {
+            await volatilePoint.dragToRelativePosition({ x: 50, y: 50 });
+        });
 
         points = await routingPoints.points();
         expect(points).toHaveLength(currentPointsLength + 1);
@@ -81,7 +85,9 @@ test.describe('The edge edit tool', () => {
         expect(volatilePoints).toHaveLength(1);
 
         // Middle one
-        await volatilePoints[0].dragToRelativePosition({ x: 0, y: 50 });
+        await app.graph.waitForReplacement(PMetadata.getType(VolatileRoutingPoint), async () => {
+            await volatilePoints[0].dragToRelativePosition({ x: 0, y: 50 });
+        });
 
         points = await routingPoints.points();
         expect(points).toHaveLength(currentPointsLength + 1);
@@ -91,8 +97,9 @@ test.describe('The edge edit tool', () => {
 
         // Junction
         const junction = points.find(p => p.lastSnapshot?.kind === 'junction')!;
-        await junction.dragToRelativePosition({ x: 20, y: -40 });
-        await junction.waitForHidden();
+        await app.graph.waitForHide(junction.locator, async () => {
+            await junction.dragToRelativePosition({ x: 20, y: -40 });
+        });
 
         points = await routingPoints.points();
         expect(points).toHaveLength(currentPointsLength);

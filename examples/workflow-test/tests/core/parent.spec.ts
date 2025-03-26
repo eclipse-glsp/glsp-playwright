@@ -29,6 +29,7 @@ test.describe('The children accessor of a parent element', () => {
             type: 'integration',
             integration
         });
+        await app.waitForReady();
         graph = app.graph;
     });
 

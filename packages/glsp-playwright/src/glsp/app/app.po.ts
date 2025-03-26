@@ -127,6 +127,10 @@ export class GLSPApp {
         this.locator = this.rootLocator.child(this.sprottySelector);
     }
 
+    locate(): Locator {
+        return this.locator.locate();
+    }
+
     protected createGraph(_options: GLSPAppOptions): GLSPGraph {
         return new GLSPSemanticGraph({ locator: GLSPGraph.locate(this) });
     }

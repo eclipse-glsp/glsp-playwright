@@ -40,6 +40,7 @@ test.describe('The marker navigator', () => {
             type: 'integration',
             integration
         });
+        await app.waitForReady();
         graph = app.graph;
         navigator = provideMarkerNavigatorVariable(integration, app).get();
         await navigator.trigger();
