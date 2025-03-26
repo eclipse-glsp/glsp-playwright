@@ -80,6 +80,28 @@ export class RoutingPoints {
 
         return elements;
     }
+
+    async sourceHandle(options?: AutoWaitOptions): Promise<RoutingPoint | undefined> {
+        const routingPoints = await this.points(options);
+        for (const point of routingPoints) {
+            if ((await point.dataKindAttr()) === 'source') {
+                return point;
+            }
+        }
+
+        return undefined;
+    }
+
+    async targetHandle(options?: AutoWaitOptions): Promise<RoutingPoint | undefined> {
+        const routingPoints = await this.points(options);
+        for (const point of routingPoints) {
+            if ((await point.dataKindAttr()) === 'target') {
+                return point;
+            }
+        }
+
+        return undefined;
+    }
 }
 
 export interface RoutingPointSnapshot extends PModelElementSnapshot {

@@ -17,7 +17,8 @@ import type { Capability, Clickable } from '~/extension';
 import { SVGMetadata, type PEdge, type PNode } from '~/glsp/graph';
 import type { ConstructorA } from '~/types';
 import { expect } from '../../../test';
-import { RoutingPointCapability } from '../routing';
+import { assertIsDefined } from '../../../utils';
+import { RoutingPointCapability, type RoutingPoint, type RoutingPointKind } from '../routing';
 
 /**
  * Elements can be resized by using the resize handles.
@@ -39,20 +40,28 @@ export function useReconnectCapability<TBase extends ConstructorA<PEdge & Clicka
 ): Capability<TBase, ReconnectCapability> {
     abstract class Mixin extends Base implements ReconnectCapability {
         async reconnectSource(node: PNode & Clickable): Promise<void> {
-            await this.reconnect(node, 0);
+            await this.reconnect(node, 'source');
             await expect(this.locate()).toHaveAttribute(SVGMetadata.Edge.sourceId, await node.idAttr());
         }
 
         async reconnectTarget(node: PNode & Clickable): Promise<void> {
-            await this.reconnect(node, -1);
+            await this.reconnect(node, 'target');
             await expect(this.locate()).toHaveAttribute(SVGMetadata.Edge.targetId, await node.idAttr());
         }
 
-        private async reconnect(node: PNode & Clickable, index: number): Promise<void> {
+        protected async reconnect(node: PNode & Clickable, dataKind: RoutingPointKind): Promise<void> {
             const routingPoints = this.routingPoints();
             await routingPoints.enable();
-            const points = await routingPoints.points();
-            await points.at(index)!.dragTo(node.locate(), { force: true });
+            let point: RoutingPoint | undefined;
+            if (dataKind === 'source') {
+                point = await routingPoints.sourceHandle();
+            } else if (dataKind === 'target') {
+                point = await routingPoints.targetHandle();
+            }
+
+            assertIsDefined(point, `Routing point of kind ${dataKind} not found`);
+
+            await point.dragTo(node.locate(), { force: true });
             await node.click();
             await expect(node).toBeSelected();
         }
