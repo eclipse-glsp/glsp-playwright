@@ -1020,10 +1020,10 @@
   resolved "https://registry.yarnpkg.com/@sinonjs/text-encoding/-/text-encoding-0.7.2.tgz#5981a8db18b56ba38ef0efb7d995b12aa7b51918"
   integrity sha512-sXXKG+uL9IrKqViTtao2Ws6dy0znu9sOaP1di/jKGW1M6VssO8vlpXCQcpZ+jisQ1tTFAC5Jo/EOzFbggBagFQ==
 
-"@theia/playwright@~1.56.0":
-  version "1.56.0"
-  resolved "https://registry.yarnpkg.com/@theia/playwright/-/playwright-1.56.0.tgz#ce27e97865c9563c9fbd5307f97d8a54b34bd6cc"
-  integrity sha512-qQbeAggpMXHgei3peQym8BRP5guzrdB6igrQiSOVWcEXtVmR+kKYLT23TY7cC+hrbFHeSqgKN9m/FjzSSoOmEQ==
+"@theia/playwright@~1.60.0":
+  version "1.60.2"
+  resolved "https://registry.yarnpkg.com/@theia/playwright/-/playwright-1.60.2.tgz#488d8c749108763471f8c4638881a69cdc151bde"
+  integrity sha512-mAvSxXZIoqAS+oR9Ix9ubqxGArpgUr0EDqtajCWZP5X8h5P52UlxKxgbhUdSdimefdjd0xHFC+KZr/TzRzV6Jw==
   dependencies:
     "@playwright/test" "^1.47.0"
     fs-extra "^9.0.8"
