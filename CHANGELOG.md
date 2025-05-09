@@ -1,5 +1,12 @@
 # Eclipse GLSP Playwright Changelog
 
+## [2.4.0 - 04/04/2025](https://github.com/eclipse-glsp/glsp-playwright/releases/tag/v2.4.0)
+
+### Changes
+
+-   [api] Various improvements in async handling of page object to reduce test flakiness [#27](https://github.com/eclipse-glsp/glsp-playwright/pull/27)
+-   [api] Bug fix for edge routing handle page object [#28](https://github.com/eclipse-glsp/glsp-playwright/pull/28)
+
 ## [2.3.0 -18/02/2024](https://github.com/eclipse-glsp/glsp-playwright/releases/tag/v2.3.0)
 
 ### Changes

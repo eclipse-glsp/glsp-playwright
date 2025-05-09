@@ -37,7 +37,7 @@
     "watch": "concurrently --kill-others -n tsc,alias -c red,yellow \"tsc -b -w --preserveWatchOutput\" \"yarn --cwd packages/glsp-playwright watch:alias\""
   },
   "devDependencies": {
-    "@eclipse-glsp/dev": "next",
+    "@eclipse-glsp/dev": "2.4.0",
     "@estruyf/github-actions-reporter": "^1.7.0",
     "@types/node": "18.x",
     "concurrently": "^8.2.2",
