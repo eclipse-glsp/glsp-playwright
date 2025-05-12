@@ -52,7 +52,7 @@
     "@eclipse-glsp-examples/workflow-server-bundled": "next",
     "@eclipse-glsp/glsp-playwright": "2.5.0-next",
     "@playwright/test": "^1.47.0",
-    "@theia/playwright": "~1.56.0",
+    "@theia/playwright": "~1.60.0",
     "@types/yargs": "^17.0.32",
     "dotenv": "^16.0.3",
     "yargs": "^17.7.2"
