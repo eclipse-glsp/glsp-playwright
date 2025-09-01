@@ -34,20 +34,21 @@
     "test:theia": "yarn example test:theia",
     "test:vscode": "yarn example test:vscode",
     "test:vscode-setup": "yarn example test:vscode-setup",
+    "upgrade:next": "glsp updateNext",
     "watch": "concurrently --kill-others -n tsc,alias -c red,yellow \"tsc -b -w --preserveWatchOutput\" \"yarn --cwd packages/glsp-playwright watch:alias\""
   },
   "devDependencies": {
     "@eclipse-glsp/dev": "next",
     "@estruyf/github-actions-reporter": "^1.7.0",
-    "@types/node": "18.x",
+    "@types/node": "20.x",
     "concurrently": "^8.2.2",
     "eslint-import-resolver-typescript": "^3.5.3",
     "lerna": "^7.4.1",
     "tsc-alias": "1.8.10",
-    "typescript": "^5.2.2"
+    "typescript": "^5.9.2"
   },
   "engines": {
-    "node": ">=18",
+    "node": ">=20",
     "yarn": ">=1.7.0 <2"
   }
 }
