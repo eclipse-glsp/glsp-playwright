@@ -1,5 +1,15 @@
 # Eclipse GLSP Playwright Changelog
 
+## 2.5.0 - active
+
+### Changes
+
+### Potentially breaking changes
+
+-   [api] Fix selector for theia context menu integration [#30](https://github.com/eclipse-glsp/glsp-playwright/pull/28)
+    -   Selector no longer works for Theia >= 1.60.0
+-   [theia] Set Theia 1.64.0 and node 20 as new minimum versions [#32](https://github.com/eclipse-glsp/glsp-playwright/pull/32)
+
 ## [2.4.0 - 04/04/2025](https://github.com/eclipse-glsp/glsp-playwright/releases/tag/v2.4.0)
 
 ### Changes

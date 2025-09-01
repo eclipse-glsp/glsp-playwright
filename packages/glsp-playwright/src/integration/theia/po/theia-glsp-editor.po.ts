@@ -14,8 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import { normalizeId, OSUtil, TheiaEditor, urlEncodePath } from '@theia/playwright';
-import { join } from 'path';
+import { normalizeId, TheiaEditor } from '@theia/playwright';
 import type { TheiaGLSPApp } from './theia-glsp-app.po';
 
 /**
@@ -29,13 +28,10 @@ export class TheiaGLSPEditor extends TheiaEditor {
         super(
             {
                 tabSelector: normalizeId(
-                    `#shell-tab-${app.options.widgetId}:file://${urlEncodePath(
-                        join(app.workspace.escapedPath, OSUtil.fileSeparator, filePath)
+                    `#shell-tab-${app.options.widgetId}:${app.workspace.pathAsUrl(filePath)}
                     )}:1`
                 ),
-                viewSelector: normalizeId(
-                    `#${app.options.widgetId}:file://${urlEncodePath(join(app.workspace.escapedPath, OSUtil.fileSeparator, filePath))}`
-                )
+                viewSelector: normalizeId(`#${app.options.widgetId}:${app.workspace.pathAsUrl(filePath)}`)
             },
             app
         );
