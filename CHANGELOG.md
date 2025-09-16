@@ -1,5 +1,11 @@
 # Eclipse GLSP Playwright Changelog
 
+## v2.6.0 - active
+
+### Changes
+
+### Potentially Breaking Changes
+
 ## [v2.5.0 - 10/09/2025](https://github.com/eclipse-glsp/glsp-playwright/releases/tag/v2.5.0)
 
 ### Changes
