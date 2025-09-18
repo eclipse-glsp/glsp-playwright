@@ -22,7 +22,10 @@ import type { Locator, Page } from '@playwright/test';
 export class VSCodeWorkbenchViewExtensions {
     readonly locator;
 
-    constructor(protected readonly page: Page, protected readonly selector = '[id="workbench.view.extensions"]') {
+    constructor(
+        protected readonly page: Page,
+        protected readonly selector = '[id="workbench.view.extensions"]'
+    ) {
         this.locator = this.page.locator(this.selector);
     }
 

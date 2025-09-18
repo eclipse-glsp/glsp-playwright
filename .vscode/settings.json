@@ -17,9 +17,7 @@
   "task.autoDetect": "off",
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.preferences.importModuleSpecifier": "relative",
-  "typescript.preferences.autoImportFileExcludePatterns": [
-    "packages/*/src/index.ts"
-  ],
+  "typescript.preferences.autoImportFileExcludePatterns": ["packages/*/src/index.ts"],
   "[css]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },

@@ -1,0 +1,12 @@
+# Compiled output
+**/dist/
+**/lib/
+**/node_modules/
+**/repositories/
+
+# Build files
+**/.eslintrc.js
+**/esbuild.js
+
+# Other generated files
+**/*.map

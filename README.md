@@ -1,4 +1,4 @@
-# Eclipse GLSP - Playwright [![CI](https://github.com/eclipse-glsp/glsp-playwright/actions/workflows/ci.yml/badge.svg)](https://github.com/eclipse-glsp/glsp-playwright/actions/workflows/ci.yml) [![Publish next](https://github.com/eclipse-glsp/glsp-playwright/actions/workflows/publish-next.yml/badge.svg)](https://github.com/eclipse-glsp/glsp-playwright/actions/workflows/publish-next.yml)
+# Eclipse GLSP - Playwright [![CI](https://github.com/eclipse-glsp/glsp-playwright/actions/workflows/ci.yml/badge.svg)](https://github.com/eclipse-glsp/glsp-playwright/actions/workflows/ci.yml?branch=main) [![Publish next](https://github.com/eclipse-glsp/glsp-playwright/actions/workflows/publish-next.yml/badge.svg)](https://github.com/eclipse-glsp/glsp-playwright/actions/workflows/publish-next.yml)
 
 A Playwright-based framework for testing the [Graphical Language Server Platform (GLSP)](https://github.com/eclipse-glsp/glsp).
 

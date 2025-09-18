@@ -25,7 +25,10 @@ export class VSCodeWorkbenchActivitybar {
     readonly extensionsItemLocator;
     readonly explorerItemLocator;
 
-    constructor(protected readonly page: Page, protected readonly selector = '[id="workbench.parts.activitybar"]') {
+    constructor(
+        protected readonly page: Page,
+        protected readonly selector = '[id="workbench.parts.activitybar"]'
+    ) {
         this.locator = this.page.locator(this.selector);
         this.explorerItemLocator = this.locator.locator('.codicon-explorer-view-icon');
         this.extensionsItemLocator = this.locator.locator('.codicon-extensions-view-icon');
