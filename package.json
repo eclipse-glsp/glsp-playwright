@@ -1,6 +1,6 @@
 {
   "name": "parent",
-  "version": "2.5.0",
+  "version": "2.6.0-next",
   "private": true,
   "workspaces": {
     "packages": [
@@ -15,19 +15,19 @@
     "all": "yarn clean && yarn install && yarn lint",
     "build": "yarn compile && yarn compile:alias",
     "check:headers": "glsp checkHeaders . -t lastCommit",
-    "check:pr": "yarn all && yarn check:headers",
+    "check:pr": "yarn all && yarn format:checkyarn && check:headers",
     "clean": "lerna run clean",
     "compile": "tsc -b",
     "compile:alias": "lerna run compile:alias",
     "example": "yarn -s --cwd ./examples/workflow-test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "generate:index": "lerna run generate:index  && yarn lint:fix",
-    "lint": "eslint --ext .ts,.tsx  --ignore-pattern '**/repositories/**' .",
+    "lint": "eslint --ext .ts,.tsx .",
     "lint:ci": "yarn lint --output-file eslint_report.json --format json",
     "lint:fix": " yarn lint --fix",
     "prepare": "lerna run prepare && yarn build",
-    "publish:latest": "lerna publish from-git --no-push",
     "publish:next": "lerna publish preminor --exact --canary --preid next --dist-tag next --no-git-tag-version --no-push --ignore-scripts --yes",
-    "publish:prepare": "lerna version --ignore-scripts --yes --no-push --exact",
     "repo": "yarn -s example repo",
     "test": "cd examples/workflow-test && yarn test",
     "test:standalone": "yarn example test:standalone",
@@ -38,12 +38,13 @@
     "watch": "concurrently --kill-others -n tsc,alias -c red,yellow \"tsc -b -w --preserveWatchOutput\" \"yarn --cwd packages/glsp-playwright watch:alias\""
   },
   "devDependencies": {
-    "@eclipse-glsp/dev": "2.5.0",
+    "@eclipse-glsp/dev": "next",
     "@estruyf/github-actions-reporter": "^1.7.0",
     "@types/node": "20.x",
     "concurrently": "^8.2.2",
     "eslint-import-resolver-typescript": "^3.5.3",
     "lerna": "^7.4.1",
+    "mocha-ctrf-json-reporter": "0.0.9",
     "tsc-alias": "1.8.10",
     "typescript": "^5.9.2"
   },

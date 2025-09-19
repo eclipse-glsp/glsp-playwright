@@ -18,7 +18,10 @@ import type { GLSPLocator } from '~/remote/locator';
 import type { GLSPToolPalette } from './tool-palette.po';
 
 export abstract class BaseToolPaletteItem extends Locateable {
-    constructor(locator: GLSPLocator, public readonly toolPalette: GLSPToolPalette) {
+    constructor(
+        locator: GLSPLocator,
+        public readonly toolPalette: GLSPToolPalette
+    ) {
         super(locator);
     }
 }
