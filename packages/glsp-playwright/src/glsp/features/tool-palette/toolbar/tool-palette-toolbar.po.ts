@@ -42,7 +42,7 @@ export class GLSPToolPaletteToolbar {
     }
 
     deletionTool(): ToolPaletteToolbarItem {
-        return this.itemByIcon('.codicon-chrome-close', ToolPaletteToolbarItem);
+        return this.itemByIcon('.codicon-eraser', ToolPaletteToolbarItem);
     }
 
     marqueeTool(): ToolPaletteToolbarItem {
