@@ -27,6 +27,7 @@
     "lint:ci": "yarn lint --output-file eslint_report.json --format json",
     "lint:fix": " yarn lint --fix",
     "prepare": "lerna run prepare && yarn build",
+    "publish:latest": "lerna publish from-package --no-git-reset -y",
     "publish:next": "lerna publish preminor --exact --canary --preid next --dist-tag next --no-git-tag-version --no-push --ignore-scripts --yes",
     "repo": "yarn -s example repo",
     "test": "cd examples/workflow-test && yarn test",
@@ -43,7 +44,7 @@
     "@types/node": "20.x",
     "concurrently": "^8.2.2",
     "eslint-import-resolver-typescript": "^3.5.3",
-    "lerna": "^7.4.1",
+    "lerna": "^9.0.0",
     "mocha-ctrf-json-reporter": "0.0.9",
     "tsc-alias": "1.8.10",
     "typescript": "^5.9.2"
