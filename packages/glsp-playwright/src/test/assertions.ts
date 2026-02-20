@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2024-2025 EclipseSource and others.
+ * Copyright (c) 2024-2026 EclipseSource and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -29,7 +29,6 @@ interface MatcherReturnType {
     log?: string[];
 }
 
-/* eslint-disable no-invalid-this */
 async function toBeSelected(this: ExpectMatcherState, element: PModelElement): Promise<MatcherReturnType> {
     const assertionName = 'toBeSelected';
     let pass: boolean;
@@ -203,8 +202,6 @@ async function toContainClass(
         actual: matcherResult?.actual
     };
 }
-
-/* eslint-enable no-invalid-this */
 
 export const expect = baseExpect.extend({
     toHaveSelected,

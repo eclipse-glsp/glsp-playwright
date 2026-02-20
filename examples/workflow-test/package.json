@@ -34,7 +34,7 @@
   "scripts": {
     "build": "tsc -b",
     "clean": "rimraf --glob lib tsconfig.tsbuildinfo server/*.log",
-    "lint": "eslint --ext .ts,.tsx ./src ./tests",
+    "lint": "eslint ./src ./tests",
     "prepare": "playwright install",
     "repo": "ts-node  ./scripts/repositories.ts",
     "start:server": "node node_modules/@eclipse-glsp-examples/workflow-server-bundled/wf-glsp-server-node.js",

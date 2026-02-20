@@ -10,7 +10,7 @@
     },
     "composite": true
   },
-  "exclude": ["**/node_modules", "**/.eslintrc.js"],
+  "exclude": ["**/node_modules"],
   "include": [
     "packages/*/src",
     "examples/*/src",
