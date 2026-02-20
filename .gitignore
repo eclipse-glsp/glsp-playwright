@@ -16,3 +16,8 @@ examples/workflow-test/playwright/.storage/*.json
 *.vsix
 !*.env.example
 *.env
+
+./claude/settings.local.json
+.claude/plans
+.reviews
+CLAUDE.local.md
