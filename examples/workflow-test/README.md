@@ -41,7 +41,7 @@ This package contains code examples that demonstrate how to test diagram editors
 
 The following libraries/frameworks need to be installed on your system:
 
--   [Node.js](https://nodejs.org/en/) `>=16.11.0`
+-   [Node.js](https://nodejs.org/en/) `>=22`
 -   [Yarn](https://classic.yarnpkg.com/en/docs/install#debian-stable) `>=1.7.0`
 
 ## Min versions
