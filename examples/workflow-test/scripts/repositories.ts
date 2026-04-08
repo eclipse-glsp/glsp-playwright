@@ -150,6 +150,10 @@ async function main(): Promise<void> {
                         type: 'string',
                         default: 'ssh'
                     } as const)
+                    .options('branch', {
+                        description: 'Branch or tag to clone. If not specified, uses the default branch of each repository.',
+                        type: 'string'
+                    })
                     .options('serverType', {
                         choices: ['node', 'java', 'all'],
                         description: 'GLSP server variant to clone and build',
@@ -158,7 +162,7 @@ async function main(): Promise<void> {
                     } as const),
             argv => {
                 const serverType = argv.serverType;
-                const options = { folder: argv.folder, override: argv.override, protocol: argv.protocol };
+                const options = { folder: argv.folder, override: argv.override, protocol: argv.protocol, branch: argv.branch };
                 clone(clientRepository, options);
                 clone(theiaRepository, options);
                 clone(vsCodeRepository, options);
