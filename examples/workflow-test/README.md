@@ -63,9 +63,9 @@ Default installations:
 ## Preparations
 
 We use the [GLSP-Client](https://github.com/eclipse-glsp/glsp-client) repository to run the tests.
-You can use `yarn repo:prepare` to automatically clone and build the required repositories and generate the `.env` file from `.env.example`.
+You can use `yarn repo:setup` to automatically clone and build the required repositories and generate the `.env` file from `.env.example`.
 
-### `yarn repo:prepare`
+### `yarn repo:setup`
 
 Clones and builds the necessary GLSP repositories into the `.repositories` directory and copies `.env.example` to `.env`.
 
@@ -87,13 +87,13 @@ Clones and builds the necessary GLSP repositories into the `.repositories` direc
 
 ```bash
 # Clone and build everything (Node server)
-yarn repo:prepare
+yarn repo:setup
 
 # Set up only for Theia tests
-yarn repo:prepare --theia
+yarn repo:setup --theia
 
 # Set up for VS Code tests with the Java server, skip building
-yarn repo:prepare --vscode --java --skip-build
+yarn repo:setup --vscode --java --skip-build
 ```
 
 Afterward, review the generated `.env` file in the `workflow-test` folder and provide the necessary data for the keys.
