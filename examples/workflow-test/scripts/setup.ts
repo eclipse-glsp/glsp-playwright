@@ -34,7 +34,11 @@ function run(command: string): void {
     execSync(command, { stdio: 'inherit', cwd: rootDir });
 }
 
-const repos = ['glsp-client'];
+const repos: string[] = [];
+
+if (standalone || all) {
+    repos.push('glsp-client');
+}
 
 if (java) {
     repos.push('glsp-server');
