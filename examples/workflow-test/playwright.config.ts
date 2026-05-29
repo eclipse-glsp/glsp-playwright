@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2023-2025 Business Informatics Group (TU Wien) and others.
+ * Copyright (c) 2023-2026 Business Informatics Group (TU Wien) and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -16,13 +16,15 @@
 import 'reflect-metadata';
 
 import type { GLSPPlaywrightOptions } from '@eclipse-glsp/glsp-playwright';
-import { devices, type PlaywrightTestConfig } from '@playwright/test';
+import { type PlaywrightTestConfig } from '@playwright/test';
 import * as dotenv from 'dotenv';
-import { createStandaloneProject, createTheiaProject, createVSCodeProject } from './configs/project.config';
-import { getEnv } from './configs/utils';
-import { createWebserver, hasRunningServer } from './configs/webserver.config';
+import { buildProjects } from './configs/project.config';
+import { getActiveProjects } from './configs/utils';
+import { buildWebServers } from './configs/webserver.config';
 
 dotenv.config();
+
+const activeProjects = getActiveProjects();
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -40,25 +42,8 @@ const config: PlaywrightTestConfig<GLSPPlaywrightOptions> = {
         actionTimeout: 0,
         trace: 'on-first-retry'
     },
-    webServer: createWebserver(),
-    projects: [
-        // Required for VSCode Extension tests
-        {
-            name: 'standalone',
-            testMatch: ['**/*.spec.js'],
-            use: {
-                ...devices['Desktop Chrome'],
-                integrationOptions: {
-                    type: 'Standalone',
-                    url: getEnv('STANDALONE_URL')!
-                }
-            }
-        }
-    ]
+    webServer: buildWebServers(activeProjects),
+    projects: buildProjects(activeProjects)
 };
-
-if (hasRunningServer(config)) {
-    config.projects = [...createStandaloneProject(), ...createTheiaProject(), ...createVSCodeProject()];
-}
 
 export default config;

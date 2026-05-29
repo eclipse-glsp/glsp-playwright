@@ -99,8 +99,4 @@ test.describe('The tool palette', () => {
 
         expect(markers.length).toBeGreaterThan(0);
     });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
-    });
 });

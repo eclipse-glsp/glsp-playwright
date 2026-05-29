@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2023-2025 Business Informatics Group (TU Wien) and others.
+ * Copyright (c) 2023-2026 Business Informatics Group (TU Wien) and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -13,7 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { CursorCSS } from '@eclipse-glsp/client/lib/base/feedback/css-feedback';
+import { CursorCSS } from '../../../../src/cursors-css';
 import { expect, test } from '@eclipse-glsp/glsp-playwright';
 import { WorkflowApp } from '../../../../src/app/workflow-app';
 import { WorkflowToolPalette } from '../../../../src/features/tool-palette/workflow-tool-palette';
@@ -123,9 +123,5 @@ test.describe('The edge creation tool', () => {
         await graph.page.keyboard.press('Escape');
 
         await expect(graph).not.toContainClass(CursorCSS.NODE_CREATION);
-    });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
     });
 });

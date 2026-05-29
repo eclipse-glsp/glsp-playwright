@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2023-2024 EclipseSource and others.
+ * Copyright (c) 2023-2026 EclipseSource and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -16,7 +16,7 @@
 
 import { IntegrationOptions, VSCodeIntegrationOptions, VSCodeStorage, expect, setup } from '@eclipse-glsp/glsp-playwright';
 
-const VSCODE_VERSION = process.env['VSCODE_VERSION'] ?? '1.88.1';
+const VSCODE_VERSION = process.env['VSCODE_VERSION'] ?? '1.101.0';
 
 setup.describe.configure({
     mode: 'serial'

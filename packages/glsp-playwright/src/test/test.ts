@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2023-2024 Business Informatics Group (TU Wien) and others.
+ * Copyright (c) 2023-2026 Business Informatics Group (TU Wien) and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -25,7 +25,7 @@ import {
     VSCodeIntegration,
     VSCodeSetup
 } from '~/integration';
-import { GLSP_SERVER_TYPE_UNKNWON, GLSPServer } from '../glsp-server';
+import { GLSP_SERVER_TYPE_UNKNOWN, GLSPServer } from '../glsp-server';
 
 /**
  * GLSP-Playwright specific options
@@ -74,7 +74,7 @@ export const test = base.extend<GLSPPlaywrightOptions & GLSPPlaywrightFixtures>(
 
     glspServer: async ({ page }, use) => {
         const server: GLSPServer = {
-            type: process.env.GLSP_SERVER_TYPE ?? GLSP_SERVER_TYPE_UNKNWON
+            type: process.env.GLSP_SERVER_TYPE ?? GLSP_SERVER_TYPE_UNKNOWN
         };
 
         await use(server);
@@ -112,11 +112,13 @@ export const test = base.extend<GLSPPlaywrightOptions & GLSPPlaywrightFixtures>(
             await integration.initialize();
             await integration.start();
             await use(integration);
+            await integration.close();
         } else {
             const integration = new PageIntegration(args);
             await integration.initialize();
             await integration.start();
             await use(integration);
+            await integration.close();
         }
     }
 });

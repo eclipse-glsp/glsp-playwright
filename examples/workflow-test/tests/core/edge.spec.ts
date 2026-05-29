@@ -45,8 +45,4 @@ test.describe('Edges', () => {
         const targetId = await edge.targetId();
         expect(targetId).toBe(await target.idAttr());
     });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
-    });
 });

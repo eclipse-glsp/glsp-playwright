@@ -60,8 +60,4 @@ test.describe('The marker', () => {
         await handle.dragToRelativePosition({ x: 10, y: 10 });
         expect(await task.marker().popupText()).toBe(expectedAutomatedPopupText);
     });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
-    });
 });

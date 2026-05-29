@@ -42,8 +42,4 @@ test.describe('Shortcuts', () => {
 
         expect(await task.locate().count()).toBe(0);
     });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
-    });
 });

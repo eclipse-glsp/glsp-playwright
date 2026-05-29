@@ -107,8 +107,4 @@ test.describe('The edge edit tool', () => {
         volatilePoints = await routingPoints.volatilePoints();
         expect(volatilePoints).toHaveLength(1);
     });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
-    });
 });

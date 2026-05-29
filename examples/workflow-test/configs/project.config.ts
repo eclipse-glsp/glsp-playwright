@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2024 EclipseSource and others.
+ * Copyright (c) 2024-2026 EclipseSource and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -22,21 +22,14 @@ import {
 } from '@eclipse-glsp/glsp-playwright';
 import { PlaywrightTestOptions, PlaywrightWorkerArgs, PlaywrightWorkerOptions, Project, devices } from '@playwright/test';
 import * as path from 'path';
-import { getEnv } from './utils';
+import { ProjectName, findVsixPath, getUrl, getVsixId } from './utils';
 
 const projectDevices = devices['Desktop Chrome'];
 
-export function createStandaloneProject(): Project<PlaywrightTestOptions & GLSPPlaywrightOptions, PlaywrightWorkerArgs>[] {
-    const url = getEnv('STANDALONE_URL');
-
-    if (url === undefined) {
-        console.error(`[Worker: ${process.env.TEST_PARALLEL_INDEX}] Standalone project can not be created.\n`);
-        return [];
-    }
-
+function createStandaloneProject(): Project<PlaywrightTestOptions & GLSPPlaywrightOptions, PlaywrightWorkerArgs>[] {
     const standaloneIntegrationOptions: StandaloneIntegrationOptions = {
         type: 'Standalone',
-        url
+        url: getUrl('STANDALONE_PORT', '/diagram.html')
     };
 
     return [
@@ -51,17 +44,28 @@ export function createStandaloneProject(): Project<PlaywrightTestOptions & GLSPP
     ];
 }
 
-export function createTheiaProject(): Project<PlaywrightTestOptions & GLSPPlaywrightOptions, PlaywrightWorkerOptions>[] {
-    const url = getEnv('THEIA_URL');
+function createStandaloneBrowserProject(): Project<PlaywrightTestOptions & GLSPPlaywrightOptions, PlaywrightWorkerArgs>[] {
+    const standaloneIntegrationOptions: StandaloneIntegrationOptions = {
+        type: 'Standalone',
+        url: getUrl('STANDALONE_BROWSER_PORT', '/diagram.html')
+    };
 
-    if (url === undefined) {
-        console.error(`[Worker: ${process.env.TEST_PARALLEL_INDEX}] Theia project can not be created.\n`);
-        return [];
-    }
+    return [
+        {
+            name: 'standalone-browser',
+            testMatch: ['**/*.spec.js'],
+            use: {
+                ...projectDevices,
+                integrationOptions: standaloneIntegrationOptions
+            }
+        }
+    ];
+}
 
+function createTheiaProject(): Project<PlaywrightTestOptions & GLSPPlaywrightOptions, PlaywrightWorkerOptions>[] {
     const theiaIntegrationOptions: TheiaIntegrationOptions = {
         type: 'Theia',
-        url,
+        url: getUrl('THEIA_PORT'),
         widgetId: 'workflow-diagram',
         workspace: '../workspace',
         file: 'example1.wf'
@@ -82,21 +86,13 @@ export function createTheiaProject(): Project<PlaywrightTestOptions & GLSPPlaywr
     ];
 }
 
-export function createVSCodeProject(): Project<PlaywrightTestOptions & GLSPPlaywrightOptions, PlaywrightWorkerOptions>[] {
-    const vsixId = getEnv('VSCODE_VSIX_ID');
-    const vsixPath = getEnv('VSCODE_VSIX_PATH');
-
-    if (vsixId === undefined || vsixPath === undefined) {
-        console.error(`[Worker: ${process.env.TEST_PARALLEL_INDEX}] VSCode project can not be created.\n`);
-        return [];
-    }
-
+function createVSCodeProject(): Project<PlaywrightTestOptions & GLSPPlaywrightOptions, PlaywrightWorkerOptions>[] {
     const vscodeIntegrationOptions: VSCodeIntegrationOptions = {
         type: 'VSCode',
         workspace: '../workspace',
         file: 'example1.wf',
-        vsixId,
-        vsixPath,
+        vsixId: getVsixId(),
+        vsixPath: findVsixPath(),
         storagePath: path.join(__dirname, '../playwright/.storage/vscode.setup.json')
     };
 
@@ -120,4 +116,21 @@ export function createVSCodeProject(): Project<PlaywrightTestOptions & GLSPPlayw
             }
         }
     ];
+}
+
+export function buildProjects(
+    activeProjects: ProjectName[]
+): Project<PlaywrightTestOptions & GLSPPlaywrightOptions, PlaywrightWorkerArgs | PlaywrightWorkerOptions>[] {
+    return activeProjects.flatMap(project => {
+        switch (project) {
+            case 'standalone':
+                return createStandaloneProject();
+            case 'standalone-browser':
+                return createStandaloneBrowserProject();
+            case 'theia':
+                return createTheiaProject();
+            case 'vscode':
+                return createVSCodeProject();
+        }
+    });
 }

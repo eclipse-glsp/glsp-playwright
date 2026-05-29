@@ -70,8 +70,4 @@ test.describe('The resizing handle', () => {
         const bottomRight = await task.resizeHandles().waitForKind('bottom-right');
         expect(await bottomRight.locate().count()).toBe(1);
     });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
-    });
 });

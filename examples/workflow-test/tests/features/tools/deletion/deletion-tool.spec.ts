@@ -62,8 +62,4 @@ test.describe('The deletion tool', () => {
         await task.delete();
         expect(await task.locate().count()).toBe(0);
     });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
-    });
 });

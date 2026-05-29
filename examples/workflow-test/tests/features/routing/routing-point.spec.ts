@@ -65,8 +65,4 @@ test.describe('The routing points of an edge', () => {
         const point = points[0];
         expect(await point.dataKindAttr()).toBe('line');
     });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
-    });
 });

@@ -67,8 +67,4 @@ test.describe('The children accessor of a parent element', () => {
         const label = await children.label();
         expect(await label.textContent()).toBe('Push');
     });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
-    });
 });

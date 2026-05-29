@@ -78,8 +78,4 @@ test.describe('The marker navigator', () => {
             });
         }
     });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
-    });
 });

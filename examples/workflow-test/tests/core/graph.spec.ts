@@ -126,8 +126,4 @@ test.describe('The graph', () => {
             await expect(graph.getNodeByLabel('Not Existing', TaskManual)).rejects.toThrow();
         });
     });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
-    });
 });

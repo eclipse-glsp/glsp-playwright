@@ -6,9 +6,6 @@
     "packages": [
       "packages/*",
       "examples/*"
-    ],
-    "nohoist": [
-      "@eclipse-glsp/workflow-test/@eclipse-glsp-examples/workflow-server-bundled"
     ]
   },
   "scripts": {
@@ -30,9 +27,12 @@
     "prepare": "lerna run prepare && yarn build",
     "publish:latest": "lerna publish from-package --no-git-reset -y",
     "publish:next": "lerna publish preminor --exact --canary --preid next --dist-tag next --no-git-tag-version --no-push --ignore-scripts --yes",
-    "repo": "yarn -s example repo",
+    "repo": "yarn example repo",
+    "repo:clean": "yarn example repo:clean",
+    "repo:setup": "yarn example repo:setup",
     "test": "cd examples/workflow-test && yarn test",
     "test:standalone": "yarn example test:standalone",
+    "test:standalone-browser": "yarn example test:standalone-browser",
     "test:theia": "yarn example test:theia",
     "test:vscode": "yarn example test:vscode",
     "test:vscode-setup": "yarn example test:vscode-setup",

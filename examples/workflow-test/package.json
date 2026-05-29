@@ -33,29 +33,25 @@
   ],
   "scripts": {
     "build": "tsc -b",
-    "clean": "rimraf --glob lib tsconfig.tsbuildinfo server/*.log",
+    "clean": "rimraf --glob lib tsconfig.tsbuildinfo",
     "lint": "eslint ./src ./tests",
     "prepare": "playwright install",
-    "repo": "ts-node  ./scripts/repositories.ts",
-    "start:server": "node node_modules/@eclipse-glsp-examples/workflow-server-bundled/wf-glsp-server-node.js",
+    "repo": "yarn glsp repo -d .repositories",
+    "repo:clean": "rimraf .repositories",
+    "repo:setup": "npx ts-node scripts/setup.ts",
     "test": "playwright test",
     "test:standalone": "yarn test --project=standalone",
+    "test:standalone-browser": "yarn test --project=standalone-browser",
     "test:theia": "yarn test --project=theia",
     "test:vscode": "yarn test --project=vscode",
     "test:vscode-setup": "yarn test --project=vscode-setup",
     "watch": "tsc -w"
   },
-  "dependencies": {
-    "@eclipse-glsp/client": "next"
-  },
   "devDependencies": {
-    "@eclipse-glsp-examples/workflow-server-bundled": "next",
     "@eclipse-glsp/glsp-playwright": "2.7.0-next",
     "@playwright/test": "^1.47.0",
     "@theia/playwright": "~1.64.0",
-    "@types/yargs": "^17.0.32",
-    "dotenv": "^16.0.3",
-    "yargs": "^17.7.2"
+    "dotenv": "^16.0.3"
   },
   "publishConfig": {
     "access": "public"

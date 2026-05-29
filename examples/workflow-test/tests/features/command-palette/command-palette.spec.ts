@@ -243,8 +243,4 @@ test.describe('The command palette', () => {
             expect(targetId).toBe(await target.idAttr());
         });
     });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
-    });
 });

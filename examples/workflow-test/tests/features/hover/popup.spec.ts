@@ -206,10 +206,6 @@ test.describe('The popup', () => {
             await expect(app.popup.locate()).toBeHidden();
         });
     });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
-    });
 });
 
 async function assertPopup<T extends PNode & PLabelledElement & PopupCapability>(

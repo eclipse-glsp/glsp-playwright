@@ -54,8 +54,4 @@ test.describe('The undo redo trigger', () => {
 
         await expect(graph).not.toContainElement({ type: TaskManual, query: { label: TaskManualNodes.pushLabel } });
     });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
-    });
 });

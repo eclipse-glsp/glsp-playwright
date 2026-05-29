@@ -72,8 +72,4 @@ test.describe('The edge accessor of a connectable element', () => {
         expect(await target.idAttr()).toContain('fork_1');
         expect(target instanceof ActivityNodeFork).toBeTruthy();
     });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
-    });
 });

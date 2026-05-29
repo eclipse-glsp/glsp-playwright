@@ -89,8 +89,4 @@ test.describe('The debug functions', () => {
         const extracted = await extractDebugInformationOfGLSPLocator(node.locator);
         expect(extracted).toMatchObject(expectedGLSPLocatorData);
     });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
-    });
 });

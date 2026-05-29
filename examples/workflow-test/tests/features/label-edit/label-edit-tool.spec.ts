@@ -62,8 +62,4 @@ test.describe('The label edit tool', () => {
 
         expect(await app.labelEditor.getWarning()).toBe('Name must not be empty');
     });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
-    });
 });
