@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2023-2025 Business Informatics Group (TU Wien) and others.
+ * Copyright (c) 2023-2026 Business Informatics Group (TU Wien) and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -71,9 +71,5 @@ test.describe('The edge accessor of a connectable element', () => {
         const target = await edges[0].target();
         expect(await target.idAttr()).toContain('fork_1');
         expect(target instanceof ActivityNodeFork).toBeTruthy();
-    });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
     });
 });

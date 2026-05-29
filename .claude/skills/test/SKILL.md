@@ -1,67 +1,45 @@
 ---
 name: test
-description: Run Playwright tests for a specific integration (standalone, theia, or vscode). Handles full environment setup including repo preparation and .env generation. Usage - /test standalone, /test theia, or /test vscode.
+description: Run Playwright tests for a specific integration (standalone, standalone-browser, theia, or vscode). Handles full environment setup including repo preparation and .env generation. Usage - /test standalone, /test theia, or /test vscode.
 ---
 
 Run Playwright tests for the specified integration. Handles environment setup, compilation, and test execution.
 
 ## Usage
 
-`$ARGUMENTS` should be one of: `standalone`, `theia`, `vscode`, or empty (defaults to standalone).
+`$ARGUMENTS` should be one of: `standalone`, `standalone-browser`, `theia`, `vscode`, or empty (runs all integrations).
 If `$ARGUMENTS` contains a specific test name pattern, run tests filtered by that pattern.
-
-Optionally, the user may specify a version (branch or tag) for the GLSP repositories, e.g. `/test standalone v2.6.0` or `/test theia release_2.7.0`.
-Extract the version from `$ARGUMENTS` if present (anything that is not an integration name or test pattern). If no version is specified, default to `master`.
 
 ## Steps
 
 ### 1. Environment Setup
 
-Check if `examples/workflow-test/.env` exists. If not, run the setup script to prepare repositories and generate it:
+Always run the setup script unless the user explicitly says to skip it:
 
 ```bash
-bash .claude/skills/test/scripts/setup-env.sh --protocol https
+yarn repo:setup
 ```
 
-If the user specified a version (branch or tag), add `--branch <version>`:
-
-```bash
-bash .claude/skills/test/scripts/setup-env.sh --protocol https --branch <version>
-```
-
-When no version is specified, omit `--branch` entirely so each repository uses its own default branch.
-
-This script will:
-
--   Clone and build required GLSP repositories (via `yarn repo prepare`) at the specified branch/tag if the `repositories/` directory is missing or incomplete
--   Generate `examples/workflow-test/.env` with the correct values (server config, standalone URL, VSCode paths, etc.)
-
-If the `.env` file already exists, skip this step.
+This will clone and build the required GLSP repositories and generate the `.env` file from `.env.example`.
 
 ### 2. Build
 
 Ensure the project is compiled:
 
 ```bash
-yarn build
+yarn
 ```
 
 ### 3. Run Tests
 
 Run the appropriate test command:
 
--   **standalone** (default): `yarn test:standalone`
+-   **all** (default, no argument): `yarn test` (runs all integrations)
+-   **standalone**: `yarn test:standalone`
+-   **standalone-browser**: `yarn test:standalone-browser`
 -   **theia**: `yarn test:theia`
 -   **vscode**: `yarn test:vscode`
 -   **pattern match**: If `$ARGUMENTS` contains a specific test name pattern, run: `cd examples/workflow-test && yarn playwright test -g "$ARGUMENTS"`
-
-For **theia** tests, the Theia server needs to be running. Start it before running tests:
-
-```bash
-yarn repo theia-integration start &
-```
-
-Wait a few seconds for it to start before running the tests.
 
 ### 4. Report Failures
 

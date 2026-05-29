@@ -8,6 +8,7 @@ lib/
 .vscode-test
 
 examples/workflow-test/server/
+examples/workflow-test/.repositories/
 examples/workflow-test/playwright/.storage/*.json
 
 *.tsbuildinfo

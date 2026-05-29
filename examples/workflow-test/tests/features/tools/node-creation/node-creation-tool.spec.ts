@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2024-2025 EclipseSource and others.
+ * Copyright (c) 2024-2026 EclipseSource and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -13,10 +13,10 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { CursorCSS } from '@eclipse-glsp/client/lib/base/feedback/css-feedback';
 import { expect, test } from '@eclipse-glsp/glsp-playwright';
 import { ServerVariable } from '@eclipse-glsp/glsp-playwright/src/test';
 import { WorkflowApp } from '../../../../src/app/workflow-app';
+import { CursorCSS } from '../../../../src/cursors-css';
 import { WorkflowToolPalette } from '../../../../src/features/tool-palette/workflow-tool-palette';
 import { Category } from '../../../../src/graph/elements/category.po';
 import { TaskManual } from '../../../../src/graph/elements/task-manual.po';
@@ -130,9 +130,5 @@ test.describe('The node creation tool', () => {
         await graph.page.keyboard.press('Escape');
 
         await expect(graph).not.toContainClass(CursorCSS.NODE_CREATION);
-    });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
     });
 });

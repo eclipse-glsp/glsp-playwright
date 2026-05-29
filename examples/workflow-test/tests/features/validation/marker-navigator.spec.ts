@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2023-2025 Business Informatics Group (TU Wien) and others.
+ * Copyright (c) 2023-2026 Business Informatics Group (TU Wien) and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -77,9 +77,5 @@ test.describe('The marker navigator', () => {
                 elements: [await graph.getNodeByLabel(order, TaskAutomated)]
             });
         }
-    });
-
-    test.afterEach(async ({ integration }) => {
-        await integration?.close();
     });
 });

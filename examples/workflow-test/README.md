@@ -63,11 +63,41 @@ Default installations:
 ## Preparations
 
 We use the [GLSP-Client](https://github.com/eclipse-glsp/glsp-client) repository to run the tests.
-Please clone it to your machine and follow the steps to install it or you can use `yarn repo prepare` to automatically clone and build the repositories.
+You can use `yarn repo:setup` to automatically clone and build the required repositories and generate the `.env` file from `.env.example`.
 
-Next, create a new `.env` file with the content of `.env.example` in the `workflow-test` folder.
+### `yarn repo:setup`
+
+Clones and builds the necessary GLSP repositories into the `.repositories` directory and copies `.env.example` to `.env`.
+
+**Integration flags** (if none is provided, all repositories are cloned):
+
+| Flag           | Cloned Repositories                                          |
+| -------------- | ------------------------------------------------------------ |
+| `--standalone` | `glsp-client`, `glsp-server-node`                            |
+| `--theia`      | `glsp-client`, `glsp-server-node`, `glsp-theia-integration`  |
+| `--vscode`     | `glsp-client`, `glsp-server-node`, `glsp-vscode-integration` |
+| _(none)_       | All of the above                                             |
+
+**Additional flags:**
+
+-   `--java` — Clone `glsp-server` (Java) instead of `glsp-server-node`
+-   `--skip-build` — Only clone repositories without building them
+
+**Examples:**
+
+```bash
+# Clone and build everything (Node server)
+yarn repo:setup
+
+# Set up only for Theia tests
+yarn repo:setup --theia
+
+# Set up for VS Code tests with the Java server, skip building
+yarn repo:setup --vscode --java --skip-build
+```
+
+Afterward, review the generated `.env` file in the `workflow-test` folder and provide the necessary data for the keys.
 This file contains private information about your environment, so do not commit it.
-Afterward, provide for the keys in `.env` file the necessary data.
 
 ## Building the examples
 
@@ -89,11 +119,21 @@ The test cases can be executed by executing the task `[Playwright] Test Standalo
 yarn test:standalone
 ```
 
+## Testing the Standalone Browser version
+
+The standalone browser variant runs the GLSP server as a web worker directly in the browser, without a separate server process.
+
+The test cases can be executed by running the following command in the _workflow-test_ folder:
+
+```bash
+yarn test:standalone-browser
+```
+
 ## Testing the Theia version
 
-It is necessary to first start the Theia instance manually.
+The Theia instance will be started automatically by Playwright.
 
-Afterward, the test cases can be executed by executing the task `[Playwright] Test Theia` or the following command in the _workflow-test_ folder:
+The test cases can be executed by executing the task `[Playwright] Test Theia` or the following command in the _workflow-test_ folder:
 
 ```bash
 yarn test:theia

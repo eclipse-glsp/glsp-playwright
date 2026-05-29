@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2024 EclipseSource and others.
+ * Copyright (c) 2024-2026 EclipseSource and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -14,46 +14,84 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import { GLSPPlaywrightOptions } from '@eclipse-glsp/glsp-playwright';
+import * as path from 'path';
 import { PlaywrightTestConfig } from '@playwright/test';
-import { getEnv } from './utils';
+import { ProjectName, getPort, getRepoDir, getRepoPath, needsGlspServer } from './utils';
 
-export function isManagedServer(): boolean {
-    const env = getEnv('GLSP_SERVER_PLAYWRIGHT_MANAGED', false);
-    return env === undefined || env === 'true';
+type WebServerConfig = Extract<NonNullable<PlaywrightTestConfig['webServer']>, unknown[]>[number];
+
+const repo = `npx glsp repo -d ${getRepoDir()}`;
+const theiaAppDir = path.resolve(getRepoPath('glsp-theia-integration'), 'examples', 'browser-app');
+
+interface ProjectServerConfig {
+    command: string;
+    port: number;
+    env?: Record<string, string>;
+    path?: string;
 }
 
-export function getServerStartCommand(): string | undefined {
-    return getEnv('GLSP_SERVER_START_COMMAND', false);
-}
+const GLSP_SERVER_COMMANDS: Record<string, string> = {
+    node: `${repo} server-node start`,
+    java: `${repo} server-java start`
+};
 
-export function hasRunningServer(config: PlaywrightTestConfig<GLSPPlaywrightOptions>): boolean {
-    const webserver = config.webServer;
+export function buildWebServers(activeProjects: ProjectName[]): PlaywrightTestConfig['webServer'] {
+    const glspServerPort = getPort('GLSP_SERVER_PORT');
+    const standalonePort = getPort('STANDALONE_PORT');
+    const standaloneBrowserPort = getPort('STANDALONE_BROWSER_PORT');
+    const theiaPort = getPort('THEIA_PORT');
 
-    const isArray = Array.isArray(webserver);
-    return !isManagedServer() || (isArray && webserver.length > 0) || (!isArray && webserver !== undefined);
-}
-
-export function createWebserver(): PlaywrightTestConfig['webServer'] {
-    if (!isManagedServer()) {
-        return [];
-    }
-
-    const port = getEnv('GLSP_SERVER_PORT');
-
-    if (port === undefined) {
-        console.error('Webserver will be not created.\n');
-        return [];
-    }
-
-    const command = getServerStartCommand() ?? `yarn start:server -w -p ${+port}`;
-
-    return [
-        {
-            command: command,
-            port: +port,
-            reuseExistingServer: !process.env.CI,
-            stdout: 'ignore'
+    const configs: Partial<Record<ProjectName, ProjectServerConfig>> = {
+        standalone: {
+            command: `${repo} client start --external-server --no-open`,
+            port: standalonePort,
+            env: { CLIENT_PORT: String(standalonePort), GLSP_SERVER_PORT: String(glspServerPort) },
+            path: '/diagram.html'
+        },
+        'standalone-browser': {
+            command: `${repo} client start --browser --no-open`,
+            port: standaloneBrowserPort,
+            env: { CLIENT_PORT: String(standaloneBrowserPort) },
+            path: '/diagram.html'
+        },
+        theia: {
+            command: `cd ${theiaAppDir} && yarn theia start --WF_GLSP=${glspServerPort} --WF_PATH=workflow --glspDebug`,
+            port: theiaPort
         }
-    ];
+    };
+
+    const servers: WebServerConfig[] = [];
+
+    if (needsGlspServer(activeProjects)) {
+        const serverType = process.env.GLSP_SERVER_TYPE ?? 'node';
+        const serverCommand = GLSP_SERVER_COMMANDS[serverType];
+        if (serverCommand) {
+            servers.push({
+                command: `${serverCommand} --port ${glspServerPort}`,
+                port: glspServerPort,
+                reuseExistingServer: !process.env.CI,
+                stdout: 'ignore'
+            });
+        }
+    }
+
+    for (const project of activeProjects) {
+        const cfg = configs[project];
+        if (!cfg) {
+            continue;
+        }
+        const readinessCheck: { port: number } | { url: string } = cfg.path
+            ? { url: `http://localhost:${cfg.port}${cfg.path}` }
+            : { port: cfg.port };
+        servers.push({
+            command: cfg.command,
+            ...readinessCheck,
+            reuseExistingServer: !process.env.CI,
+            stdout: 'ignore',
+            stderr: 'ignore',
+            env: { ...(process.env as Record<string, string>), ...cfg.env }
+        });
+    }
+
+    return servers;
 }

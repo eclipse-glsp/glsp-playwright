@@ -28,9 +28,15 @@ Clone this repository and build the packages:
 yarn install
 ```
 
-This command will also install Playwright, the necessary browsers and the GLSP-Server.
+This command will also install Playwright and the necessary browsers.
 
-Once the installation is finished, follow the instructions to test the example in the [example folder](./examples/workflow-test/README.md).
+Next, run the setup script to clone, build the required repositories and generate the `.env` file:
+
+```bash
+yarn repo:setup
+```
+
+Once the setup is finished, follow the instructions to test the example in the [example folder](./examples/workflow-test/README.md).
 
 ### Tasks
 

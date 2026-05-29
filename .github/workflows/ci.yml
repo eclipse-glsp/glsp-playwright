@@ -53,14 +53,6 @@ jobs:
     name: Playwright Tests (Node server)
     timeout-minutes: 120
     runs-on: ubuntu-22.04
-    env:
-      THEIA_URL: 'http://localhost:3000'
-      VSCODE_VSIX_ID: 'eclipse-glsp.workflow-vscode-example'
-      GLSP_SERVER_TYPE: 'node'
-      GLSP_SERVER_DEBUG: 'true'
-      GLSP_SERVER_PORT: '8081'
-      GLSP_SERVER_PLAYWRIGHT_MANAGED: 'true'
-      GLSP_WEBSOCKET_PATH: 'workflow'
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
@@ -69,14 +61,9 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Prepare repos
-        run: yarn repo prepare --protocol https
-      - name: Set Environment Variables
-        run: |
-          echo "STANDALONE_URL=$(yarn -s repo client url)" >> $GITHUB_ENV
-          echo "VSCODE_VSIX_PATH=$(yarn -s repo vscode-integration vsixPath)" >> $GITHUB_ENV
-          echo "GLSP_SERVER_START_COMMAND=yarn repo node-server start" >> $GITHUB_ENV
-      - name: Start theia
-        run: yarn repo theia-integration start &
+        run: yarn repo:setup
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: Run Playwright tests
         id: run_playwright_tests
         run: xvfb-run -a yarn test
@@ -91,35 +78,22 @@ jobs:
     name: Playwright Tests (Java server)
     timeout-minutes: 120
     runs-on: ubuntu-22.04
-    env:
-      THEIA_URL: 'http://localhost:3000'
-      VSCODE_VSIX_ID: 'eclipse-glsp.workflow-vscode-example'
-      GLSP_SERVER_TYPE: 'java'
-      GLSP_SERVER_DEBUG: 'true'
-      GLSP_SERVER_PORT: '8081'
-      GLSP_SERVER_PLAYWRIGHT_MANAGED: 'true'
-      GLSP_WEBSOCKET_PATH: 'workflow'
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: '22'
       - name: Set up JDK
-        uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 # v4.2.1
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
       - name: Install dependencies
         run: yarn install
       - name: Prepare repos
-        run: yarn repo prepare --protocol https --serverType java
-      - name: Set Environment Variables
-        run: |
-          echo "STANDALONE_URL=$(yarn -s repo client url)" >> $GITHUB_ENV
-          echo "VSCODE_VSIX_PATH=$(yarn -s repo vscode-integration vsixPath)" >> $GITHUB_ENV
-          echo "GLSP_SERVER_START_COMMAND=yarn repo java-server start" >> $GITHUB_ENV
-      - name: Start theia
-        run: yarn repo theia-integration start &
+        run: yarn repo:setup --java
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: Run Playwright tests
         id: run_playwright_tests
         run: xvfb-run -a yarn test

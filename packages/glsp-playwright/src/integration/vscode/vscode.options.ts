@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2023 EclipseSource and others.
+ * Copyright (c) 2023-2026 EclipseSource and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -22,10 +22,6 @@ export interface VSCodeIntegrationOptions extends BaseIntegrationOptions {
     vsixPath: string;
     storagePath: string;
     file?: string;
-    /*
-     * Logs the content of the Electron Application to the console.
-     * Disabled by default.
-     */
     isConsoleLogEnabled?: boolean;
 }
 

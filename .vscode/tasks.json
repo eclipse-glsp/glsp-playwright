@@ -40,6 +40,18 @@
       "problemMatcher": []
     },
     {
+      "label": "[Playwright] Test Standalone (Browser)",
+      "detail": "Run test cases for Standalone Browser integration",
+      "type": "shell",
+      "group": "test",
+      "command": "cd examples/workflow-test && yarn test:standalone-browser",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "[Playwright] Test Theia",
       "detail": "Run test cases for Theia integration",
       "type": "shell",
