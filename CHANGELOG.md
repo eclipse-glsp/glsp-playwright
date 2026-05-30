@@ -1,10 +1,16 @@
 # Eclipse GLSP Playwright Changelog
 
-## [v2.6.0 - 11/02/2026](https://github.com/eclipse-glsp/glsp-playwright/releases/tag/v2.6.0)
-
--   [po] Fix for changed icon of tool palette [#37](https://github.com/eclipse-glsp/glsp-playwright/pull/37)
+## v2.7.0 - active
 
 ### Changes
+
+-   [build] Upgrade to Node 22 [#43](https://github.com/eclipse-glsp/glsp-playwright/pull/43)
+
+## [v2.6.0 - 11/02/2026](https://github.com/eclipse-glsp/glsp-playwright/releases/tag/v2.6.0)
+
+### Changes
+
+-   [po] Fix for changed icon of tool palette [#37](https://github.com/eclipse-glsp/glsp-playwright/pull/37)
 
 ## [v2.5.0 - 10/09/2025](https://github.com/eclipse-glsp/glsp-playwright/releases/tag/v2.5.0)
 
