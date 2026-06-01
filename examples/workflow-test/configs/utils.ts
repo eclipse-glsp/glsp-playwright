@@ -80,7 +80,12 @@ export function getVsixId(): string {
 
 export function findVsixPath(): string {
     const subCommand = useWebExtension() ? 'web-vsix-path' : 'vsix-path';
-    return execSync(`npx glsp repo -d ${getRepoDir()} vscode ${subCommand}`, { encoding: 'utf-8' }).trim();
+    return execSync(`yarn --silent glsp repo -d ${getRepoDir()} vscode ${subCommand}`, { encoding: 'utf-8' }).trim();
+}
+
+export function getBrowserServerBundlePath(): string {
+    const serverRoot = execSync(`yarn --silent glsp repo -d ${getRepoDir()} server-node pwd`, { encoding: 'utf-8' }).trim();
+    return path.resolve(serverRoot, 'examples', 'workflow-server-bundled-web', 'wf-glsp-server-webworker.js');
 }
 
 function parseRequestedProjects(): ProjectName[] | undefined {

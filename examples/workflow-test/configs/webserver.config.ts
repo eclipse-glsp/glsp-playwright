@@ -14,9 +14,9 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import * as path from 'path';
 import { PlaywrightTestConfig } from '@playwright/test';
-import { ProjectName, getPort, getRepoDir, getRepoPath, needsGlspServer } from './utils';
+import * as path from 'path';
+import { ProjectName, getBrowserServerBundlePath, getPort, getRepoDir, getRepoPath, needsGlspServer } from './utils';
 
 type WebServerConfig = Extract<NonNullable<PlaywrightTestConfig['webServer']>, unknown[]>[number];
 
@@ -30,7 +30,7 @@ interface ProjectServerConfig {
 export function buildWebServers(activeProjects: ProjectName[]): PlaywrightTestConfig['webServer'] {
     // Resolved lazily inside the function: top-level evaluation would run at import time,
     // before `dotenv.config()` in playwright.config.ts, so GLSP_REPO_DIR would not be picked up.
-    const repo = `npx glsp repo -d ${getRepoDir()}`;
+    const repo = `yarn --silent glsp repo -d ${getRepoDir()}`;
     const theiaAppDir = path.resolve(getRepoPath('glsp-theia-integration'), 'examples', 'browser-app');
 
     const GLSP_SERVER_COMMANDS: Record<string, string> = {
@@ -42,7 +42,7 @@ export function buildWebServers(activeProjects: ProjectName[]): PlaywrightTestCo
     const standalonePort = getPort('STANDALONE_PORT');
     const standaloneBrowserPort = getPort('STANDALONE_BROWSER_PORT');
     const theiaPort = getPort('THEIA_PORT');
-
+    const browserServerBundle = getBrowserServerBundlePath();
     const configs: Partial<Record<ProjectName, ProjectServerConfig>> = {
         standalone: {
             command: `${repo} client start --external-server --no-open`,
@@ -51,7 +51,7 @@ export function buildWebServers(activeProjects: ProjectName[]): PlaywrightTestCo
             path: '/diagram.html'
         },
         'standalone-browser': {
-            command: `${repo} client start --browser --no-open`,
+            command: `${repo} client start --browser --no-open --external-server ${browserServerBundle}`,
             port: standaloneBrowserPort,
             env: { CLIENT_PORT: String(standaloneBrowserPort) },
             path: '/diagram.html'
