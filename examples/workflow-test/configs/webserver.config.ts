@@ -20,9 +20,6 @@ import { ProjectName, getPort, getRepoDir, getRepoPath, needsGlspServer } from '
 
 type WebServerConfig = Extract<NonNullable<PlaywrightTestConfig['webServer']>, unknown[]>[number];
 
-const repo = `npx glsp repo -d ${getRepoDir()}`;
-const theiaAppDir = path.resolve(getRepoPath('glsp-theia-integration'), 'examples', 'browser-app');
-
 interface ProjectServerConfig {
     command: string;
     port: number;
@@ -30,12 +27,17 @@ interface ProjectServerConfig {
     path?: string;
 }
 
-const GLSP_SERVER_COMMANDS: Record<string, string> = {
-    node: `${repo} server-node start`,
-    java: `${repo} server-java start`
-};
-
 export function buildWebServers(activeProjects: ProjectName[]): PlaywrightTestConfig['webServer'] {
+    // Resolved lazily inside the function: top-level evaluation would run at import time,
+    // before `dotenv.config()` in playwright.config.ts, so GLSP_REPO_DIR would not be picked up.
+    const repo = `npx glsp repo -d ${getRepoDir()}`;
+    const theiaAppDir = path.resolve(getRepoPath('glsp-theia-integration'), 'examples', 'browser-app');
+
+    const GLSP_SERVER_COMMANDS: Record<string, string> = {
+        node: `${repo} server-node start`,
+        java: `${repo} server-java start`
+    };
+
     const glspServerPort = getPort('GLSP_SERVER_PORT');
     const standalonePort = getPort('STANDALONE_PORT');
     const standaloneBrowserPort = getPort('STANDALONE_BROWSER_PORT');
