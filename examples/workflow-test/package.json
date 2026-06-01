@@ -38,7 +38,7 @@
     "prepare": "playwright install",
     "repo": "yarn glsp repo -d .repositories",
     "repo:clean": "rimraf .repositories",
-    "repo:setup": "npx ts-node scripts/setup.ts",
+    "repo:setup": "ts-node scripts/setup.ts",
     "test": "playwright test",
     "test:standalone": "yarn test --project=standalone",
     "test:standalone-browser": "yarn test --project=standalone-browser",
