@@ -49,8 +49,8 @@
   },
   "devDependencies": {
     "@eclipse-glsp/glsp-playwright": "2.7.0-next",
-    "@playwright/test": "^1.47.0",
-    "@theia/playwright": "~1.64.0",
+    "@playwright/test": "^1.59.1",
+    "@theia/playwright": "~1.71.2",
     "dotenv": "^16.0.3"
   },
   "publishConfig": {
