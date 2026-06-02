@@ -1,6 +1,6 @@
 {
   "name": "@eclipse-glsp/workflow-test",
-  "version": "2.7.0-next",
+  "version": "2.7.0",
   "private": true,
   "description": "Example project for glsp-playwright",
   "homepage": "https://www.eclipse.org/glsp/",
@@ -48,7 +48,7 @@
     "watch": "tsc -w"
   },
   "devDependencies": {
-    "@eclipse-glsp/glsp-playwright": "2.7.0-next",
+    "@eclipse-glsp/glsp-playwright": "2.7.0",
     "@playwright/test": "^1.59.1",
     "@theia/playwright": "~1.71.2",
     "dotenv": "^16.0.3"
