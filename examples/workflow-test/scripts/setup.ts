@@ -56,6 +56,16 @@ if (vscode || all) {
 
 run(`${repo} clone ${repos.join(' ')}`);
 
+if (repos.includes('glsp-vscode-integration')) {
+    // The glsp-vscode-integration repo is a lerna monorepo that gets cloned into the `.repositories`
+    // directory of this (also lerna-based) repo. Without an `nx.json` marking the repo root, lerna
+    // walks up the directory tree, detects the nesting and fails. Adding an empty `nx.json` tells
+    // lerna to stop the lookup at the repo root.
+    const nxJson = resolve(rootDir, '.repositories', 'glsp-vscode-integration', 'nx.json');
+    console.log(`Adding ${nxJson}`);
+    writeFileSync(nxJson, '{}');
+}
+
 if (!skipBuild) {
     run(`${repo} build`);
     if (repos.includes('glsp-vscode-integration')) {
