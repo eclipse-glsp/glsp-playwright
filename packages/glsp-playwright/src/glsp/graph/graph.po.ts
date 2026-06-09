@@ -257,7 +257,9 @@ export class GLSPGraph extends PModelElement {
             await creator();
         }).toPass();
 
-        const ignore = ['.ghost-element', ...ids.map(id => `[id="${id}"]`)];
+        // Exclude transient creation feedback in addition to the already-present elements.
+        // This ensures stability against timing issues under load
+        const ignore = ['.ghost-element', '.feedback-edge', ...ids.map(id => `[id="${id}"]`)];
         const createdLocator = this.locate().locator(`[data-svg-metadata-type="${elementType}"]:not(${ignore.join(',')})`);
 
         await expect(createdLocator.first()).toBeVisible();
