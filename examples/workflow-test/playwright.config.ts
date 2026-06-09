@@ -40,7 +40,10 @@ const config: PlaywrightTestConfig<GLSPPlaywrightOptions> = {
     reporter: process.env.CI ? [['html', { open: 'never' }], ['@estruyf/github-actions-reporter']] : [['html', { open: 'never' }]],
     use: {
         actionTimeout: 0,
-        trace: 'on-first-retry'
+        trace: 'on-first-retry',
+        // Emulate `prefers-reduced-motion` so decorative entrance animations and transitions are
+        // disabled during tests.
+        contextOptions: { reducedMotion: 'reduce' }
     },
     webServer: buildWebServers(activeProjects),
     projects: buildProjects(activeProjects)
