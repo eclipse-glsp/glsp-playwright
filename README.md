@@ -1,14 +1,26 @@
-# Eclipse GLSP - Playwright [![CI](https://github.com/eclipse-glsp/glsp-playwright/actions/workflows/ci.yml/badge.svg)](https://github.com/eclipse-glsp/glsp-playwright/actions/workflows/ci.yml?branch=main) 
+# Eclipse GLSP - Playwright [![CI](https://github.com/eclipse-glsp/glsp-playwright/actions/workflows/ci.yml/badge.svg)](https://github.com/eclipse-glsp/glsp-playwright/actions/workflows/ci.yml?branch=main)
 
 A Playwright-based framework for testing the [Graphical Language Server Platform (GLSP)](https://github.com/eclipse-glsp/glsp).
 
 ## Structure
 
--   `@eclipse-glsp/glsp-playwright`: Generic Playwright testing framework
+- `@eclipse-glsp/glsp-playwright`: Generic Playwright testing framework
 
-## Building
+## Developer Documentation
 
-This project is built with `yarn`.
+### First time setup
+
+- Install [node.js](https://nodejs.org/) (requires Node v22+)
+- Install pnpm: <https://pnpm.io/installation> (use pnpm 10+); a recent pnpm automatically switches to the version pinned in the `packageManager` field
+- Clone this repository
+- Install dependencies: `pnpm i` or `pnpm i --frozen-lockfile`
+
+### Build & Testing
+
+- Build (all packages): `pnpm build`
+- Lint (all packages): `pnpm lint`
+- Clean (all packages): `pnpm clean`
+- Full validation: `pnpm check:all`
 
 ## Workflow Diagram Example
 
@@ -25,7 +37,7 @@ https://user-images.githubusercontent.com/588090/154459938-849ca684-11b3-472c-8a
 Clone this repository and build the packages:
 
 ```bash
-yarn install
+pnpm build
 ```
 
 This command will also install Playwright and the necessary browsers.
@@ -33,7 +45,7 @@ This command will also install Playwright and the necessary browsers.
 Next, run the setup script to clone, build the required repositories and generate the `.env` file:
 
 ```bash
-yarn repo:setup
+pnpm repo:setup
 ```
 
 Once the setup is finished, follow the instructions to test the example in the [example folder](./examples/workflow-test/README.md).

@@ -4,6 +4,8 @@
     "rootDir": "src",
     "outDir": "lib",
     "baseUrl": ".",
+    // This package uses reflect-metadata (DI decorators); declared as a dependency.
+    "types": ["node", "reflect-metadata"],
     "paths": {
       "~/": ["src"],
       "~/*": ["src/*"]

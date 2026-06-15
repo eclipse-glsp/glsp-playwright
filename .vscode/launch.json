@@ -10,7 +10,7 @@
       "name": "Run tests (Standalone)",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "runtimeExecutable": "yarn",
+      "runtimeExecutable": "pnpm",
       "runtimeArgs": ["test:standalone"],
       "presentation": {
         "group": "GLSP-Playwright launch configurations",
@@ -23,7 +23,7 @@
       "name": "Run tests (Theia)",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "runtimeExecutable": "yarn",
+      "runtimeExecutable": "pnpm",
       "runtimeArgs": ["test:theia"],
       "presentation": {
         "group": "GLSP-Playwright launch configurations",
@@ -36,7 +36,7 @@
       "name": "Run tests (VS Code)",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "runtimeExecutable": "yarn",
+      "runtimeExecutable": "pnpm",
       "runtimeArgs": ["test:vscode"],
       "presentation": {
         "group": "GLSP-Playwright launch configurations",
@@ -49,7 +49,7 @@
       "name": "Run current test (Standalone)",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "runtimeExecutable": "yarn",
+      "runtimeExecutable": "pnpm",
       "runtimeArgs": ["test:standalone", "${fileBasename}"],
       "presentation": {
         "group": "GLSP-Playwright launch configurations",
@@ -62,7 +62,7 @@
       "name": "Run current test (Theia)",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "runtimeExecutable": "yarn",
+      "runtimeExecutable": "pnpm",
       "runtimeArgs": ["test:theia", "${fileBasename}"],
       "presentation": {
         "group": "GLSP-Playwright launch configurations",
@@ -75,7 +75,7 @@
       "name": "Run current test (VS Code)",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "runtimeExecutable": "yarn",
+      "runtimeExecutable": "pnpm",
       "runtimeArgs": ["test:vscode", "${fileBasename}"],
       "presentation": {
         "group": "GLSP-Playwright launch configurations",
@@ -88,7 +88,7 @@
       "name": "Inspect current file (Standalone)",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "runtimeExecutable": "yarn",
+      "runtimeExecutable": "pnpm",
       "runtimeArgs": ["test:standalone", "--ui", "${fileBasename}"],
       "env": {
         "PWDEBUG": "1"
@@ -104,7 +104,7 @@
       "name": "Inspect current file (Theia)",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "runtimeExecutable": "yarn",
+      "runtimeExecutable": "pnpm",
       "runtimeArgs": ["test:theia", "--ui", "${fileBasename}"],
       "env": {
         "PWDEBUG": "1"
@@ -120,7 +120,7 @@
       "name": "Inspect current file (VS Code)",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "runtimeExecutable": "yarn",
+      "runtimeExecutable": "pnpm",
       "runtimeArgs": ["test:vscode", "--ui", "${fileBasename}"],
       "env": {
         "PWDEBUG": "1"

@@ -8,7 +8,7 @@
       "detail": "Build all packages & examples",
       "type": "shell",
       "group": "build",
-      "command": "yarn",
+      "command": "pnpm build",
       "presentation": {
         "reveal": "always",
         "panel": "new"
@@ -20,7 +20,7 @@
       "detail": "Watch all packages & examples",
       "type": "shell",
       "group": "build",
-      "command": "yarn watch",
+      "command": "pnpm watch",
       "presentation": {
         "reveal": "always",
         "panel": "new"
@@ -32,7 +32,7 @@
       "detail": "Run test cases for Standalone integration",
       "type": "shell",
       "group": "test",
-      "command": "cd examples/workflow-test && yarn test:standalone",
+      "command": "cd examples/workflow-test && pnpm test:standalone",
       "presentation": {
         "reveal": "always",
         "panel": "new"
@@ -44,7 +44,7 @@
       "detail": "Run test cases for Standalone Browser integration",
       "type": "shell",
       "group": "test",
-      "command": "cd examples/workflow-test && yarn test:standalone-browser",
+      "command": "cd examples/workflow-test && pnpm test:standalone-browser",
       "presentation": {
         "reveal": "always",
         "panel": "new"
@@ -56,7 +56,7 @@
       "detail": "Run test cases for Theia integration",
       "type": "shell",
       "group": "test",
-      "command": "cd examples/workflow-test && yarn test:theia",
+      "command": "cd examples/workflow-test && pnpm test:theia",
       "presentation": {
         "reveal": "always",
         "panel": "new"
@@ -68,7 +68,7 @@
       "detail": "Run test cases for VS Code integration",
       "type": "shell",
       "group": "test",
-      "command": "cd examples/workflow-test && yarn test:vscode",
+      "command": "cd examples/workflow-test && pnpm test:vscode",
       "presentation": {
         "reveal": "always",
         "panel": "new"

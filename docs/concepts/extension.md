@@ -18,8 +18,8 @@ Capabilities provide GLSP-Client-specific functionality like accessing the `comm
 
 Flows define an action or sequence of actions the user would typically do, like `clicking`, `hovering`, or `renaming` an element.
 
--   The `Click` flow consists of only a single action, namely clicking on an element.
--   The `Rename` flow consists of actions like double-clicking on the element, writing the new name, and pressing enter.
+- The `Click` flow consists of only a single action, namely clicking on an element.
+- The `Rename` flow consists of actions like double-clicking on the element, writing the new name, and pressing enter.
 
 ### Model
 

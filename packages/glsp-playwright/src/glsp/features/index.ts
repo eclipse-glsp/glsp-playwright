@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2023-2024 Business Informatics Group (TU Wien) and others.
+ * Copyright (c) 2023-2026 Business Informatics Group (TU Wien) and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -18,6 +18,7 @@ export * from './command-palette';
 export * from './context-menu';
 export * from './label-editor';
 export * from './popup';
+export * from './reconnect';
 export * from './routing';
 export * from './tool-palette';
 export * from './undo-redo';

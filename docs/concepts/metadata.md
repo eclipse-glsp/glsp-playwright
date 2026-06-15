@@ -18,8 +18,8 @@ To connect the correct page object with the right SVG element, we need to provid
 
 For easier development, we make use of decorators:
 
--   <https://www.typescriptlang.org/docs/handbook/decorators.html>
--   <https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html#decorators>
+- <https://www.typescriptlang.org/docs/handbook/decorators.html>
+- <https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html#decorators>
 
 ## Decorators
 
