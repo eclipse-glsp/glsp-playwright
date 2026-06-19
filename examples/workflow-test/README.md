@@ -41,31 +41,31 @@ This package contains code examples that demonstrate how to test diagram editors
 
 The following libraries/frameworks need to be installed on your system:
 
--   [Node.js](https://nodejs.org/en/) `>=22`
--   [Yarn](https://classic.yarnpkg.com/en/docs/install#debian-stable) `>=1.7.0`
+- [Node.js](https://nodejs.org/en/) `>=22`
+- [pnpm](https://pnpm.io/installation) `>=11.6.0`
 
 ## Min versions
 
--   [Standalone](https://github.com/eclipse-glsp/glsp-client): v2.1.1
--   [Theia](https://github.com/eclipse-glsp/glsp-theia-integration): v2.1.1
--   [VSCode](https://github.com/eclipse-glsp/glsp-vscode-integration): v2.1.1
+- [Standalone](https://github.com/eclipse-glsp/glsp-client): v2.1.1
+- [Theia](https://github.com/eclipse-glsp/glsp-theia-integration): v2.1.1
+- [VSCode](https://github.com/eclipse-glsp/glsp-vscode-integration): v2.1.1
 
 Default installations:
 
--   [VS Code IDE](https://code.visualstudio.com/updates/): 1.88.1
+- [VS Code IDE](https://code.visualstudio.com/updates/): 1.88.1
 
 ## Structure
 
--   [./src](./src/): This folder provides the page objects necessary for the `Workflow Example`.
--   [./tests](./tests/): The test cases are implemented in this folder. Every `GLSP-Playwright` feature has the respective test cases for demonstration purposes provided here.
--   [playwright.config.ts](./playwright.config.ts): The Playwright configuration. More information is available in the [Playwright Documentation](https://playwright.dev/docs/test-configuration).
+- [./src](./src/): This folder provides the page objects necessary for the `Workflow Example`.
+- [./tests](./tests/): The test cases are implemented in this folder. Every `GLSP-Playwright` feature has the respective test cases for demonstration purposes provided here.
+- [playwright.config.ts](./playwright.config.ts): The Playwright configuration. More information is available in the [Playwright Documentation](https://playwright.dev/docs/test-configuration).
 
 ## Preparations
 
 We use the [GLSP-Client](https://github.com/eclipse-glsp/glsp-client) repository to run the tests.
-You can use `yarn repo:setup` to automatically clone and build the required repositories and generate the `.env` file from `.env.example`.
+You can use `pnpm repo:setup` to automatically clone and build the required repositories and generate the `.env` file from `.env.example`.
 
-### `yarn repo:setup`
+### `pnpm repo:setup`
 
 Clones and builds the necessary GLSP repositories into the `.repositories` directory and copies `.env.example` to `.env`.
 
@@ -80,20 +80,20 @@ Clones and builds the necessary GLSP repositories into the `.repositories` direc
 
 **Additional flags:**
 
--   `--java` — Clone `glsp-server` (Java) instead of `glsp-server-node`
--   `--skip-build` — Only clone repositories without building them
+- `--java` — Clone `glsp-server` (Java) instead of `glsp-server-node`
+- `--skip-build` — Only clone repositories without building them
 
 **Examples:**
 
 ```bash
 # Clone and build everything (Node server)
-yarn repo:setup
+pnpm repo:setup
 
 # Set up only for Theia tests
-yarn repo:setup --theia
+pnpm repo:setup --theia
 
 # Set up for VS Code tests with the Java server, skip building
-yarn repo:setup --vscode --java --skip-build
+pnpm repo:setup --vscode --java --skip-build
 ```
 
 Afterward, review the generated `.env` file in the `workflow-test` folder and provide the necessary data for the keys.
@@ -101,11 +101,11 @@ This file contains private information about your environment, so do not commit 
 
 ## Building the examples
 
-The example project has to be built using yarn.
+The example project has to be built using pnpm.
 Simply execute the task `[Playwright] Build all` or the following command in the _root_ folder:
 
 ```bash
-yarn
+pnpm install
 ```
 
 The different versions share the same server instance.
@@ -116,7 +116,7 @@ The server will be started automatically by Playwright.
 The test cases can be executed by executing the task `[Playwright] Test Standalone` or the following command in the _workflow-test_ folder:
 
 ```bash
-yarn test:standalone
+pnpm test:standalone
 ```
 
 ## Testing the Standalone Browser version
@@ -126,7 +126,7 @@ The standalone browser variant runs the GLSP server as a web worker directly in 
 The test cases can be executed by running the following command in the _workflow-test_ folder:
 
 ```bash
-yarn test:standalone-browser
+pnpm test:standalone-browser
 ```
 
 ## Testing the Theia version
@@ -136,7 +136,7 @@ The Theia instance will be started automatically by Playwright.
 The test cases can be executed by executing the task `[Playwright] Test Theia` or the following command in the _workflow-test_ folder:
 
 ```bash
-yarn test:theia
+pnpm test:theia
 ```
 
 ## Testing the VS Code version
@@ -147,7 +147,7 @@ The user needs to provide the path of the `vsix` file in the `.env` file.
 Then the test cases can be executed by executing the task `[Playwright] Test VS Code` or the following command in the _workflow-test_ folder:
 
 ```bash
-yarn test:vscode
+pnpm test:vscode
 ```
 
 ## Development
@@ -163,14 +163,14 @@ Use the `Watch All` task to rebuild the project automatically after doing change
 
 ### Live Debugging
 
--   Read the [Live Debugging Documentation](https://playwright.dev/docs/debug#live-debugging)
--   You can get the locator of a specific page object or a `GLSPLocator` by using the `.locate()` method:
+- Read the [Live Debugging Documentation](https://playwright.dev/docs/debug#live-debugging)
+- You can get the locator of a specific page object or a `GLSPLocator` by using the `.locate()` method:
 
 ```ts
 const locator = task.locate();
 ```
 
--   Click on the locator variable to highlight it within the browser
+- Click on the locator variable to highlight it within the browser
 
 ### Extractors
 

@@ -3,7 +3,7 @@ import glspConfig from '@eclipse-glsp/eslint-config';
 export default [
     ...glspConfig,
     {
-        ignores: ['**/*.js', '**/*.mjs', '**/*.cjs', '**/dist/', '**/lib/', '**/.repositories/', '**/*.map']
+        ignores: ['**/*.js', '**/*.mjs', '**/*.cjs', '**/dist/', '**/lib/', '**/.repositories/', '**/*.map', '.worktrees/']
     },
     {
         files: ['**/*.{ts,tsx}'],

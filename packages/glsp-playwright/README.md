@@ -4,7 +4,7 @@ A Playwright-based framework for testing the [Graphical Language Server Platform
 
 ## Building
 
-This project is built with `yarn`.
+This project is built with `pnpm`.
 
 ## More information
 

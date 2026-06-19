@@ -30,27 +30,28 @@
     "src"
   ],
   "scripts": {
-    "build": "tsc -b ",
+    "build": "pnpm compile",
     "circular": "npx madge --circular ./lib ./src",
     "clean": "rimraf lib tsconfig.tsbuildinfo  coverage",
+    "compile": "tsc -b && pnpm compile:alias",
     "compile:alias": "tsc-alias",
     "generate:index": "glsp generateIndex src -f",
     "lint": "eslint ./src",
-    "lint:all": "yarn lint && yarn circular --no-spinner",
+    "lint:all": "pnpm lint && pnpm circular --no-spinner",
+    "prepublishOnly": "pnpm build",
     "watch": "(concurrently \"tsc -w\" \"tsc-alias -w\")",
     "watch:alias": "tsc-alias -w"
   },
   "dependencies": {
     "@vscode/test-electron": "^2.3.2",
+    "reflect-metadata": "^0.2.2",
     "ts-dedent": "^2.2.0",
-    "uuid": "^9.0.0"
-  },
-  "devDependencies": {
-    "@types/uuid": "^9.0.0"
+    "uuid": "^14.0.0"
   },
   "peerDependencies": {
     "@playwright/test": "^1.47.0",
-    "@theia/playwright": "^1.66.0"
+    "@theia/playwright": "^1.66.0",
+    "playwright-core": "^1.47.0"
   },
   "publishConfig": {
     "access": "public"

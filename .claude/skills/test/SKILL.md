@@ -17,7 +17,7 @@ If `$ARGUMENTS` contains a specific test name pattern, run tests filtered by tha
 Always run the setup script unless the user explicitly says to skip it:
 
 ```bash
-yarn repo:setup
+pnpm repo:setup
 ```
 
 This will clone and build the required GLSP repositories and generate the `.env` file from `.env.example`.
@@ -27,19 +27,19 @@ This will clone and build the required GLSP repositories and generate the `.env`
 Ensure the project is compiled:
 
 ```bash
-yarn
+pnpm build
 ```
 
 ### 3. Run Tests
 
 Run the appropriate test command:
 
--   **all** (default, no argument): `yarn test` (runs all integrations)
--   **standalone**: `yarn test:standalone`
--   **standalone-browser**: `yarn test:standalone-browser`
--   **theia**: `yarn test:theia`
--   **vscode**: `yarn test:vscode`
--   **pattern match**: If `$ARGUMENTS` contains a specific test name pattern, run: `cd examples/workflow-test && yarn playwright test -g "$ARGUMENTS"`
+- **all** (default, no argument): `pnpm test` (runs all integrations)
+- **standalone**: `pnpm test:standalone`
+- **standalone-browser**: `pnpm test:standalone-browser`
+- **theia**: `pnpm test:theia`
+- **vscode**: `pnpm test:vscode`
+- **pattern match**: If `$ARGUMENTS` contains a specific test name pattern, run: `cd examples/workflow-test && pnpm playwright test -g "$ARGUMENTS"`
 
 ### 4. Report Failures
 

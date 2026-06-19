@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { execSync } from 'child_process';
-import { copyFileSync, readFileSync, writeFileSync } from 'fs';
+import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
 
 const args = process.argv.slice(2);
@@ -27,7 +27,7 @@ const vscode = args.includes('--vscode');
 const all = !theia && !standalone && !vscode;
 
 const rootDir = resolve(__dirname, '..');
-const repo = 'yarn glsp repo -d .repositories';
+const repo = 'pnpm glsp repo -d .repositories';
 
 function run(command: string): void {
     console.log(`Running: ${command}`);
@@ -64,6 +64,26 @@ if (repos.includes('glsp-vscode-integration')) {
     const nxJson = resolve(rootDir, '.repositories', 'glsp-vscode-integration', 'nx.json');
     console.log(`Adding ${nxJson}`);
     writeFileSync(nxJson, '{}');
+}
+
+// TEMPORARY: remove once all GLSP repos are migrated to pnpm.
+// Yarn classic (1.x) walks up the directory tree looking for a `packageManager` field. Since this
+// repo's root package.json declares `pnpm@<version>`, a `yarn install` inside a cloned (yarn-based)
+// repo under `.repositories` would find that pnpm pin, misparse it as `yarn@pnpm@<version>`, and
+// abort. Pin each cloned yarn repo to the local yarn version so the lookup stops at the repo itself.
+const yarnVersion = execSync('yarn --version', { cwd: rootDir }).toString().trim();
+for (const cloned of repos) {
+    const repoDir = resolve(rootDir, '.repositories', cloned);
+    const pkgPath = resolve(repoDir, 'package.json');
+    if (!existsSync(resolve(repoDir, 'yarn.lock')) || !existsSync(pkgPath)) {
+        continue;
+    }
+    const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+    if (!pkg.packageManager) {
+        pkg.packageManager = `yarn@${yarnVersion}`;
+        writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
+        console.log(`Pinned ${cloned} packageManager to yarn@${yarnVersion}`);
+    }
 }
 
 if (!skipBuild) {

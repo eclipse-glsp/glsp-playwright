@@ -15,8 +15,7 @@
  ********************************************************************************/
 
 import { PlaywrightTestConfig } from '@playwright/test';
-import * as path from 'path';
-import { ProjectName, getBrowserServerBundlePath, getPort, getRepoDir, getRepoPath, needsGlspServer } from './utils';
+import { ProjectName, getBrowserServerBundlePath, getPort, getRepoDir, needsGlspServer } from './utils';
 
 type WebServerConfig = Extract<NonNullable<PlaywrightTestConfig['webServer']>, unknown[]>[number];
 
@@ -30,8 +29,7 @@ interface ProjectServerConfig {
 export function buildWebServers(activeProjects: ProjectName[]): PlaywrightTestConfig['webServer'] {
     // Resolved lazily inside the function: top-level evaluation would run at import time,
     // before `dotenv.config()` in playwright.config.ts, so GLSP_REPO_DIR would not be picked up.
-    const repo = `yarn --silent glsp repo -d ${getRepoDir()}`;
-    const theiaAppDir = path.resolve(getRepoPath('glsp-theia-integration'), 'examples', 'browser-app');
+    const repo = `pnpm --silent glsp repo -d ${getRepoDir()}`;
 
     const GLSP_SERVER_COMMANDS: Record<string, string> = {
         node: `${repo} server-node start`,
@@ -57,7 +55,7 @@ export function buildWebServers(activeProjects: ProjectName[]): PlaywrightTestCo
             path: '/diagram.html'
         },
         theia: {
-            command: `cd ${theiaAppDir} && yarn theia start --WF_GLSP=${glspServerPort} --WF_PATH=workflow --glspDebug`,
+            command: `${repo} theia run browser theia start --WF_GLSP=${glspServerPort} --WF_PATH=workflow --glspDebug`,
             port: theiaPort
         }
     };

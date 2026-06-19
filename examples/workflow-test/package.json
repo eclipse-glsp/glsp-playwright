@@ -36,22 +36,23 @@
     "clean": "rimraf --glob lib tsconfig.tsbuildinfo",
     "lint": "eslint ./src ./tests",
     "prepare": "playwright install",
-    "repo": "yarn glsp repo -d .repositories",
+    "repo": "pnpm glsp repo -d .repositories",
     "repo:clean": "rimraf .repositories",
     "repo:setup": "ts-node scripts/setup.ts",
     "test": "playwright test",
-    "test:standalone": "yarn test --project=standalone",
-    "test:standalone-browser": "yarn test --project=standalone-browser",
-    "test:theia": "yarn test --project=theia",
-    "test:vscode": "yarn test --project=vscode",
-    "test:vscode-setup": "yarn test --project=vscode-setup",
+    "test:standalone": "pnpm test --project=standalone",
+    "test:standalone-browser": "pnpm test --project=standalone-browser",
+    "test:theia": "pnpm test --project=theia",
+    "test:vscode": "pnpm test --project=vscode",
+    "test:vscode-setup": "pnpm test --project=vscode-setup",
     "watch": "tsc -w"
   },
   "devDependencies": {
-    "@eclipse-glsp/glsp-playwright": "2.8.0-next",
+    "@eclipse-glsp/glsp-playwright": "workspace:*",
     "@playwright/test": "^1.59.1",
     "@theia/playwright": "~1.71.2",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "ts-dedent": "^2.2.0"
   },
   "publishConfig": {
     "access": "public"
