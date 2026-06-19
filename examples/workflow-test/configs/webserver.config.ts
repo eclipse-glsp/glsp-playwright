@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 import { PlaywrightTestConfig } from '@playwright/test';
-import { ProjectName, getBrowserServerBundlePath, getPort, getRepoDir, needsGlspServer } from './utils';
+import { ProjectName, getBrowserServerBundlePath, getPort, getRepoDir, isYarnRepo, needsGlspServer } from './utils';
 
 type WebServerConfig = Extract<NonNullable<PlaywrightTestConfig['webServer']>, unknown[]>[number];
 
@@ -41,6 +41,7 @@ export function buildWebServers(activeProjects: ProjectName[]): PlaywrightTestCo
     const standaloneBrowserPort = getPort('STANDALONE_BROWSER_PORT');
     const theiaPort = getPort('THEIA_PORT');
     const browserServerBundle = getBrowserServerBundlePath();
+    const theiaBin = isYarnRepo('glsp-theia-integration') ? 'theia' : 'exec theia';
     const configs: Partial<Record<ProjectName, ProjectServerConfig>> = {
         standalone: {
             command: `${repo} client start --external-server --no-open`,
@@ -55,7 +56,12 @@ export function buildWebServers(activeProjects: ProjectName[]): PlaywrightTestCo
             path: '/diagram.html'
         },
         theia: {
-            command: `${repo} theia run browser theia start --WF_GLSP=${glspServerPort} --WF_PATH=workflow --glspDebug`,
+            // TEMPORARY: drop the `isYarnRepo` branch once glsp-theia-integration is migrated to pnpm.
+            // The command resolves to `<pm> browser <exec?> theia start ...` in the cloned repo. Under
+            // pnpm the `theia` binary must be launched via `pnpm exec` (the script shorthand only runs
+            // package.json scripts, else it fails with ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL); yarn classic
+            // runs binaries directly and has no `exec` command.
+            command: `${repo} theia run browser ${theiaBin} start --WF_GLSP=${glspServerPort} --WF_PATH=workflow --glspDebug`,
             port: theiaPort
         }
     };

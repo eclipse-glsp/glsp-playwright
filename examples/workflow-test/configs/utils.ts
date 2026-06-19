@@ -45,6 +45,16 @@ export function getRepoPath(repoName: string): string {
     return path.resolve(getRepoDir(), repoName);
 }
 
+// TEMPORARY: remove once all GLSP repos are migrated to pnpm.
+// During the migration a cloned integration repo may still be yarn-based. The package manager
+// determines how a binary is launched in a sub-package: pnpm's script shorthand only runs
+// package.json scripts, so the `theia` binary must be invoked via `pnpm exec`, whereas yarn classic
+// runs binaries directly and has no `exec` command. Detect the lockfile so callers can adapt.
+// Mirrors the yarn.lock-based detection in scripts/setup.ts.
+export function isYarnRepo(repoName: string): boolean {
+    return existsSync(path.resolve(getRepoPath(repoName), 'yarn.lock'));
+}
+
 export function getPort(envVar: string): number {
     const val = process.env[envVar];
     if (val) {
