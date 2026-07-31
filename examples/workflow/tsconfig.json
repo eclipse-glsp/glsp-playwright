@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    // `rootDir: "."` keeps the src/tests split in the output, i.e. `src/**` -> `lib/src/**` and
+    // `tests/**` -> `lib/tests/**`. The integration example packages point a Playwright project
+    // at `lib/tests`, and the relative imports inside those specs resolve into `lib/src`.
+    "rootDir": ".",
+    "outDir": "lib",
+    "baseUrl": ".",
+    "declarationMap": true
+  },
+  "include": ["src", "tests", "playwright.config.ts", "./configs/*.ts"],
+  "references": [{ "path": "../../packages/playwright" }]
+}

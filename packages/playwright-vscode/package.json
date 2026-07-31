@@ -1,0 +1,60 @@
+{
+  "name": "@eclipse-glsp/playwright-vscode",
+  "version": "2.8.0-next",
+  "description": "VS Code integration for the GLSP Playwright testing framework",
+  "homepage": "https://www.eclipse.org/glsp/",
+  "bugs": "https://github.com/eclipse-glsp/glsp/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eclipse-glsp/glsp-playwright.git"
+  },
+  "license": "(EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0)",
+  "author": {
+    "name": "Eclipse GLSP"
+  },
+  "contributors": [
+    {
+      "name": "Eclipse GLSP Project",
+      "email": "glsp-dev@eclipse.org",
+      "url": "https://projects.eclipse.org/projects/ecd.glsp"
+    },
+    {
+      "name": "Haydar Metin",
+      "email": "dev@haydar.metin.at",
+      "url": "https://me.big.tuwien.ac.at/"
+    }
+  ],
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "scripts": {
+    "build": "pnpm compile",
+    "circular": "npx madge --circular ./lib ./src",
+    "clean": "rimraf lib tsconfig.tsbuildinfo coverage",
+    "compile": "tsc -b",
+    "generate:index": "glsp generateIndex src -f",
+    "lint": "eslint ./src",
+    "lint:all": "pnpm lint && pnpm circular --no-spinner",
+    "prepublishOnly": "pnpm build",
+    "watch": "tsc -w"
+  },
+  "dependencies": {
+    "@eclipse-glsp/playwright": "workspace:*",
+    "@vscode/test-electron": "^2.3.2",
+    "uuid": "^14.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "playwright-core": "^1.59.1"
+  },
+  "peerDependencies": {
+    "@playwright/test": "^1.47.0",
+    "playwright-core": "^1.47.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

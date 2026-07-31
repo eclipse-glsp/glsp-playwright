@@ -7,9 +7,8 @@ playwright/.cache/
 lib/
 .vscode-test
 
-examples/workflow-test/server/
-examples/workflow-test/.repositories/
-examples/workflow-test/playwright/.storage/*.json
+examples/.repositories/
+examples/workflow-vscode/playwright/.storage/*.json
 
 *.tsbuildinfo
 *.log

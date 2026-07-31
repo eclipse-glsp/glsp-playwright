@@ -4,6 +4,7 @@
     "noEmit": true
   },
   "include": [
+    "scripts",
     "packages/*/src",
     "examples/*/src",
     "examples/*/tests",

@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "lib",
+    "baseUrl": "."
+  },
+  "include": ["tests", "playwright.config.ts", "./configs/*.ts"],
+  "references": [
+    { "path": "../../packages/playwright" },
+    { "path": "../../packages/playwright-theia" },
+    { "path": "../workflow" }
+  ]
+}

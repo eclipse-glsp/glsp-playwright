@@ -15,7 +15,7 @@ importers:
     devDependencies:
       '@eclipse-glsp/dev':
         specifier: next
-        version: 2.8.0-next.19(@types/node@22.19.21)(@typescript-eslint/utils@8.61.0(eslint@10.5.0)(typescript@5.9.3))(typescript@5.9.3)(vite@8.2.2(@types/node@22.19.21))
+        version: 2.9.0-next.1(@types/node@22.19.21)(@typescript-eslint/utils@8.61.0(eslint@10.5.0)(typescript@5.9.3))(typescript@5.9.3)(vite@8.2.2(@types/node@22.19.21))
       '@estruyf/github-actions-reporter':
         specifier: ^1.7.0
         version: 1.12.0(@playwright/test@1.60.0)
@@ -28,6 +28,9 @@ importers:
       mocha-ctrf-json-reporter:
         specifier: 0.0.9
         version: 0.0.9
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@types/node@22.19.21)(typescript@5.9.3)
       tsc-alias:
         specifier: 1.8.10
         version: 1.8.10
@@ -35,11 +38,35 @@ importers:
         specifier: ^5.9.2
         version: 5.9.3
 
-  examples/workflow-test:
+  examples/workflow:
     devDependencies:
-      '@eclipse-glsp/glsp-playwright':
+      '@eclipse-glsp/playwright':
         specifier: workspace:*
-        version: link:../../packages/glsp-playwright
+        version: link:../../packages/playwright
+      '@playwright/test':
+        specifier: ^1.59.1
+        version: 1.60.0
+      dotenv:
+        specifier: ^16.0.3
+        version: 16.6.1
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
+      ts-dedent:
+        specifier: ^2.2.0
+        version: 2.3.0
+
+  examples/workflow-theia:
+    devDependencies:
+      '@eclipse-glsp/playwright':
+        specifier: workspace:*
+        version: link:../../packages/playwright
+      '@eclipse-glsp/playwright-theia':
+        specifier: workspace:*
+        version: link:../../packages/playwright-theia
+      '@eclipse-glsp/workflow-test':
+        specifier: workspace:*
+        version: link:../workflow
       '@playwright/test':
         specifier: ^1.59.1
         version: 1.60.0
@@ -49,33 +76,81 @@ importers:
       dotenv:
         specifier: ^16.0.3
         version: 16.6.1
-      ts-dedent:
-        specifier: ^2.2.0
-        version: 2.3.0
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
 
-  packages/glsp-playwright:
-    dependencies:
+  examples/workflow-vscode:
+    devDependencies:
+      '@eclipse-glsp/playwright':
+        specifier: workspace:*
+        version: link:../../packages/playwright
+      '@eclipse-glsp/playwright-vscode':
+        specifier: workspace:*
+        version: link:../../packages/playwright-vscode
+      '@eclipse-glsp/workflow-test':
+        specifier: workspace:*
+        version: link:../workflow
       '@playwright/test':
-        specifier: ^1.47.0
+        specifier: ^1.59.1
         version: 1.60.0
-      '@theia/playwright':
-        specifier: ^1.66.0
-        version: 1.71.2
-      '@vscode/test-electron':
-        specifier: ^2.3.2
-        version: 2.5.2(supports-color@8.1.1)
-      playwright-core:
-        specifier: ^1.47.0
-        version: 1.60.0
+      dotenv:
+        specifier: ^16.0.3
+        version: 16.6.1
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
+
+  packages/playwright:
+    dependencies:
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
       ts-dedent:
         specifier: ^2.2.0
         version: 2.3.0
+    devDependencies:
+      '@playwright/test':
+        specifier: ^1.59.1
+        version: 1.60.0
+      playwright-core:
+        specifier: ^1.59.1
+        version: 1.60.0
+
+  packages/playwright-theia:
+    dependencies:
+      '@eclipse-glsp/playwright':
+        specifier: workspace:*
+        version: link:../playwright
+    devDependencies:
+      '@playwright/test':
+        specifier: ^1.59.1
+        version: 1.60.0
+      '@theia/playwright':
+        specifier: ~1.71.2
+        version: 1.71.2
+      playwright-core:
+        specifier: ^1.59.1
+        version: 1.60.0
+
+  packages/playwright-vscode:
+    dependencies:
+      '@eclipse-glsp/playwright':
+        specifier: workspace:*
+        version: link:../playwright
+      '@vscode/test-electron':
+        specifier: ^2.3.2
+        version: 2.5.2
       uuid:
         specifier: ^14.0.0
         version: 14.0.0
+    devDependencies:
+      '@playwright/test':
+        specifier: ^1.59.1
+        version: 1.60.0
+      playwright-core:
+        specifier: ^1.59.1
+        version: 1.60.0
 
 packages:
 
@@ -116,21 +191,25 @@ packages:
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
 
-  '@eclipse-glsp/cli@2.8.0-next.19':
-    resolution: {integrity: sha512-t+PEnSqOjFXznmAexX7Ekc+jLUIqPlIkUnm1laWi/D9mFHo67KRQ7563qmrTn4Wi0NAsdWeXToFBxFxG6/PfaQ==}
+  '@cspotcode/source-map-support@0.8.1':
+    resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
+    engines: {node: '>=12'}
+
+  '@eclipse-glsp/cli@2.9.0-next.1':
+    resolution: {integrity: sha512-/Z6wW4YQ2jo4X1L3Zcu02E6m4eddiMLfxMTQRkBEGeNn4z+L6d4o4ev+j0TMGTkNoIHYyHBQKZFExfNinN8h5Q==}
     hasBin: true
 
-  '@eclipse-glsp/config-test@2.8.0-next.19':
-    resolution: {integrity: sha512-kLTnX6MGyKvI9u6TxZek3AQaUcdI/TMuhDBwB0+zGma3lwuGSvXqmqkYDdXrGN5ntuYoq7sfZBuCy+67LO7SXQ==}
+  '@eclipse-glsp/config-test@2.9.0-next.1':
+    resolution: {integrity: sha512-8j8s/BtKkXPIKZzqMhDgZsSpWMtCJI3WAa5Athh7h0Pbze44WxwS3mGPonEha8J9Te5pjfbrkkONUURM+bmmhg==}
 
-  '@eclipse-glsp/config@2.8.0-next.19':
-    resolution: {integrity: sha512-Jxb3Zq9pw1waIbBINTEy9+7clcB939bOW+Lo56GB38LBd4HkQX82/Gh0EZN7PZhMP/mCfo4J6XGOK0m7q7qbpg==}
+  '@eclipse-glsp/config@2.9.0-next.1':
+    resolution: {integrity: sha512-OIEW5bdM6/AvoMluU4vYDUNFDOl4yYWckUmHeX+XpeH+EeDP1qJizJ1JhwSwDkLVmLEXEz1pNX1wcpNmb6fuJg==}
 
-  '@eclipse-glsp/dev@2.8.0-next.19':
-    resolution: {integrity: sha512-Kairzb+bgxSVuBcVPBLxWNbJevMm3nYqbTY1WaY8RXjDCRSW03U50et2AgC2L/F8I1gmJGZLfMF4BhxJzehOIg==}
+  '@eclipse-glsp/dev@2.9.0-next.1':
+    resolution: {integrity: sha512-EbD7j1GZt5kPGVvYocCfQfn6NC8/+n/wDuM8a9DkUEccjjxIlUyhpLZvSoabuU6tHzoRHmQSw+ew7fyJ28n06A==}
 
-  '@eclipse-glsp/eslint-config@2.8.0-next.19':
-    resolution: {integrity: sha512-QlXER0UYOaYT7WpzYpuHbLgjaeKTTjd0USddgvvuWneIwvsRRjaXk9QI0RKeCIKvJHjpzPOFsmW8RTjzp/EMhw==}
+  '@eclipse-glsp/eslint-config@2.9.0-next.1':
+    resolution: {integrity: sha512-2fZG4eshzKVPRO+/hSJOMkUI3oEQtDLhmH7/bCmstXLj35ccu6ammRXrMDwAzpXeeFqGzp4Y2hknW7JxceB8jQ==}
     peerDependencies:
       '@eslint/js': ^10.0.1
       '@stylistic/eslint-plugin': ^5.10.0
@@ -143,16 +222,16 @@ packages:
       globals: ^17.6.0
       typescript-eslint: ^8.0.0
 
-  '@eclipse-glsp/prettier-config@2.8.0-next.19':
-    resolution: {integrity: sha512-pBLY7CQYHl0pAwSTiNPr4j182sSi0LH9ZwL+Ka0EhvXMMxUfvPMaEmKFi5nXuxVigeOFpRcTaRyuJU0LH15AqA==}
+  '@eclipse-glsp/prettier-config@2.9.0-next.1':
+    resolution: {integrity: sha512-NCnfiukDokl+uhx3nteAOzizNf9jfurokyXEzwVn6ZQCxgFeUjEHdm8xRr5PZt9ijAxC7LZAXkjI9tVTYrWWPw==}
 
-  '@eclipse-glsp/ts-config@2.8.0-next.19':
-    resolution: {integrity: sha512-zH7UW1+upPxvGljLMTuOP+S7yfXtxyvDcXnkc+iPWtzZORzcLm7IZRYfzoC6EKx45cllyasiLwV5ebhk6a/QOw==}
+  '@eclipse-glsp/ts-config@2.9.0-next.1':
+    resolution: {integrity: sha512-ZvFz/NKN/2fGRBj83Gf/vgiCFtJmD3ZX9ZYZlwj3S4DFDu2vbVcjrcAWfBckVNMYXl+n9kqYJhFxhx3xx/Io1g==}
     peerDependencies:
       typescript: '>=5.5'
 
-  '@eclipse-glsp/vitest-config@2.8.0-next.19':
-    resolution: {integrity: sha512-Kq2VLBCTbp2keeNnNK6Io06iTSepzsQ/Ql3FCrXsEMyDziYYKsPsmZ1wbMbCWFoziQokWzTf4pkTcwVCymPWCQ==}
+  '@eclipse-glsp/vitest-config@2.9.0-next.1':
+    resolution: {integrity: sha512-Im8ujwCmyq01oRYBnhomH4arzptoMG6gBiXcBGE/EyvKmniLZf/KxFUl2WEEydavea70jqyvoWrFrJ6LEy8aSQ==}
     peerDependencies:
       '@vitest/coverage-v8': '>=4.0.0'
       vitest: '>=4.0.0'
@@ -239,6 +318,9 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@jridgewell/trace-mapping@0.3.9':
+    resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
 
   '@napi-rs/wasm-runtime@1.1.5':
     resolution: {integrity: sha512-AWPoBRJ9tsnVhor4sjO7rkni+7p+2IAEFj6cx06UgP10jkQHqay/36uRV/bFkgrh18D9vb4cr8Q0Pthskgzy+Q==}
@@ -384,6 +466,18 @@ packages:
     resolution: {integrity: sha512-O3PDvjikVWECu078bLdRb2HwjVgR+wa7D0GX8gN1A8axlgEc7tordHOoEYcKRVxGcAw7bxXjwiKGXaY17qXD+Q==}
     peerDependencies:
       eslint: '>=7.7.0'
+
+  '@tsconfig/node10@1.0.13':
+    resolution: {integrity: sha512-gcLdvR9HO1ZJBypsOGqaP6TFEzb6vIta0KSTLt9NAQ6pXQO3cRgSVyCN6pzYqI9DlJgY71XKO0dpDhCf08b3pg==}
+
+  '@tsconfig/node12@1.0.11':
+    resolution: {integrity: sha512-cqefuRsh12pWyGsIoBKJA9luFu3mRxCA+ORZvA4ktLSzIuCUtWVxGIuXigEwO5/ywWFMZ2QEGKWvkZG1zDMTag==}
+
+  '@tsconfig/node14@1.0.3':
+    resolution: {integrity: sha512-ysT8mhdixWK6Hw3i1V2AeRqZ5WfXg1G43mqoYlM2nc6388Fq5jcXyr5mRsqViLx/GJYdoL0bfXD8nmF+Zn/Iow==}
+
+  '@tsconfig/node16@1.0.4':
+    resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
 
   '@tybys/wasm-util@0.10.2':
     resolution: {integrity: sha512-RoBvJ2X0wuKlWFIjrwffGw1IqZHKQqzIchKaadZZfnNpsAYp2mM0h36JtPCjNDAHGgYez/15uMBpfGwchhiMgg==}
@@ -632,6 +726,10 @@ packages:
     peerDependencies:
       acorn: ^6.0.0 || ^7.0.0 || ^8.0.0
 
+  acorn-walk@8.3.5:
+    resolution: {integrity: sha512-HEHNfbars9v4pgpW6SO1KSPkfoS0xVOM/9UzkJltjlsHZmJasxg8aXkuZa7SMf8vKGIBhpUsPluQSqhJFCqebw==}
+    engines: {node: '>=0.4.0'}
+
   acorn@8.17.0:
     resolution: {integrity: sha512-xRQbDb9BnwDafYNn6Vwl839DYVjqXYb1XVGtWAZ1kcDc6iwAL4hg3B1dZlRiuENFeO2H53gFG3in621AdERVAg==}
     engines: {node: '>=0.4.0'}
@@ -664,6 +762,9 @@ packages:
   anymatch@3.1.3:
     resolution: {integrity: sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==}
     engines: {node: '>= 8'}
+
+  arg@4.1.3:
+    resolution: {integrity: sha512-58S9QDqG0Xx27YwPSt9fJxivjYl432YCwfDMfZ+71RAqUrZef7LrKQZ3LHLOwCS4FLNBplP533Zx895SeOCHvA==}
 
   array-union@2.1.0:
     resolution: {integrity: sha512-HGyxoOTYUyCM6stUe6EJgnd4EoewAI7zMdfqO+kGjnlZmBDz/cR5pf8r/cR4Wq60sL/p0IkcjUEEPwS3GFrIyw==}
@@ -753,6 +854,9 @@ packages:
   core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
 
+  create-require@1.1.1:
+    resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
+
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
     engines: {node: '>= 8'}
@@ -787,6 +891,10 @@ packages:
   detect-newline@4.0.1:
     resolution: {integrity: sha512-qE3Veg1YXzGHQhlA6jzebZN2qVf6NX+A7m7qlhCGG30dJixrAQhYOsJjsnBjJkCSmuOPpCk30145fr8FV0bzog==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+
+  diff@9.0.0:
+    resolution: {integrity: sha512-svtcdpS8CgJyqAjEQIXdb3OjhFVVYjzGAPO8WGCmRbrml64SPw/jJD4GoE98aR7r25A0XcgrK3F02yw9R/vhQw==}
+    engines: {node: '>=0.3.1'}
 
   dir-glob@3.0.1:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}
@@ -1235,6 +1343,9 @@ packages:
     resolution: {integrity: sha512-hXdUTZYIVOt1Ex//jAQi+wTZZpUpwBj/0QsOzqegb3rGMMeJiSEu5xLHnYfBrRV4RH2+OCSOO95Is/7x1WJ4bw==}
     engines: {node: '>=10'}
 
+  make-error@1.3.6:
+    resolution: {integrity: sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==}
+
   marked@12.0.2:
     resolution: {integrity: sha512-qXUm7e/YKFoqFPYPa3Ukg9xlI5cyAtGmyEIzMfW//m6kXwCy2Ps9DYf5ioijFKQ8qyuscrHoY04iJGctu2Kg0Q==}
     engines: {node: '>= 18'}
@@ -1563,6 +1674,20 @@ packages:
     resolution: {integrity: sha512-JfJeIHke7y2egdGGgRAvpCwYFUsHlM2gPcrVOxFkznt/4uzQ7HFmvE63iFHVLBJNDuyDOQgijDK/tXH/f6Msjg==}
     engines: {node: '>=6.10'}
 
+  ts-node@10.9.2:
+    resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': '>=1.2.50'
+      '@swc/wasm': '>=1.2.50'
+      '@types/node': '*'
+      typescript: '>=2.7'
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      '@swc/wasm':
+        optional: true
+
   tsc-alias@1.8.10:
     resolution: {integrity: sha512-Ibv4KAWfFkFdKJxnWfVtdOmB0Zi1RJVxcbPGiCDsFpCQSsmpWyuzHG3rQyI5YkobWwxFPEyQfu1hdo4qLG2zPw==}
     hasBin: true
@@ -1613,6 +1738,9 @@ packages:
   uuid@14.0.0:
     resolution: {integrity: sha512-Qo+uWgilfSmAhXCMav1uYFynlQO7fMFiMVZsQqZRMIXp0O7rR7qjkj+cPvBHLgBqi960QCoo/PH2/6ZtVqKvrg==}
     hasBin: true
+
+  v8-compile-cache-lib@3.0.1:
+    resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
 
   vite@8.2.2:
     resolution: {integrity: sha512-cFKLV/PRgAUlIRm5WjMjJ86jrftzpqcgH+Us+DS8mI3CDNiH30Whrz8uHL3+MOLPAgqbMBAqWdAHAphOAM+z/Q==}
@@ -1728,6 +1856,10 @@ packages:
     resolution: {integrity: sha512-7dSzzRQ++CKnNI/krKnYRV7JKKPUXMEh61soaHKg9mrWEhzFWhFnxPxGl+69cD1Ou63C13NUPCnmIcrvqCuM6w==}
     engines: {node: '>=12'}
 
+  yn@3.1.1:
+    resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
+    engines: {node: '>=6'}
+
   yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
@@ -1767,11 +1899,15 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
-  '@eclipse-glsp/cli@2.8.0-next.19': {}
-
-  '@eclipse-glsp/config-test@2.8.0-next.19(@types/node@22.19.21)(vite@8.2.2(@types/node@22.19.21))':
+  '@cspotcode/source-map-support@0.8.1':
     dependencies:
-      '@eclipse-glsp/vitest-config': 2.8.0-next.19(@vitest/coverage-v8@4.1.11)(vitest@4.1.11)
+      '@jridgewell/trace-mapping': 0.3.9
+
+  '@eclipse-glsp/cli@2.9.0-next.1': {}
+
+  '@eclipse-glsp/config-test@2.9.0-next.1(@types/node@22.19.21)(vite@8.2.2(@types/node@22.19.21))':
+    dependencies:
+      '@eclipse-glsp/vitest-config': 2.9.0-next.1(@vitest/coverage-v8@4.1.11)(vitest@4.1.11)
       '@vitest/coverage-v8': 4.1.11(vitest@4.1.11)
       vitest: 4.1.11(@types/node@22.19.21)(@vitest/coverage-v8@4.1.11)(vite@8.2.2(@types/node@22.19.21))
     transitivePeerDependencies:
@@ -1789,11 +1925,11 @@ snapshots:
       - msw
       - vite
 
-  '@eclipse-glsp/config@2.8.0-next.19(@typescript-eslint/utils@8.61.0(eslint@10.5.0)(typescript@5.9.3))(typescript@5.9.3)':
+  '@eclipse-glsp/config@2.9.0-next.1(@typescript-eslint/utils@8.61.0(eslint@10.5.0)(typescript@5.9.3))(typescript@5.9.3)':
     dependencies:
-      '@eclipse-glsp/eslint-config': 2.8.0-next.19(@eslint/js@10.0.1(eslint@10.5.0))(@stylistic/eslint-plugin@5.10.0(eslint@10.5.0))(@tony.ganchev/eslint-plugin-header@3.4.4(eslint@10.5.0))(eslint-config-prettier@10.1.8(eslint@10.5.0))(eslint-import-resolver-typescript@4.4.5(eslint-plugin-import-x@4.16.2(@typescript-eslint/utils@8.61.0(eslint@10.5.0)(typescript@5.9.3))(eslint@10.5.0))(eslint@10.5.0))(eslint-plugin-import-x@4.16.2(@typescript-eslint/utils@8.61.0(eslint@10.5.0)(typescript@5.9.3))(eslint@10.5.0))(eslint-plugin-no-null@1.0.2(eslint@10.5.0))(eslint@10.5.0)(globals@17.6.0)(typescript-eslint@8.61.0(eslint@10.5.0)(typescript@5.9.3))
-      '@eclipse-glsp/prettier-config': 2.8.0-next.19(prettier@3.8.4)
-      '@eclipse-glsp/ts-config': 2.8.0-next.19(typescript@5.9.3)
+      '@eclipse-glsp/eslint-config': 2.9.0-next.1(@eslint/js@10.0.1(eslint@10.5.0))(@stylistic/eslint-plugin@5.10.0(eslint@10.5.0))(@tony.ganchev/eslint-plugin-header@3.4.4(eslint@10.5.0))(eslint-config-prettier@10.1.8(eslint@10.5.0))(eslint-import-resolver-typescript@4.4.5(eslint-plugin-import-x@4.16.2(@typescript-eslint/utils@8.61.0(eslint@10.5.0)(typescript@5.9.3))(eslint@10.5.0))(eslint@10.5.0))(eslint-plugin-import-x@4.16.2(@typescript-eslint/utils@8.61.0(eslint@10.5.0)(typescript@5.9.3))(eslint@10.5.0))(eslint-plugin-no-null@1.0.2(eslint@10.5.0))(eslint@10.5.0)(globals@17.6.0)(typescript-eslint@8.61.0(eslint@10.5.0)(typescript@5.9.3))
+      '@eclipse-glsp/prettier-config': 2.9.0-next.1(prettier@3.8.4)
+      '@eclipse-glsp/ts-config': 2.9.0-next.1(typescript@5.9.3)
       '@eslint/js': 10.0.1(eslint@10.5.0)
       '@stylistic/eslint-plugin': 5.10.0(eslint@10.5.0)
       '@tony.ganchev/eslint-plugin-header': 3.4.4(eslint@10.5.0)
@@ -1814,11 +1950,11 @@ snapshots:
       - supports-color
       - typescript
 
-  '@eclipse-glsp/dev@2.8.0-next.19(@types/node@22.19.21)(@typescript-eslint/utils@8.61.0(eslint@10.5.0)(typescript@5.9.3))(typescript@5.9.3)(vite@8.2.2(@types/node@22.19.21))':
+  '@eclipse-glsp/dev@2.9.0-next.1(@types/node@22.19.21)(@typescript-eslint/utils@8.61.0(eslint@10.5.0)(typescript@5.9.3))(typescript@5.9.3)(vite@8.2.2(@types/node@22.19.21))':
     dependencies:
-      '@eclipse-glsp/cli': 2.8.0-next.19
-      '@eclipse-glsp/config': 2.8.0-next.19(@typescript-eslint/utils@8.61.0(eslint@10.5.0)(typescript@5.9.3))(typescript@5.9.3)
-      '@eclipse-glsp/config-test': 2.8.0-next.19(@types/node@22.19.21)(vite@8.2.2(@types/node@22.19.21))
+      '@eclipse-glsp/cli': 2.9.0-next.1
+      '@eclipse-glsp/config': 2.9.0-next.1(@typescript-eslint/utils@8.61.0(eslint@10.5.0)(typescript@5.9.3))(typescript@5.9.3)
+      '@eclipse-glsp/config-test': 2.9.0-next.1(@types/node@22.19.21)(vite@8.2.2(@types/node@22.19.21))
     transitivePeerDependencies:
       - '@edge-runtime/vm'
       - '@opentelemetry/api'
@@ -1840,7 +1976,7 @@ snapshots:
       - typescript
       - vite
 
-  '@eclipse-glsp/eslint-config@2.8.0-next.19(@eslint/js@10.0.1(eslint@10.5.0))(@stylistic/eslint-plugin@5.10.0(eslint@10.5.0))(@tony.ganchev/eslint-plugin-header@3.4.4(eslint@10.5.0))(eslint-config-prettier@10.1.8(eslint@10.5.0))(eslint-import-resolver-typescript@4.4.5(eslint-plugin-import-x@4.16.2(@typescript-eslint/utils@8.61.0(eslint@10.5.0)(typescript@5.9.3))(eslint@10.5.0))(eslint@10.5.0))(eslint-plugin-import-x@4.16.2(@typescript-eslint/utils@8.61.0(eslint@10.5.0)(typescript@5.9.3))(eslint@10.5.0))(eslint-plugin-no-null@1.0.2(eslint@10.5.0))(eslint@10.5.0)(globals@17.6.0)(typescript-eslint@8.61.0(eslint@10.5.0)(typescript@5.9.3))':
+  '@eclipse-glsp/eslint-config@2.9.0-next.1(@eslint/js@10.0.1(eslint@10.5.0))(@stylistic/eslint-plugin@5.10.0(eslint@10.5.0))(@tony.ganchev/eslint-plugin-header@3.4.4(eslint@10.5.0))(eslint-config-prettier@10.1.8(eslint@10.5.0))(eslint-import-resolver-typescript@4.4.5(eslint-plugin-import-x@4.16.2(@typescript-eslint/utils@8.61.0(eslint@10.5.0)(typescript@5.9.3))(eslint@10.5.0))(eslint@10.5.0))(eslint-plugin-import-x@4.16.2(@typescript-eslint/utils@8.61.0(eslint@10.5.0)(typescript@5.9.3))(eslint@10.5.0))(eslint-plugin-no-null@1.0.2(eslint@10.5.0))(eslint@10.5.0)(globals@17.6.0)(typescript-eslint@8.61.0(eslint@10.5.0)(typescript@5.9.3))':
     dependencies:
       '@eslint/js': 10.0.1(eslint@10.5.0)
       '@stylistic/eslint-plugin': 5.10.0(eslint@10.5.0)
@@ -1853,17 +1989,17 @@ snapshots:
       globals: 17.6.0
       typescript-eslint: 8.61.0(eslint@10.5.0)(typescript@5.9.3)
 
-  '@eclipse-glsp/prettier-config@2.8.0-next.19(prettier@3.8.4)':
+  '@eclipse-glsp/prettier-config@2.9.0-next.1(prettier@3.8.4)':
     dependencies:
       prettier-plugin-packagejson: 3.0.2(prettier@3.8.4)
     transitivePeerDependencies:
       - prettier
 
-  '@eclipse-glsp/ts-config@2.8.0-next.19(typescript@5.9.3)':
+  '@eclipse-glsp/ts-config@2.9.0-next.1(typescript@5.9.3)':
     dependencies:
       typescript: 5.9.3
 
-  '@eclipse-glsp/vitest-config@2.8.0-next.19(@vitest/coverage-v8@4.1.11)(vitest@4.1.11)':
+  '@eclipse-glsp/vitest-config@2.9.0-next.1(@vitest/coverage-v8@4.1.11)(vitest@4.1.11)':
     dependencies:
       '@vitest/coverage-v8': 4.1.11(vitest@4.1.11)
       vitest: 4.1.11(@types/node@22.19.21)(@vitest/coverage-v8@4.1.11)(vite@8.2.2(@types/node@22.19.21))
@@ -1894,7 +2030,7 @@ snapshots:
   '@eslint/config-array@0.23.5':
     dependencies:
       '@eslint/object-schema': 3.0.5
-      debug: 4.4.3(supports-color@8.1.1)
+      debug: 4.4.3
       minimatch: 10.2.5
     transitivePeerDependencies:
       - supports-color
@@ -1946,6 +2082,11 @@ snapshots:
   '@jridgewell/sourcemap-codec@1.5.5': {}
 
   '@jridgewell/trace-mapping@0.3.31':
+    dependencies:
+      '@jridgewell/resolve-uri': 3.1.2
+      '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@jridgewell/trace-mapping@0.3.9':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -2046,6 +2187,14 @@ snapshots:
     dependencies:
       eslint: 10.5.0
 
+  '@tsconfig/node10@1.0.13': {}
+
+  '@tsconfig/node12@1.0.11': {}
+
+  '@tsconfig/node14@1.0.3': {}
+
+  '@tsconfig/node16@1.0.4': {}
+
   '@tybys/wasm-util@0.10.2':
     dependencies:
       tslib: 2.8.1
@@ -2090,7 +2239,7 @@ snapshots:
       '@typescript-eslint/types': 8.61.0
       '@typescript-eslint/typescript-estree': 8.61.0(typescript@5.9.3)
       '@typescript-eslint/visitor-keys': 8.61.0
-      debug: 4.4.3(supports-color@8.1.1)
+      debug: 4.4.3
       eslint: 10.5.0
       typescript: 5.9.3
     transitivePeerDependencies:
@@ -2100,7 +2249,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/tsconfig-utils': 8.61.0(typescript@5.9.3)
       '@typescript-eslint/types': 8.61.0
-      debug: 4.4.3(supports-color@8.1.1)
+      debug: 4.4.3
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
@@ -2119,7 +2268,7 @@ snapshots:
       '@typescript-eslint/types': 8.61.0
       '@typescript-eslint/typescript-estree': 8.61.0(typescript@5.9.3)
       '@typescript-eslint/utils': 8.61.0(eslint@10.5.0)(typescript@5.9.3)
-      debug: 4.4.3(supports-color@8.1.1)
+      debug: 4.4.3
       eslint: 10.5.0
       ts-api-utils: 2.5.0(typescript@5.9.3)
       typescript: 5.9.3
@@ -2134,7 +2283,7 @@ snapshots:
       '@typescript-eslint/tsconfig-utils': 8.61.0(typescript@5.9.3)
       '@typescript-eslint/types': 8.61.0
       '@typescript-eslint/visitor-keys': 8.61.0
-      debug: 4.4.3(supports-color@8.1.1)
+      debug: 4.4.3
       minimatch: 10.2.5
       semver: 7.8.4
       tinyglobby: 0.2.17
@@ -2284,10 +2433,10 @@ snapshots:
       convert-source-map: 2.0.0
       tinyrainbow: 3.1.1
 
-  '@vscode/test-electron@2.5.2(supports-color@8.1.1)':
+  '@vscode/test-electron@2.5.2':
     dependencies:
-      http-proxy-agent: 7.0.2(supports-color@8.1.1)
-      https-proxy-agent: 7.0.6(supports-color@8.1.1)
+      http-proxy-agent: 7.0.2
+      https-proxy-agent: 7.0.6
       jszip: 3.10.1
       ora: 8.2.0
       semver: 7.8.4
@@ -2295,6 +2444,10 @@ snapshots:
       - supports-color
 
   acorn-jsx@5.3.2(acorn@8.17.0):
+    dependencies:
+      acorn: 8.17.0
+
+  acorn-walk@8.3.5:
     dependencies:
       acorn: 8.17.0
 
@@ -2325,6 +2478,8 @@ snapshots:
     dependencies:
       normalize-path: 3.0.0
       picomatch: 2.3.2
+
+  arg@4.1.3: {}
 
   array-union@2.1.0: {}
 
@@ -2411,6 +2566,8 @@ snapshots:
 
   core-util-is@1.0.3: {}
 
+  create-require@1.1.1: {}
+
   cross-spawn@7.0.6:
     dependencies:
       path-key: 3.1.1
@@ -2423,11 +2580,9 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.29.7
 
-  debug@4.4.3(supports-color@8.1.1):
+  debug@4.4.3:
     dependencies:
       ms: 2.1.3
-    optionalDependencies:
-      supports-color: 8.1.1
 
   deep-is@0.1.4: {}
 
@@ -2436,6 +2591,8 @@ snapshots:
   detect-libc@2.1.2: {}
 
   detect-newline@4.0.1: {}
+
+  diff@9.0.0: {}
 
   dir-glob@3.0.1:
     dependencies:
@@ -2468,7 +2625,7 @@ snapshots:
 
   eslint-import-resolver-typescript@4.4.5(eslint-plugin-import-x@4.16.2(@typescript-eslint/utils@8.61.0(eslint@10.5.0)(typescript@5.9.3))(eslint@10.5.0))(eslint@10.5.0):
     dependencies:
-      debug: 4.4.3(supports-color@8.1.1)
+      debug: 4.4.3
       eslint: 10.5.0
       eslint-import-context: 0.1.9(unrs-resolver@1.12.2)
       get-tsconfig: 4.14.0
@@ -2486,7 +2643,7 @@ snapshots:
       '@package-json/types': 0.0.12
       '@typescript-eslint/types': 8.61.0
       comment-parser: 1.4.7
-      debug: 4.4.3(supports-color@8.1.1)
+      debug: 4.4.3
       eslint: 10.5.0
       eslint-import-context: 0.1.9(unrs-resolver@1.12.2)
       is-glob: 4.0.3
@@ -2530,7 +2687,7 @@ snapshots:
       '@types/estree': 1.0.9
       ajv: 6.15.0
       cross-spawn: 7.0.6
-      debug: 4.4.3(supports-color@8.1.1)
+      debug: 4.4.3
       escape-string-regexp: 4.0.0
       eslint-scope: 9.1.2
       eslint-visitor-keys: 5.0.1
@@ -2677,17 +2834,17 @@ snapshots:
 
   html-escaper@2.0.2: {}
 
-  http-proxy-agent@7.0.2(supports-color@8.1.1):
+  http-proxy-agent@7.0.2:
     dependencies:
       agent-base: 7.1.4
-      debug: 4.4.3(supports-color@8.1.1)
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
-  https-proxy-agent@7.0.6(supports-color@8.1.1):
+  https-proxy-agent@7.0.6:
     dependencies:
       agent-base: 7.1.4
-      debug: 4.4.3(supports-color@8.1.1)
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -2855,6 +3012,8 @@ snapshots:
   make-dir@4.0.0:
     dependencies:
       semver: 7.8.4
+
+  make-error@1.3.6: {}
 
   marked@12.0.2: {}
 
@@ -3149,6 +3308,24 @@ snapshots:
 
   ts-dedent@2.3.0: {}
 
+  ts-node@10.9.2(@types/node@22.19.21)(typescript@5.9.3):
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1
+      '@tsconfig/node10': 1.0.13
+      '@tsconfig/node12': 1.0.11
+      '@tsconfig/node14': 1.0.3
+      '@tsconfig/node16': 1.0.4
+      '@types/node': 22.19.21
+      acorn: 8.17.0
+      acorn-walk: 8.3.5
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 9.0.0
+      make-error: 1.3.6
+      typescript: 5.9.3
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+
   tsc-alias@1.8.10:
     dependencies:
       chokidar: 3.6.0
@@ -3220,6 +3397,8 @@ snapshots:
 
   uuid@14.0.0: {}
 
+  v8-compile-cache-lib@3.0.1: {}
+
   vite@8.2.2(@types/node@22.19.21):
     dependencies:
       lightningcss: 1.33.0
@@ -3289,5 +3468,7 @@ snapshots:
       string-width: 4.2.3
       y18n: 5.0.8
       yargs-parser: 21.1.1
+
+  yn@3.1.1: {}
 
   yocto-queue@0.1.0: {}

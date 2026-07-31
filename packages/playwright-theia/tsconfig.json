@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "lib",
+    "baseUrl": ".",
+    "types": ["node"],
+    // Overrides the inherited `~/` mapping, which points at the core package's `src` and would
+    // otherwise resolve against this package's `baseUrl` to a path that does not exist. Emptying
+    // it makes an accidental `~/` import a hard error instead of a silent misresolution, and
+    // keeps cross-package imports going through the package name so that project references and
+    // pnpm's node_modules layout enforce the dependency graph.
+    "paths": {}
+  },
+  "include": ["src"],
+  "references": [{ "path": "../playwright" }]
+}
