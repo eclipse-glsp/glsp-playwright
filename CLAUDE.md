@@ -6,14 +6,14 @@ Eclipse GLSP Playwright — a Playwright-based testing framework for GLSP (Graph
 
 ## Build & Development
 
-- **Package manager**: pnpm (v11.6.0+) — do not use yarn or npm
-- **Build**: `pnpm build` from root installs and compiles everything
+-   **Package manager**: pnpm (v11.6.0+) — do not use yarn or npm
+-   **Build**: `pnpm build` from root installs and compiles everything
 
 ## Validation
 
-- After completing any code changes, always run the `/fix` skill before reporting completion. It enforces a build gate and auto-fixes lint/format/header issues; manually resolve anything it could not auto-fix (compile errors, remaining lint errors) and re-run it.
+-   After completing any code changes, always run the `/fix` skill before reporting completion. It enforces a build gate and auto-fixes lint/format/header issues; manually resolve anything it could not auto-fix (compile errors, remaining lint errors) and re-run it.
 
 ## Code Style Rules
 
-- **Floating promises** — `@typescript-eslint/no-floating-promises` is an error; always `await` or handle promises
-- **Path alias** — `~/` maps to `packages/glsp-playwright/src/` in TypeScript configs
+-   **Floating promises** — `@typescript-eslint/no-floating-promises` is an error; always `await` or handle promises
+-   **Path alias** — `~/` maps to `packages/playwright/src/` in TypeScript configs (only the core package uses it; the integration packages import core by package name)

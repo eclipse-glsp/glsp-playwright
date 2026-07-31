@@ -6,8 +6,8 @@
     "lib": ["ES2019", "DOM"],
     "types": ["node"],
     "paths": {
-      "~/": ["packages/glsp-playwright/src"],
-      "~/*": ["packages/glsp-playwright/src/*"]
+      "~/": ["packages/playwright/src"],
+      "~/*": ["packages/playwright/src/*"]
     },
     "composite": true
   },
@@ -16,9 +16,15 @@
     "packages/*/src",
     "examples/*/src",
     "examples/*/tests",
-    "examples/*/scripts",
     "examples/*/*.config.ts",
     "examples/*/configs/*.ts"
   ],
-  "references": [{ "path": "./packages/glsp-playwright" }, { "path": "./examples/workflow-test" }]
+  "references": [
+    { "path": "./packages/playwright" },
+    { "path": "./packages/playwright-theia" },
+    { "path": "./packages/playwright-vscode" },
+    { "path": "./examples/workflow" },
+    { "path": "./examples/workflow-theia" },
+    { "path": "./examples/workflow-vscode" }
+  ]
 }
