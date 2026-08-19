@@ -32,7 +32,7 @@
       "detail": "Run test cases for Standalone integration",
       "type": "shell",
       "group": "test",
-      "command": "cd examples/workflow-test && pnpm test:standalone",
+      "command": "cd examples/workflow && pnpm test:standalone",
       "presentation": {
         "reveal": "always",
         "panel": "new"
@@ -44,7 +44,7 @@
       "detail": "Run test cases for Standalone Browser integration",
       "type": "shell",
       "group": "test",
-      "command": "cd examples/workflow-test && pnpm test:standalone-browser",
+      "command": "cd examples/workflow && pnpm test:standalone-browser",
       "presentation": {
         "reveal": "always",
         "panel": "new"
@@ -56,7 +56,7 @@
       "detail": "Run test cases for Theia integration",
       "type": "shell",
       "group": "test",
-      "command": "cd examples/workflow-test && pnpm test:theia",
+      "command": "cd examples/workflow-theia && pnpm test",
       "presentation": {
         "reveal": "always",
         "panel": "new"
@@ -68,7 +68,7 @@
       "detail": "Run test cases for VS Code integration",
       "type": "shell",
       "group": "test",
-      "command": "cd examples/workflow-test && pnpm test:vscode",
+      "command": "cd examples/workflow-vscode && pnpm test",
       "presentation": {
         "reveal": "always",
         "panel": "new"

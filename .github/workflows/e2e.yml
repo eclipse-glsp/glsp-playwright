@@ -44,4 +44,4 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: playwright-report-${{ matrix.os }}
-          path: examples/workflow-test/playwright-report/
+          path: examples/*/playwright-report/

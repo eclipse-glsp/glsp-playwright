@@ -1,0 +1,48 @@
+{
+  "name": "@eclipse-glsp/workflow-test",
+  "version": "2.8.0-next",
+  "private": true,
+  "description": "Shared page objects and integration-agnostic tests for the GLSP workflow example",
+  "homepage": "https://www.eclipse.org/glsp/",
+  "bugs": "https://github.com/eclipse-glsp/glsp/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eclipse-glsp/glsp-playwright.git"
+  },
+  "license": "(EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0)",
+  "author": {
+    "name": "Eclipse GLSP"
+  },
+  "contributors": [
+    {
+      "name": "Eclipse GLSP Project",
+      "email": "glsp-dev@eclipse.org",
+      "url": "https://projects.eclipse.org/projects/ecd.glsp"
+    },
+    {
+      "name": "Haydar Metin",
+      "email": "dev@haydar.metin.at",
+      "url": "https://me.big.tuwien.ac.at/"
+    }
+  ],
+  "main": "lib/src/index.js",
+  "types": "lib/src/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf --glob lib tsconfig.tsbuildinfo playwright-report test-results",
+    "generate:index": "glsp generateIndex src -f",
+    "lint": "eslint ./src ./tests ./configs",
+    "repo": "pnpm glsp repo -d ../.repositories",
+    "test": "playwright test",
+    "test:standalone": "pnpm test --project=standalone",
+    "test:standalone-browser": "pnpm test --project=standalone-browser",
+    "watch": "tsc -w"
+  },
+  "devDependencies": {
+    "@eclipse-glsp/playwright": "workspace:*",
+    "@playwright/test": "^1.59.1",
+    "dotenv": "^16.0.3",
+    "reflect-metadata": "^0.2.2",
+    "ts-dedent": "^2.2.0"
+  }
+}
