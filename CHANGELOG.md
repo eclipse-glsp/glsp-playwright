@@ -4,6 +4,10 @@
 
 ### Changes
 
+- [po] Fix edge-creation flakiness by excluding the transient `.feedback-edge` preview in `Graph.waitForCreation` [#54](https://github.com/eclipse-glsp/glsp-playwright/pull/54)
+- [build] Migrate the build from yarn and lerna to pnpm workspaces [#58](https://github.com/eclipse-glsp/glsp-playwright/pull/58)
+    - Dependencies that pnpm's strict layout no longer hoists (`reflect-metadata`, `playwright-core`, `ts-dedent`) are declared explicitly
+
 ### Potentially Breaking Changes
 
 ## [v2.7.0 - 02/06/2026](https://github.com/eclipse-glsp/glsp-playwright/releases/tag/v2.7.0)
