@@ -1,6 +1,6 @@
 {
   "name": "@eclipse-glsp/workflow-test",
-  "version": "2.8.0-next",
+  "version": "2.8.0",
   "private": true,
   "description": "Example project for glsp-playwright",
   "homepage": "https://www.eclipse.org/glsp/",
@@ -38,7 +38,7 @@
     "prepare": "playwright install",
     "repo": "pnpm glsp repo -d .repositories",
     "repo:clean": "rimraf .repositories",
-    "repo:setup": "ts-node scripts/setup.ts",
+    "repo:setup": "node scripts/setup.mts",
     "test": "playwright test",
     "test:standalone": "pnpm test --project=standalone",
     "test:standalone-browser": "pnpm test --project=standalone-browser",

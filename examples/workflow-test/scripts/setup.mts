@@ -26,7 +26,7 @@ const vscode = args.includes('--vscode');
 
 const all = !theia && !standalone && !vscode;
 
-const rootDir = resolve(__dirname, '..');
+const rootDir = resolve(import.meta.dirname, '..');
 const repo = 'pnpm glsp repo -d .repositories';
 
 function run(command: string): void {
