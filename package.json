@@ -1,6 +1,6 @@
 {
   "name": "parent",
-  "version": "2.8.0",
+  "version": "2.9.0-next",
   "private": true,
   "scripts": {
     "build": "pnpm compile",
@@ -32,7 +32,7 @@
     "watch": "concurrently --kill-others -n tsc,alias -c red,yellow \"tsc -b -w --preserveWatchOutput\" \"pnpm -C packages/glsp-playwright watch:alias\""
   },
   "devDependencies": {
-    "@eclipse-glsp/dev": "2.8.0",
+    "@eclipse-glsp/dev": "next",
     "@estruyf/github-actions-reporter": "^1.7.0",
     "@types/node": "22.x",
     "concurrently": "^8.2.2",
