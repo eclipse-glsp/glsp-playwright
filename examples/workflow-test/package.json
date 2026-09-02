@@ -1,6 +1,6 @@
 {
   "name": "@eclipse-glsp/workflow-test",
-  "version": "2.8.0",
+  "version": "2.9.0-next",
   "private": true,
   "description": "Example project for glsp-playwright",
   "homepage": "https://www.eclipse.org/glsp/",
