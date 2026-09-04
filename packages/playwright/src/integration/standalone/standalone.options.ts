@@ -20,6 +20,9 @@ export interface StandaloneIntegrationOptions extends BaseIntegrationOptions {
     url: string;
 }
 
+/** Options accepted by {@link defineStandaloneIntegration}. */
+export type StandaloneIntegrationConfig = Omit<StandaloneIntegrationOptions, 'type' | 'integrationFactory'>;
+
 declare global {
     namespace GLSPPlaywright {
         interface IntegrationOptionsMap {

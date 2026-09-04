@@ -13,15 +13,18 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { SVGMetadataUtils } from '~/glsp/graph';
+import { SVGMetadataUtils } from '../../glsp/graph';
+import type { GLSPSemanticApp } from '../../glsp/app';
+import { MarkerNavigatorIntegration, StandaloneMarkerNavigator } from '../../glsp/features/validation/marker-navigator.integration';
+import type { MarkerNavigator } from '../../glsp/features/validation/marker-navigator';
 import { Integration } from '../integration.base';
 import type { IntegrationArgs } from '../integration.type';
-import type { PageIntegrationOptions } from './page.options';
+import type { PageIntegrationConfig, PageIntegrationOptions } from './page.options';
 
 /**
  * The {@link PageIntegration} provides an unchanged experience of Playwright.
  */
-export class PageIntegration extends Integration {
+export class PageIntegration extends Integration implements MarkerNavigatorIntegration {
     override page = this.args.page;
 
     constructor(
@@ -29,6 +32,10 @@ export class PageIntegration extends Integration {
         protected readonly options?: PageIntegrationOptions
     ) {
         super(args, 'Page');
+    }
+
+    createMarkerNavigator(app: GLSPSemanticApp): MarkerNavigator {
+        return new StandaloneMarkerNavigator(app);
     }
 
     /**
@@ -51,7 +58,7 @@ export class PageIntegration extends Integration {
  * @param config URL of the page to open
  * @returns Options carrying the factory for the {@link PageIntegration}
  */
-export function definePageIntegration(config: Omit<PageIntegrationOptions, 'type' | 'integrationFactory'>): PageIntegrationOptions {
+export function definePageIntegration(config: PageIntegrationConfig): PageIntegrationOptions {
     return {
         ...config,
         type: 'Page',

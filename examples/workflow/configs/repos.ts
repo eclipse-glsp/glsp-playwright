@@ -27,9 +27,22 @@ import { getRepoPath } from './env';
  * @param setupFlag Flag to suggest for `pnpm repo:setup`
  */
 export function assertReposPresent(configDir: string, repos: string[], setupFlag: string): void {
+    if (isPlaywrightTestListing()) {
+        return;
+    }
     const missing = repos.filter(repo => !existsSync(getRepoPath(configDir, repo)));
     if (missing.length > 0) {
         const paths = missing.map(r => `"${r}" at ${getRepoPath(configDir, r)}`).join(', ');
         throw new Error(`Missing GLSP repositories: ${paths}.\nRun \`pnpm repo:setup ${setupFlag}\` to clone and build them.`);
     }
+}
+
+/** Whether Playwright is discovering tests without executing them. */
+export function isPlaywrightTestListing(): boolean {
+    return process.argv.includes('--list');
+}
+
+/** Whether Playwright is evaluating its configuration in a test worker. */
+export function isPlaywrightWorker(): boolean {
+    return process.env.TEST_WORKER_INDEX !== undefined;
 }

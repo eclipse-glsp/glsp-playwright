@@ -13,7 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { definedAttr } from '~/utils/ts.utils';
+import { definedAttr } from '../../../../utils/ts.utils';
 import type { GLSPToolPalette } from '../tool-palette.po';
 import { ToolPaletteContentGroup, ToolPaletteContentGroupConstructor } from './tool-palette-content-group.po';
 import { ToolPaletteContentItem, ToolPaletteContentItemConstructor } from './tool-palette-content-item.po';

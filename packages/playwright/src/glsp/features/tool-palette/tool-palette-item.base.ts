@@ -13,8 +13,8 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { Locateable } from '~/remote/locateable';
-import type { GLSPLocator } from '~/remote/locator';
+import { Locateable } from '../../../remote/locateable';
+import type { GLSPLocator } from '../../../remote/locator';
 import type { GLSPToolPalette } from './tool-palette.po';
 
 export abstract class BaseToolPaletteItem extends Locateable {

@@ -13,7 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { MarkerNavigator, StandaloneUndoRedoTrigger } from '@eclipse-glsp/playwright';
+import { MarkerNavigator } from '@eclipse-glsp/playwright';
 
 /**
  * Theia binds marker navigation to the same keys as its own problem navigation,
@@ -23,9 +23,3 @@ export class TheiaMarkerNavigator extends MarkerNavigator {
     protected readonly forwardKey = 'F8';
     protected readonly backwardKey = 'Shift+F8';
 }
-
-/**
- * @deprecated Theia uses the same undo/redo key bindings as the GLSP-Client.
- * Use {@link StandaloneUndoRedoTrigger}, or let `provideUndoRedoTrigger` pick the trigger.
- */
-export class TheiaUndoRedoTrigger extends StandaloneUndoRedoTrigger {}

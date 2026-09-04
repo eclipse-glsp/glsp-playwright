@@ -13,11 +13,11 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { useClickableFlow } from '~/extension/flows';
-import { Mix } from '~/extension/mixin';
-import type { GLSPLocator } from '~/remote';
-import type { ConstructorT } from '~/types';
-import { definedGLSPAttr } from '~/utils/ts.utils';
+import { useClickableFlow } from '../../../../extension/flows';
+import { Mix } from '../../../../extension/mixin';
+import type { GLSPLocator } from '../../../../remote';
+import type { ConstructorT } from '../../../../types';
+import { definedGLSPAttr } from '../../../../utils/ts.utils';
 import { BaseToolPaletteItem } from '../tool-palette-item.base';
 import type { GLSPToolPalette } from '../tool-palette.po';
 import { ToolPaletteContentItem } from './tool-palette-content-item.po';

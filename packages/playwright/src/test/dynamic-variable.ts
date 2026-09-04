@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import type { Integration, IntegrationType } from '~/integration';
+import type { Integration, IntegrationType } from '../integration';
 import type { GLSPServer } from '../glsp-server';
 
 type RecordKey = string | number | symbol;
@@ -46,6 +46,9 @@ export abstract class BaseDynamicVariable<TKey extends RecordKey, TValue> {
     }
 }
 
+/**
+ * @deprecated Prefer an integration capability that provides the integration-specific behavior.
+ */
 export class IntegrationVariable<TValue> extends BaseDynamicVariable<IntegrationType, TValue> {
     protected integration?: Integration;
 

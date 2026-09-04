@@ -6,7 +6,6 @@
     // at `lib/tests`, and the relative imports inside those specs resolve into `lib/src`.
     "rootDir": ".",
     "outDir": "lib",
-    "baseUrl": ".",
     "declarationMap": true
   },
   "include": ["src", "tests", "playwright.config.ts", "./configs/*.ts"],

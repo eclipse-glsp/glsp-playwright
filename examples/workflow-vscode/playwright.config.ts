@@ -16,12 +16,9 @@
 import 'reflect-metadata';
 
 import type { GLSPPlaywrightOptions } from '@eclipse-glsp/playwright';
-import { baseConfig } from '@eclipse-glsp/workflow-test/lib/configs/base.config';
-import { loadEnv } from '@eclipse-glsp/workflow-test/lib/configs/env';
-import { buildGlspServerWebServer, getGlspServerRepo } from '@eclipse-glsp/workflow-test/lib/configs/glsp-server.config';
-import { assertReposPresent } from '@eclipse-glsp/workflow-test/lib/configs/repos';
+import { assertReposPresent, baseConfig, buildGlspServerWebServer, getGlspServerRepo, loadEnv } from '@eclipse-glsp/workflow/configs';
 import { type PlaywrightTestConfig } from '@playwright/test';
-import { SHARED_TEST_DIR, buildProjects } from './configs/project.config';
+import { buildProjects } from './configs/project.config';
 
 loadEnv(__dirname);
 
@@ -32,12 +29,7 @@ assertReposPresent(__dirname, ['glsp-vscode-integration', getGlspServerRepo()], 
  */
 const config: PlaywrightTestConfig<GLSPPlaywrightOptions> = {
     ...baseConfig,
-    // Most specs come from `@eclipse-glsp/workflow-test`; making that the top-level `testDir` keeps
-    // the report paths relative to it. The `vscode-setup` project overrides it.
-    testDir: SHARED_TEST_DIR,
-    // `snapshotDir` defaults to `testDir`, which would write into the other package's build
-    // output. Pin it here instead.
-    snapshotDir: 'snapshots',
+    testDir: 'lib/tests',
     // VS Code launches Electron itself, so only the GLSP server is needed.
     webServer: [buildGlspServerWebServer(__dirname)],
     projects: buildProjects(__dirname)

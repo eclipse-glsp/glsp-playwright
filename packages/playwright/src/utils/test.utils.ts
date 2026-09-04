@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 import { Locator } from '@playwright/test';
-import { waitForFunction } from '~/integration/wait.fixes';
+import { waitForFunction } from '../integration/wait.fixes';
 import { GLSPLocator, Locateable } from '../remote';
 
 export async function waitForClassRemoval(

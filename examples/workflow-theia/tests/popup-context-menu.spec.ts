@@ -13,25 +13,18 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { expect, test } from '@eclipse-glsp/playwright';
-import { assertPopup, expectedManualPopupText, manualLabel, TaskManual, WorkflowApp } from '@eclipse-glsp/workflow-test';
+import { expect } from '@eclipse-glsp/playwright';
+import { assertPopup, expectedManualPopupText, manualLabel, TaskManual, test } from '@eclipse-glsp/workflow';
 
 // Closing the popup through the context menu is only reachable in Theia, the only integration
 // that provides a context menu.
 test.describe('The popup', () => {
-    let app: WorkflowApp;
-
-    test.beforeEach(async ({ integration, glspServer }) => {
-        app = new WorkflowApp({
-            type: 'integration',
-            integration
-        });
-        await app.waitForReady();
-        expectedManualPopupText.setServer(glspServer);
+    test.beforeEach(async ({ workflow }) => {
+        expectedManualPopupText.setServer(workflow.glspServer);
     });
 
     test.describe('should be closed on', () => {
-        test('context menu', async () => {
+        test('context menu', async ({ workflow: { app } }) => {
             await assertPopup(app, manualLabel, TaskManual, expectedManualPopupText.get());
 
             await app.contextMenu.open();

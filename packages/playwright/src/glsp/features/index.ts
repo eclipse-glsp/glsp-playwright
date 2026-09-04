@@ -16,6 +16,7 @@
 export * from './change-bounds';
 export * from './command-palette';
 export * from './context-menu';
+export * from './keyboard-shortcut';
 export * from './label-editor';
 export * from './popup';
 export * from './reconnect';

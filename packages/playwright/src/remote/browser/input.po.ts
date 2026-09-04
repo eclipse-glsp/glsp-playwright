@@ -13,7 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { assertIsDefined } from '~/utils/ts.utils';
+import { assertIsDefined } from '../../utils/ts.utils';
 import { Locateable } from '../locateable';
 import type { GLSPLocator } from '../locator';
 

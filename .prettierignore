@@ -2,6 +2,10 @@
 node_modules/
 
 **/repositories/
+**/.repositories/
+
+# Keep the Eclipse Foundation template byte-for-byte aligned upstream.
+SECURITY.md
 
 # Build outputs
 lib/

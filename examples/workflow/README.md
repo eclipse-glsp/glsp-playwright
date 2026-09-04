@@ -41,63 +41,89 @@ This package contains code examples that demonstrate how to test diagram editors
 
 The following libraries/frameworks need to be installed on your system:
 
--   [Node.js](https://nodejs.org/en/) `>=22`
--   [pnpm](https://pnpm.io/installation) `>=11.6.0`
+- [Node.js](https://nodejs.org/en/) `>=22.18`
+- [pnpm](https://pnpm.io/installation) `>=11.6.0`
 
 ## Min versions
 
--   [Standalone](https://github.com/eclipse-glsp/glsp-client): v2.1.1
--   [Theia](https://github.com/eclipse-glsp/glsp-theia-integration): v2.1.1
--   [VSCode](https://github.com/eclipse-glsp/glsp-vscode-integration): v2.1.1
+- [Standalone](https://github.com/eclipse-glsp/glsp-client): v2.1.1
+- [Theia](https://github.com/eclipse-glsp/glsp-theia-integration): v2.1.1
+- [VSCode](https://github.com/eclipse-glsp/glsp-vscode-integration): v2.1.1
 
 Default installations:
 
--   [VS Code IDE](https://code.visualstudio.com/updates/): 1.88.1
+- [VS Code IDE](https://code.visualstudio.com/updates/): 1.88.1
 
 ## Structure
 
 The example is split across three packages, mirroring the framework packages:
 
-| Package                    | Contents                                                                  |
-| -------------------------- | ------------------------------------------------------------------------- |
-| `examples/workflow`        | Page objects, the integration-agnostic tests, and the standalone projects |
-| `examples/workflow-theia`  | Theia configuration plus the tests that only apply to Theia               |
-| `examples/workflow-vscode` | VS Code configuration, the VS Code setup test, and the vsix helpers       |
+| Package                    | Contents                                                                       |
+| -------------------------- | ------------------------------------------------------------------------------ |
+| `examples/workflow`        | Page objects, reusable test suites, and the standalone contract registration   |
+| `examples/workflow-theia`  | Theia contract registration, configuration, and Theia-specific tests           |
+| `examples/workflow-vscode` | VS Code contract registration, configuration, setup test, and the vsix helpers |
 
 Within this package:
 
--   [./src](./src/): The page objects for the `Workflow Example`, exported through `src/index.ts` so
-    that the integration packages can reuse them.
--   [./tests](./tests/): The integration-agnostic test cases. Every `GLSP-Playwright` feature has
-    the respective test cases for demonstration purposes provided here.
--   [./configs](./configs/): The Playwright configuration, split into parts that are shared with the
-    integration packages (`base.config.ts`, `env.ts`, `repos.ts`, `glsp-server.config.ts`) and the
-    standalone specific ones.
--   [playwright.config.ts](./playwright.config.ts): The Playwright configuration. More information is
-    available in the [Playwright Documentation](https://playwright.dev/docs/test-configuration).
+- [./src](./src/): The page objects and reusable test suites for the `Workflow Example`, exported
+  through `src/index.ts` so that integration packages can reuse and customize them.
+- [./tests](./tests/): The single entry point that registers the complete reusable contract for
+  the standalone projects.
+- [./configs](./configs/): The Playwright configuration, split into parts that are shared with the
+  integration packages (`base.config.ts`, `env.ts`, `repos.ts`, `glsp-server.config.ts`) and the
+  standalone specific ones.
+- [playwright.config.ts](./playwright.config.ts): The Playwright configuration. More information is
+  available in the [Playwright Documentation](https://playwright.dev/docs/test-configuration).
 
 ### Shared tests
 
-The tests in [./tests](./tests/) are written to be independent of the integration, so they run
-under all of them. Rather than being duplicated, they are compiled here and the integration
-packages point a Playwright project's `testDir` at `../workflow/lib/tests`. Tests that only apply
-to one integration live in that integration's package, and tests that only apply to the standalone
-client use the `.standalone.spec.ts` suffix, which the integration packages exclude.
+The test bodies live in reusable suite factories under [./src/test/suites](./src/test/suites/).
+Each test case has a stable identifier, allowing an integration to replace or extend individual
+cases and to add integration-specific cases without copying the base implementation:
 
-This means a test in this package may only import from `@eclipse-glsp/playwright`. Importing
-`@eclipse-glsp/playwright-theia` or `-vscode` here would couple every integration to both.
+```ts
+import { defineWorkflowSuites, test } from '@eclipse-glsp/workflow';
+
+defineWorkflowSuites(test, {
+    contextMenu: {
+        replace: {
+            open: {
+                title: 'should open the native context menu',
+                run: async ({ app }) => app.contextMenu.open()
+            }
+        }
+    },
+    markerNavigator: { skip: 'The integration has no support for marker navigation' }
+});
+```
+
+The aggregate function is the integration contract. It registers every shared suite by default, so
+updating `@eclipse-glsp/workflow` automatically includes newly published suites. Integrations
+only configure case-level differences and mark unsupported suites with a `skip` reason so they
+remain visible in test discovery and reports.
+Playwright still executes a local test entry point; integration repositories do not load compiled
+spec files from the core package. The reusable suites depend only on `@eclipse-glsp/playwright`, so
+they do not couple the core package to Theia or VS Code.
+
+Replaced cases keep the source location of their declaration in the shared suite factory. Report
+links and IDE navigation therefore open the shared registration rather than the
+integration-specific replacement body. This is an intentional consequence of retaining stable,
+per-case Playwright locations.
 
 ## Preparations
 
 We use the GLSP repositories to run the tests.
 Run `pnpm repo:setup` from the repository root to clone and build the required repositories and
-generate the `.env` file from `.env.example`.
+create the shared `.env` file when it does not exist.
 
 ### `pnpm repo:setup`
 
-Clones and builds the necessary GLSP repositories into `examples/.repositories` and copies
-`examples/.env.example` to `examples/.env`. Both are shared by all three example packages, since
-the GLSP server is needed by every integration. Set `GLSP_REPO_DIR` to use a different directory.
+Clones and builds the necessary GLSP repositories into `examples/.repositories` and creates
+`examples/.env` from `examples/.env.example` if needed. Existing settings in `.env` are preserved.
+Both are shared by all three example packages, since the GLSP server is needed by every integration.
+Set `GLSP_REPO_DIR` in the shell or `.env` to use a different directory; `pnpm repo`,
+`pnpm repo:setup`, and `pnpm repo:clean` all honor it.
 
 **Integration flags** (if none is provided, all repositories are cloned):
 
@@ -110,8 +136,8 @@ the GLSP server is needed by every integration. Set `GLSP_REPO_DIR` to use a dif
 
 **Additional flags:**
 
--   `--java` — Clone `glsp-server` (Java) instead of `glsp-server-node`
--   `--skip-build` — Only clone repositories without building them
+- `--java` — Clone `glsp-server` (Java) instead of `glsp-server-node`
+- `--skip-build` — Only clone repositories without building them
 
 **Examples:**
 
@@ -135,8 +161,11 @@ The example project has to be built using pnpm.
 Simply execute the task `[Playwright] Build all` or the following command in the _root_ folder:
 
 ```bash
-pnpm install
+pnpm build
 ```
+
+Running `pnpm install` in the repository root also installs the Chromium browser used by the
+Standalone and Theia tests.
 
 The different versions share the same server instance.
 The server will be started automatically by Playwright.
@@ -197,19 +226,20 @@ Use the `Watch All` task to rebuild the project automatically after doing change
 
 ### Live Debugging
 
--   Read the [Live Debugging Documentation](https://playwright.dev/docs/debug#live-debugging)
--   You can get the locator of a specific page object or a `GLSPLocator` by using the `.locate()` method:
+- Read the [Live Debugging Documentation](https://playwright.dev/docs/debug#live-debugging)
+- You can get the locator of a specific page object or a `GLSPLocator` by using the `.locate()` method:
 
 ```ts
 const locator = task.locate();
 ```
 
--   Click on the locator variable to highlight it within the browser
+- Click on the locator variable to highlight it within the browser
 
 ### Extractors
 
 Using the powerful debugger coming with `Playwright` is the recommended way to debug the test cases.
-Still, to provide more information, we offer util functions to extract additional context information. See the [debug tests](./tests/core/debug.standalone.spec.ts) for instructions on how to use them.
+Still, to provide more information, we offer utility functions to extract additional context. See
+the [debug suite](./src/test/suites/core/debug.standalone.suite.ts) for examples and usage notes.
 
 ## More information
 

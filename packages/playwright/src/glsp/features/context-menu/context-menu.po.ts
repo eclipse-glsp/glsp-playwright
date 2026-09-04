@@ -14,8 +14,8 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { dedent } from 'ts-dedent';
-import type { GLSPLocator } from '~/remote';
-import { Locateable } from '~/remote/locateable';
+import type { GLSPLocator } from '../../../remote';
+import { Locateable } from '../../../remote/locateable';
 
 export interface GLSPContextMenuOptions {
     locator: GLSPLocator;

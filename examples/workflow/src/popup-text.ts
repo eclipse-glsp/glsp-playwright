@@ -13,17 +13,18 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { PLabelledElement, PNode, PNodeConstructor, PopupCapability, ServerVariable, expect } from '@eclipse-glsp/playwright';
-import { dedent } from 'ts-dedent';
-import type { WorkflowApp } from './app/workflow-app';
-import { GLSP_SERVER_TYPE_JAVA, GLSP_SERVER_TYPE_NODE } from './server';
-
 /**
+ * @module
+ *
  * Popup fixtures shared by the popup tests.
  *
  * They live here rather than in a spec file because the popup tests are split across
  * integrations: the integration-agnostic ones and the Theia specific one both need them.
  */
+import { PLabelledElement, PNode, PNodeConstructor, PopupCapability, ServerVariable, expect } from '@eclipse-glsp/playwright';
+import { dedent } from 'ts-dedent';
+import type { WorkflowApp } from './app/workflow-app';
+import { GLSP_SERVER_TYPE_JAVA, GLSP_SERVER_TYPE_NODE } from './server';
 
 export const manualLabel = 'Push';
 

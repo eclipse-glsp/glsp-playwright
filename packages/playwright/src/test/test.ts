@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { test as base } from '@playwright/test';
-import { createIntegration, Integration, IntegrationOptions, IntegrationType } from '~/integration';
+import { createIntegration, Integration, IntegrationOptions, IntegrationType } from '../integration';
 import { GLSP_SERVER_TYPE_UNKNOWN, GLSPServer } from '../glsp-server';
 
 /**
@@ -73,6 +73,8 @@ export const test = base.extend<GLSPPlaywrightOptions & GLSPPlaywrightFixtures>(
 
 /**
  * Runs the given callback if the active integration is the same as the provided integration type
+ *
+ * @deprecated Prefer an integration capability interface for behavior that varies by host.
  */
 export async function runInIntegration(
     integration: Integration,
@@ -92,11 +94,13 @@ export async function runInIntegration(
  *
  * **Details**
  *
- * The following test case will be executed only if the `Theia` integration is active.
+ * The following test case will be executed only if the `Standalone` integration is active.
  *
  * ```
- * test.skip(skipNonIntegration(integrationOptions, 'Theia'), 'Only within Theia supported');
+ * test.skip(skipNonIntegration(integrationOptions, 'Standalone'), 'Only supported standalone');
  * ```
+ *
+ * @deprecated Prefer project configuration or an integration capability check.
  */
 export function skipNonIntegration(integrationOptions?: IntegrationOptions, ...integration: IntegrationType[]): boolean {
     return integrationOptions !== undefined && !integration.includes(integrationOptions.type);
@@ -107,11 +111,13 @@ export function skipNonIntegration(integrationOptions?: IntegrationOptions, ...i
  *
  * **Details**
  *
- * The following test case will be skipped if the `Theia` integration is active.
+ * The following test case will be skipped if the `Standalone` integration is active.
  *
  * ```
- * test.skip(skipIntegration(integrationOptions, 'Theia'), 'Not supported');
+ * test.skip(skipIntegration(integrationOptions, 'Standalone'), 'Not supported standalone');
  * ```
+ *
+ * @deprecated Prefer project configuration or an integration capability check.
  */
 export function skipIntegration(integrationOptions?: IntegrationOptions, ...integration: IntegrationType[]): boolean {
     return integrationOptions === undefined || integration.includes(integrationOptions.type);

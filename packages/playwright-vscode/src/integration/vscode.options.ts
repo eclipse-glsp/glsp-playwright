@@ -27,7 +27,6 @@ export interface VSCodeIntegrationOptions extends BaseIntegrationOptions {
     vsixPath: string;
     storagePath: string;
     file?: string;
-    isConsoleLogEnabled?: boolean;
 }
 
 /**

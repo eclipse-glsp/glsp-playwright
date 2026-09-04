@@ -1,6 +1,6 @@
 {
-  "name": "@eclipse-glsp/workflow-test-vscode",
-  "version": "2.8.0-next",
+  "name": "@eclipse-glsp/workflow-vscode",
+  "version": "2.9.0-next",
   "private": true,
   "description": "VS Code integration tests for the GLSP workflow example",
   "homepage": "https://www.eclipse.org/glsp/",
@@ -29,16 +29,15 @@
     "build": "tsc -b",
     "clean": "rimraf --glob lib tsconfig.tsbuildinfo playwright-report test-results",
     "lint": "eslint ./tests ./configs",
-    "repo": "pnpm glsp repo -d ../.repositories",
+    "repo": "pnpm -C ../.. repo",
     "test": "playwright test --project=vscode",
-    "test:vscode": "pnpm test",
     "test:vscode-setup": "playwright test --project=vscode-setup",
     "watch": "tsc -w"
   },
   "devDependencies": {
     "@eclipse-glsp/playwright": "workspace:*",
     "@eclipse-glsp/playwright-vscode": "workspace:*",
-    "@eclipse-glsp/workflow-test": "workspace:*",
+    "@eclipse-glsp/workflow": "workspace:*",
     "@playwright/test": "^1.59.1",
     "dotenv": "^16.0.3",
     "reflect-metadata": "^0.2.2"

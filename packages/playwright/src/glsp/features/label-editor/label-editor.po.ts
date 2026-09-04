@@ -13,9 +13,9 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import type { GLSPApp } from '~/glsp';
-import type { GLSPLocator } from '~/remote';
-import { Locateable } from '~/remote';
+import type { GLSPApp } from '../..';
+import type { GLSPLocator } from '../../../remote';
+import { Locateable } from '../../../remote';
 import { expect } from '../../../test';
 
 export interface GLSPLabelEditorOptions {

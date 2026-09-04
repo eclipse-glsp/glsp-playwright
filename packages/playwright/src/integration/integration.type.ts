@@ -19,11 +19,8 @@ import type { Integration } from './integration.base';
 declare global {
     namespace GLSPPlaywright {
         /**
-         * Open registry of all known integration options, keyed by their {@link IntegrationType}.
-         *
-         * Every integration contributes its own entry through declaration merging, which is what
-         * allows integrations to live in separate packages without this package having to know
-         * about them. An integration package adds its entry next to its options interface:
+         * Open registry of integration options, extended by integration packages through
+         * declaration merging:
          *
          * ```ts
          * declare global {
@@ -34,11 +31,7 @@ declare global {
          *     }
          * }
          * ```
-         *
-         * The global namespace is used deliberately. `declare module '@eclipse-glsp/playwright'`
-         * would *not* work: this interface is declared here and only re-exported by the package
-         * barrel, and TypeScript cannot merge into a re-exported declaration — it would silently
-         * create a new, unrelated interface instead.
+         * See the integration concept documentation for the extension contract and rationale.
          */
         interface IntegrationOptionsMap {}
     }
@@ -59,9 +52,7 @@ export type IntegrationOptions = IntegrationOptionsMap[IntegrationType];
 /**
  * Creates the {@link Integration} for a concrete set of options.
  *
- * This is the extension point that lets an integration defined in another package plug into
- * the `integration` fixture: the options carry their own factory, so nothing has to be
- * registered globally and no import can be elided away.
+ * Options carry this factory so integrations can plug into the fixture without a global registry.
  */
 export type IntegrationFactory<TOptions extends BaseIntegrationOptions = BaseIntegrationOptions> = (
     args: IntegrationArgs,
@@ -75,7 +66,7 @@ export interface BaseIntegrationOptions {
      *
      * The built-in `Page` and `Standalone` integrations are also resolved without it, so it stays
      * optional here. Every integration contributed by another package must provide one, which its
-     * `define*Integration()` helper does automatically — for example `defineTheiaIntegration()`.
+     * `define*Integration()` helper does automatically, for example `defineTheiaIntegration()`.
      */
     integrationFactory?: IntegrationFactory<any>;
 }

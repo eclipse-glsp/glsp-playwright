@@ -15,7 +15,7 @@
  ********************************************************************************/
 import { expect } from '@playwright/test';
 import type { Locator } from 'playwright-core';
-import type { ConstructorT } from '~/types';
+import type { ConstructorT } from '../../../types';
 import { NodeMetadata } from '../decorators';
 import type { EdgeSearchOptions } from '../graph.type';
 import { SVGMetadataUtils } from '../svg-metadata-api';

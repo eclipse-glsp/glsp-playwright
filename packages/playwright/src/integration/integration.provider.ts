@@ -23,9 +23,7 @@ import { StandaloneIntegrationOptions } from './standalone/standalone.options';
 /**
  * Creates the {@link Integration} for the given options.
  *
- * Options created by a `define*Integration()` helper carry their own factory, which is what
- * makes it possible to contribute integrations from separate packages (such as
- * `@eclipse-glsp/playwright-theia`) without this package depending on them.
+ * Options created by a `define*Integration()` helper carry the factory supplied by their package.
  *
  * @param args Playwright fixtures handed to the integration
  * @param options Integration options, or `undefined` for the default page integration
@@ -41,7 +39,7 @@ export function createIntegration(args: IntegrationArgs, options?: IntegrationOp
     }
 
     // Read before the guards below narrow `options`. In a program that contains only this
-    // package the two built-in guards are exhaustive, so `options` would narrow to `never` —
+    // package the two built-in guards are exhaustive, so `options` would narrow to `never`,
     // even though options contributed by another package do reach the `throw` at runtime.
     const { type } = options;
 

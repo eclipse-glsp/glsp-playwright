@@ -14,9 +14,9 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import type { Locator } from '@playwright/test';
-import { waitForFunction } from '~/integration/wait.fixes';
-import type { GLSPLocator } from '~/remote';
-import { Input, Locateable } from '~/remote';
+import { waitForFunction } from '../../../integration/wait.fixes';
+import type { GLSPLocator } from '../../../remote';
+import { Input, Locateable } from '../../../remote';
 
 export interface GLSPBaseCommandPaletteOptions {
     locator: GLSPLocator;

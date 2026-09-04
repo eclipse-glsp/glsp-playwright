@@ -40,6 +40,8 @@ export function loadEnv(configDir: string): void {
 
 /**
  * Directory shared by all example packages that holds the cloned GLSP repositories.
+ * Keep its environment-variable resolution aligned with `scripts/repo-env.mts`. The script adds
+ * stricter validation because it also performs destructive cleanup in this directory.
  *
  * @param configDir Directory of the calling `playwright.config.ts`, i.e. `__dirname`
  */

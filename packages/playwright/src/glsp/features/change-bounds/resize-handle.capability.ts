@@ -13,9 +13,9 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import type { Capability, Clickable } from '~/extension';
-import type { PNode } from '~/glsp/graph';
-import type { ConstructorA } from '~/types';
+import type { Capability, Clickable } from '../../../extension';
+import type { PNode } from '../../graph';
+import type { ConstructorA } from '../../../types';
 import { ResizeHandles } from './resize-handle.po';
 
 /**

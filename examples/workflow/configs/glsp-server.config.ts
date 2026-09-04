@@ -16,7 +16,7 @@
 import type { PlaywrightTestConfig } from '@playwright/test';
 import { getPort, getRepoDir } from './env';
 
-type WebServerConfig = Exclude<PlaywrightTestConfig['webServer'], undefined | any[]>;
+export type WebServerConfig = Exclude<NonNullable<PlaywrightTestConfig['webServer']>, readonly unknown[]>;
 
 /**
  * Name of the repository holding the GLSP server for the configured server type.

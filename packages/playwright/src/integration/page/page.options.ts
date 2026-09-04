@@ -26,6 +26,9 @@ export interface PageIntegrationOptions extends BaseIntegrationOptions {
     url: string;
 }
 
+/** Options accepted by {@link definePageIntegration}. */
+export type PageIntegrationConfig = Omit<PageIntegrationOptions, 'type' | 'integrationFactory'>;
+
 declare global {
     namespace GLSPPlaywright {
         interface IntegrationOptionsMap {

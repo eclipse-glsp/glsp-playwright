@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import type { Locator } from '@playwright/test';
-import type { Locateable } from '~/remote';
+import type { Locateable } from '../../remote';
 import type { ConstructorA } from '../../types';
 import type { Flow } from '../types';
 
@@ -70,11 +70,11 @@ export function useClickableFlow<TBase extends ConstructorA<Locateable>>(Base: T
          * @see {@link Locator.click}
          */
         async click(options?: Parameters<Locator['click']>[0] & { dispatch?: boolean }): Promise<void> {
-            this.locate().dispatchEvent('mouseover', { bubbles: true });
+            await this.locate().dispatchEvent('mouseover', { bubbles: true });
 
             if (options?.dispatch) {
-                this.locate().dispatchEvent('mousedown', { bubbles: true });
-                this.locate().dispatchEvent('mouseup', { bubbles: true });
+                await this.locate().dispatchEvent('mousedown', { bubbles: true });
+                await this.locate().dispatchEvent('mouseup', { bubbles: true });
                 return;
             }
 

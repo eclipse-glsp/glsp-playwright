@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import type { Locator, Page } from '@playwright/test';
-import type { GLSPApp } from '~/glsp/app';
+import type { GLSPApp } from '../glsp/app';
 
 export type LocateContext = 'self' | 'root';
 

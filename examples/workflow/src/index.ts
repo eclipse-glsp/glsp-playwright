@@ -19,3 +19,4 @@ export * from './features';
 export * from './graph';
 export * from './popup-text';
 export * from './server';
+export * from './test';

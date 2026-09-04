@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { Locator } from '@playwright/test';
-import { SVGMetadata } from '~/glsp/graph/svg-metadata-api';
+import { SVGMetadata } from '../glsp/graph/svg-metadata-api';
 import { GLSPLocator } from '../remote';
 
 export interface DebugNode {

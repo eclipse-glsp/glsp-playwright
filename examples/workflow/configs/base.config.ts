@@ -38,9 +38,3 @@ export const baseConfig: PlaywrightTestConfig<GLSPPlaywrightOptions> = {
         contextOptions: { reducedMotion: 'reduce' }
     }
 };
-
-/**
- * Specs that only apply to the standalone GLSP-Client, marked by the `.standalone.spec` suffix.
- * The integration packages exclude them.
- */
-export const STANDALONE_ONLY = ['**/*.standalone.spec.js'];

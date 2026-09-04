@@ -1,5 +1,5 @@
 {
-  "name": "@eclipse-glsp/workflow-test",
+  "name": "@eclipse-glsp/workflow",
   "version": "2.9.0-next",
   "private": true,
   "description": "Shared page objects and integration-agnostic tests for the GLSP workflow example",
@@ -25,6 +25,16 @@
       "url": "https://me.big.tuwien.ac.at/"
     }
   ],
+  "exports": {
+    ".": {
+      "types": "./lib/src/index.d.ts",
+      "default": "./lib/src/index.js"
+    },
+    "./configs": {
+      "types": "./lib/configs/index.d.ts",
+      "default": "./lib/configs/index.js"
+    }
+  },
   "main": "lib/src/index.js",
   "types": "lib/src/index.d.ts",
   "scripts": {
@@ -32,7 +42,8 @@
     "clean": "rimraf --glob lib tsconfig.tsbuildinfo playwright-report test-results",
     "generate:index": "glsp generateIndex src -f",
     "lint": "eslint ./src ./tests ./configs",
-    "repo": "pnpm glsp repo -d ../.repositories",
+    "prepare": "playwright install chromium",
+    "repo": "pnpm -C ../.. repo",
     "test": "playwright test",
     "test:standalone": "pnpm test --project=standalone",
     "test:standalone-browser": "pnpm test --project=standalone-browser",

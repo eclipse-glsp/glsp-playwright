@@ -18,8 +18,8 @@
 // Importing it here makes the framework self-contained instead of depending on the consumer's
 // Playwright configuration installing the polyfill.
 import 'reflect-metadata';
-import { PEdge, PEdgeConstructor, PModelElement, PModelElementConstructor, PNode, PNodeConstructor } from '~/glsp';
-import type { ConstructorT } from '~/types';
+import type { PEdge, PEdgeConstructor, PModelElement, PModelElementConstructor, PNode, PNodeConstructor } from '../..';
+import type { ConstructorT } from '../../../types';
 import type { EdgeMetadata } from './edge.decorator';
 import type { ModelElementMetadata } from './html.decorator';
 import type { NodeMetadata } from './node.decorator';

@@ -14,9 +14,9 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import type { Locator } from '@playwright/test';
-import type { GLSPApp } from '~/glsp';
-import { GLSPLocator, type LocateContext } from '~/remote';
-import { definedAttr, isUndefinedOrValue } from '~/utils/ts.utils';
+import type { GLSPApp } from '..';
+import { GLSPLocator, type LocateContext } from '../../remote';
+import { definedAttr, isUndefinedOrValue } from '../../utils/ts.utils';
 import { expect } from '../../test';
 import { ModelElementMetadata, PMetadata } from './decorators';
 import { assertEqualType, createTypedEdgeProxy, getPModelElementConstructorOfType } from './elements';

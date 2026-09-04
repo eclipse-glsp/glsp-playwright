@@ -16,7 +16,14 @@
 
 import { Locator, Page } from '@playwright/test';
 import { TheiaAppLoader, TheiaWorkspace } from '@theia/playwright';
-import type { GLSPSemanticApp, IntegrationArgs, MarkerNavigator, MarkerNavigatorIntegration } from '@eclipse-glsp/playwright';
+import type {
+    DiagramShortcutIntegration,
+    DiagramShortcuts,
+    GLSPSemanticApp,
+    IntegrationArgs,
+    MarkerNavigator,
+    MarkerNavigatorIntegration
+} from '@eclipse-glsp/playwright';
 import { ContextMenuIntegration, Integration, SVGMetadataUtils } from '@eclipse-glsp/playwright';
 import { TheiaMarkerNavigator } from './theia-keybindings';
 import { TheiaGLSPApp } from './po/theia-glsp-app.po';
@@ -27,8 +34,17 @@ import { TheiaIntegrationConfig, TheiaIntegrationOptions } from './theia.options
  * The {@link TheiaIntegration} provides the glue code for working
  * with the Theia version of the GLSP-Client.
  */
-export class TheiaIntegration extends Integration implements ContextMenuIntegration, MarkerNavigatorIntegration {
+export class TheiaIntegration
+    extends Integration
+    implements ContextMenuIntegration, DiagramShortcutIntegration, MarkerNavigatorIntegration
+{
     protected theiaApp: TheiaGLSPApp;
+
+    readonly diagramShortcuts: DiagramShortcuts = {
+        center: 'Alt+C',
+        fitToScreen: 'Alt+F',
+        layout: 'Alt+L'
+    };
 
     override get page(): Page {
         return this.theiaApp.page;

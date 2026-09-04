@@ -13,19 +13,22 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { SVGMetadataUtils } from '~/glsp/graph';
+import { SVGMetadataUtils } from '../../glsp/graph';
+import type { GLSPSemanticApp } from '../../glsp/app';
+import { MarkerNavigatorIntegration, StandaloneMarkerNavigator } from '../../glsp/features/validation/marker-navigator.integration';
+import type { MarkerNavigator } from '../../glsp/features/validation/marker-navigator';
 // Imported directly instead of via the `../../test` barrel: that barrel also pulls in
-// `test/test.ts`, which imports `~/integration` and would close a runtime import cycle.
+// `test/test.ts`, which imports the integration barrel and would close a runtime import cycle.
 import { expect } from '../../test/assertions';
 import { Integration } from '../integration.base';
 import type { IntegrationArgs } from '../integration.type';
-import type { StandaloneIntegrationOptions } from './standalone.options';
+import type { StandaloneIntegrationConfig, StandaloneIntegrationOptions } from './standalone.options';
 
 /**
  * The {@link StandaloneIntegration} provides the glue code for working
  * with the standalone version of the GLSP-Client.
  */
-export class StandaloneIntegration extends Integration {
+export class StandaloneIntegration extends Integration implements MarkerNavigatorIntegration {
     override page = this.args.page;
 
     constructor(
@@ -33,6 +36,10 @@ export class StandaloneIntegration extends Integration {
         protected readonly options: StandaloneIntegrationOptions
     ) {
         super(args, 'Standalone');
+    }
+
+    createMarkerNavigator(app: GLSPSemanticApp): MarkerNavigator {
+        return new StandaloneMarkerNavigator(app);
     }
 
     /**
@@ -53,9 +60,7 @@ export class StandaloneIntegration extends Integration {
  * @param config URL of the standalone GLSP-Client
  * @returns Options carrying the factory for the {@link StandaloneIntegration}
  */
-export function defineStandaloneIntegration(
-    config: Omit<StandaloneIntegrationOptions, 'type' | 'integrationFactory'>
-): StandaloneIntegrationOptions {
+export function defineStandaloneIntegration(config: StandaloneIntegrationConfig): StandaloneIntegrationOptions {
     return {
         ...config,
         type: 'Standalone',

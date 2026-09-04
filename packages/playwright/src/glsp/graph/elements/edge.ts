@@ -13,7 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { definedGLSPAttr } from '~/utils/ts.utils';
+import { definedGLSPAttr } from '../../../utils/ts.utils';
 import { ConstructorT } from '../../../types';
 import { EdgeMetadata } from '../decorators';
 import { SVGMetadata, SVGMetadataUtils } from '../svg-metadata-api';

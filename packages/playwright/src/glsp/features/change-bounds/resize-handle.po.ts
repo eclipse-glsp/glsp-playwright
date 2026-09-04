@@ -14,10 +14,10 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import type { Locator } from '@playwright/test';
-import { AutoPrepareOptions, AutoWaitOptions, Clickable, Mix, useDraggableFlow } from '~/extension';
-import { ModelElementMetadata, PMetadata, PNode, SVGMetadata } from '~/glsp/graph';
-import { GLSPLocator, Locateable } from '~/remote';
-import type { Position } from '~/types';
+import { AutoPrepareOptions, AutoWaitOptions, Clickable, Mix, useDraggableFlow } from '../../../extension';
+import { ModelElementMetadata, PMetadata, PNode, SVGMetadata } from '../../graph';
+import { GLSPLocator, Locateable } from '../../../remote';
+import type { Position } from '../../../types';
 
 type Vertical = 'top' | 'bottom';
 type Horizontal = 'left' | 'right';

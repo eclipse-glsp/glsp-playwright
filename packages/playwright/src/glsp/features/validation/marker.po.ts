@@ -13,9 +13,9 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { Mix } from '~/extension';
-import { useHoverableFlow } from '~/extension/flows';
-import { ModelElementMetadata, PModelElement, PModelElementData, SVGMetadataUtils } from '~/glsp/graph';
+import { Mix } from '../../../extension';
+import { useHoverableFlow } from '../../../extension/flows';
+import { ModelElementMetadata, PModelElement, PModelElementData, SVGMetadataUtils } from '../../graph';
 import { usePopupCapability } from '../popup/popup.capability';
 
 export interface MarkerData extends PModelElementData {

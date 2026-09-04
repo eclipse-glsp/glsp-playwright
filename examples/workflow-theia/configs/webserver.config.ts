@@ -13,8 +13,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { getPort, getRepoDir } from '@eclipse-glsp/workflow-test/lib/configs/env';
-import { buildGlspServerWebServer } from '@eclipse-glsp/workflow-test/lib/configs/glsp-server.config';
+import { buildGlspServerWebServer, getPort, getRepoDir } from '@eclipse-glsp/workflow/configs';
 import type { PlaywrightTestConfig } from '@playwright/test';
 
 /**

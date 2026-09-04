@@ -20,7 +20,7 @@ import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as platformPath from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import type { IntegrationArgs } from '@eclipse-glsp/playwright';
+import type { DiagramShortcutIntegration, DiagramShortcuts, IntegrationArgs } from '@eclipse-glsp/playwright';
 import { Integration, SVGMetadataUtils } from '@eclipse-glsp/playwright';
 import { VSCodeWorkbenchActivitybar } from './po/workbench-activitybar.po';
 import type { VSCodeIntegrationConfig, VSCodeIntegrationOptions } from './vscode.options';
@@ -53,9 +53,15 @@ interface RunPaths {
  * Run configurations allow starting multiple Electron instances in parallel
  * and the configuration will be saved in the temp folder.
  */
-export class VSCodeIntegration extends Integration {
+export class VSCodeIntegration extends Integration implements DiagramShortcutIntegration {
     protected _page: Page;
     workbenchActivitybar: VSCodeWorkbenchActivitybar;
+
+    readonly diagramShortcuts: DiagramShortcuts = {
+        center: 'Alt+C',
+        fitToScreen: 'Alt+F',
+        layout: 'Alt+L'
+    };
 
     protected runConfig: VSCodeRunConfig;
     protected electronApp: ElectronApplication;

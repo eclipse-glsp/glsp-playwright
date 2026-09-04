@@ -2,16 +2,16 @@
 
 Theia integration tests for the `Workflow Example`.
 
-This package holds only what is specific to Theia:
+This package holds what is specific to Theia:
 
--   [./tests](./tests/): Test cases that only apply to Theia, such as the context menu, which no
-    other integration provides.
--   [./configs](./configs/): The Theia project and the web server that starts the Theia browser
-    application.
+- [./tests](./tests/): One registration of the complete reusable Workflow contract plus tests that
+  only apply to Theia. Its context-menu customization demonstrates replacing and extending cases.
+- [./configs](./configs/): The Theia project and the web server that starts the Theia browser
+  application.
 
-The integration-agnostic test cases live in [`@eclipse-glsp/workflow-test`](../workflow/README.md) and
-are reused by pointing this package's `theia` project at `../workflow/lib/tests`, so they exist
-only once.
+The integration-agnostic test bodies live in
+[`@eclipse-glsp/workflow`](../workflow/README.md). This package registers the aggregate
+contract locally, so newly published suites run automatically and remain customizable.
 
 ## Running
 

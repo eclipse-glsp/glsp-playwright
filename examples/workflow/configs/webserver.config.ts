@@ -18,28 +18,21 @@ import { PlaywrightTestConfig } from '@playwright/test';
 import { execSync } from 'child_process';
 import * as path from 'path';
 import { getPort, getRepoDir } from './env';
-import { buildGlspServerWebServer } from './glsp-server.config';
+import { buildGlspServerWebServer, WebServerConfig } from './glsp-server.config';
 import type { ProjectName } from './project.config';
-
-type WebServerConfig = Extract<NonNullable<PlaywrightTestConfig['webServer']>, unknown[]>[number];
-
-let browserServerBundle: string | undefined;
+import { isPlaywrightTestListing, isPlaywrightWorker } from './repos';
 
 /**
  * Path of the GLSP server compiled to a web worker, used by the `standalone-browser` project.
  *
- * Resolved lazily and memoized: this shells out to the GLSP CLI, and Playwright re-reads the
- * configuration in every worker, so an eager call would spawn one subprocess per worker — and
- * would require the server repository even for projects that never use the bundle.
+ * Resolved only when the standalone-browser project is active, so other projects do not require
+ * the server repository's browser bundle.
  */
 function getBrowserServerBundlePath(configDir: string): string {
-    if (browserServerBundle === undefined) {
-        const serverRoot = execSync(`pnpm --silent glsp repo -d ${getRepoDir(configDir)} server-node pwd`, {
-            encoding: 'utf-8'
-        }).trim();
-        browserServerBundle = path.resolve(serverRoot, 'examples', 'workflow-server-bundled-web', 'wf-glsp-server-webworker.js');
-    }
-    return browserServerBundle;
+    const serverRoot = execSync(`pnpm --silent glsp repo -d ${getRepoDir(configDir)} server-node pwd`, {
+        encoding: 'utf-8'
+    }).trim();
+    return path.resolve(serverRoot, 'examples', 'workflow-server-bundled-web', 'wf-glsp-server-webworker.js');
 }
 
 /**
@@ -49,6 +42,12 @@ function getBrowserServerBundlePath(configDir: string): string {
  * @param activeProjects Projects the run was started for
  */
 export function buildWebServers(configDir: string, activeProjects: ProjectName[]): PlaywrightTestConfig['webServer'] {
+    // Web servers are started by Playwright's main process. Keep worker and discovery configs valid
+    // without resolving repositories or manufacturing placeholder command arguments.
+    if (isPlaywrightTestListing() || isPlaywrightWorker()) {
+        return [];
+    }
+
     const repo = `pnpm --silent glsp repo -d ${getRepoDir(configDir)}`;
     const glspServerPort = getPort('GLSP_SERVER_PORT');
 

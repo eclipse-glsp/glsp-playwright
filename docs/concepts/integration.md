@@ -10,7 +10,7 @@ The **GLSP-Client** can be executed in browser and browser-like environments (e.
 
 |               | **Page** | **Standalone** | **Eclipse Theia** | **VS Code** | **Eclipse IDE** |
 | ------------- | -------- | -------------- | ----------------- | ----------- | --------------- |
-| **Supported** | Yes      | Yes            | WIP               | WIP         | No              |
+| **Supported** | Yes      | Yes            | Yes               | Yes         | No              |
 
 ## GLSP-Playwright-Integrations
 
@@ -72,8 +72,17 @@ To add an integration from another package:
     }
     ```
 
-    Use the global namespace, not `declare module '@eclipse-glsp/playwright'`. The map is declared inside the package and only re-exported by its barrel, and TypeScript cannot merge into a re-exported declaration — it would silently create an unrelated interface instead.
+    Use the global namespace, not `declare module '@eclipse-glsp/playwright'`. The map is declared inside the package and only re-exported by its barrel. TypeScript cannot merge into a re-exported declaration; it would silently create an unrelated interface instead.
 
 4. Export a `defineMyPlatformIntegration()` helper that fills in `type` and `integrationFactory`.
 
-If your platform rebinds keys that the framework drives (undo/redo, marker navigation), implement the matching capability interface — `UndoRedoIntegration` or `MarkerNavigatorIntegration` — instead of branching on the integration type in a test. `provideUndoRedoTrigger` and `provideMarkerNavigator` then pick your variant up automatically, which keeps shared tests free of any platform import.
+If your platform rebinds keys that the framework drives, implement the matching capability
+interface (`UndoRedoIntegration`, `MarkerNavigatorIntegration`, or
+`DiagramShortcutIntegration`) instead of branching on the integration type in a test. The
+matching `provide*` helper then picks your variant up automatically, which keeps shared tests free
+of any platform import.
+
+`provideUndoRedoTrigger` and `provideDiagramShortcut` use the client key bindings when an
+integration does not implement their capability. Marker navigation is deliberately stricter:
+`provideMarkerNavigator` requires an explicit capability because host applications can reserve
+its keys. The Page, Standalone, and Theia integrations provide one; VS Code currently does not.

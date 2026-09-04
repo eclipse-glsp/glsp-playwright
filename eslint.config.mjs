@@ -10,7 +10,6 @@ export default [
             '**/dist/',
             '**/lib/',
             // Both spellings: `.repositories/` is the current clone target, `repositories/` a legacy one.
-            // Kept in sync with `.prettierignore`.
             '**/.repositories/',
             '**/repositories/',
             '**/.vscode-test/',
@@ -19,7 +18,7 @@ export default [
         ]
     },
     {
-        files: ['**/*.{ts,tsx}'],
+        files: ['**/*.{ts,tsx,mts}'],
         languageOptions: {
             parserOptions: {
                 project: './tsconfig.eslint.json',
@@ -48,9 +47,11 @@ export default [
                         { group: ['**/../index'] },
                         {
                             group: [
-                                // Matches the core package and both integration packages.
+                                // Matches each core package and its integration packages.
                                 '@eclipse-glsp/playwright*/src/**',
-                                '@eclipse-glsp/playwright*/lib/**'
+                                '@eclipse-glsp/playwright*/lib/**',
+                                '@eclipse-glsp/workflow*/src/**',
+                                '@eclipse-glsp/workflow*/lib/**'
                             ],
                             message:
                                 'Import from the package root instead. Deep imports are resolved by the Playwright require hook ' +

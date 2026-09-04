@@ -2,18 +2,19 @@
 
 VS Code integration tests for the `Workflow Example`.
 
-This package holds only what is specific to VS Code:
+This package holds what is specific to VS Code:
 
--   [./tests/setup](./tests/setup/): The setup test that downloads VS Code and installs the extension
-    under test. It runs as the `vscode-setup` project, which the `vscode` project depends on.
--   [./configs](./configs/): The VS Code projects and the helpers that locate the packaged `vsix`.
--   `./playwright/.storage`: Holds the path of the downloaded VS Code instance, written by the setup
-    project and read by the tests.
+- [./tests](./tests/): One registration of the complete reusable Workflow contract.
+- [./tests/setup](./tests/setup/): The setup test that downloads VS Code and installs the extension
+  under test. It runs as the `vscode-setup` project, which the `vscode` project depends on.
+- [./configs](./configs/): The VS Code projects and the helpers that locate the packaged `vsix`.
+- `./playwright/.storage`: Holds the path of the downloaded VS Code instance, written by the setup
+  project and read by the tests.
 
-The integration-agnostic test cases live in [`@eclipse-glsp/workflow-test`](../workflow/README.md) and
-are reused by pointing this package's `vscode` project at `../workflow/lib/tests`, so they exist
-only once. Two of them are excluded because VS Code does not support the feature: undo/redo through
-the keyboard and marker navigation.
+The integration-agnostic test bodies live in
+[`@eclipse-glsp/workflow`](../workflow/README.md). This package registers the aggregate
+contract locally, so newly published suites run automatically. It explicitly disables two suites
+that VS Code does not support: undo/redo through the keyboard and marker navigation.
 
 ## Running
 

@@ -1,14 +1,9 @@
 {
   "extends": "@eclipse-glsp/ts-config/tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "target": "ES2019",
     "lib": ["ES2019", "DOM"],
     "types": ["node"],
-    "paths": {
-      "~/": ["packages/playwright/src"],
-      "~/*": ["packages/playwright/src/*"]
-    },
     "composite": true
   },
   "exclude": ["**/node_modules"],

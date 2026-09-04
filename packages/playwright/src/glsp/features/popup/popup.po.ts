@@ -13,11 +13,11 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import type { Hoverable } from '~/extension/flows';
-import type { GLSPApp } from '~/glsp';
-import type { GLSPLocator } from '~/remote';
-import { Locateable } from '~/remote';
-import { definedGLSPAttr } from '~/utils/ts.utils';
+import type { Hoverable } from '../../../extension/flows';
+import type { GLSPApp } from '../..';
+import type { GLSPLocator } from '../../../remote';
+import { Locateable } from '../../../remote';
+import { definedGLSPAttr } from '../../../utils/ts.utils';
 
 export interface GLSPPopupOptions {
     locator: GLSPLocator;

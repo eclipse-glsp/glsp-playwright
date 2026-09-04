@@ -6,9 +6,9 @@ A Playwright-based framework for testing the [Graphical Language Server Platform
 
 The framework is split so that a consumer only installs the integration it tests:
 
--   `@eclipse-glsp/playwright`: Generic Playwright testing framework, including the standalone GLSP-Client integration
--   `@eclipse-glsp/playwright-theia`: Theia integration, adds `@theia/playwright`
--   `@eclipse-glsp/playwright-vscode`: VS Code integration, adds `@vscode/test-electron` and Electron
+- `@eclipse-glsp/playwright`: Generic Playwright testing framework, including the standalone GLSP-Client integration
+- `@eclipse-glsp/playwright-theia`: Theia integration, adds `@theia/playwright`
+- `@eclipse-glsp/playwright-vscode`: VS Code integration, adds `@vscode/test-electron` and Electron
 
 The Theia and VS Code packages depend on the core package but never on each other.
 
@@ -20,17 +20,17 @@ integration-agnostic tests, standalone projects), `examples/workflow-theia` and
 
 ### First time setup
 
--   Install [node.js](https://nodejs.org/) (requires Node v22+)
--   Install pnpm: <https://pnpm.io/installation> (use pnpm 10+); a recent pnpm automatically switches to the version pinned in the `packageManager` field
--   Clone this repository
--   Install dependencies: `pnpm i` or `pnpm i --frozen-lockfile`
+- Install [node.js](https://nodejs.org/) (requires Node v22+)
+- Install pnpm: <https://pnpm.io/installation> (use pnpm 10+); a recent pnpm automatically switches to the version pinned in the `packageManager` field
+- Clone this repository
+- Install dependencies: `pnpm i` or `pnpm i --frozen-lockfile`
 
 ### Build & Testing
 
--   Build (all packages): `pnpm build`
--   Lint (all packages): `pnpm lint`
--   Clean (all packages): `pnpm clean`
--   Full validation: `pnpm check:all`
+- Build (all packages): `pnpm build`
+- Lint (all packages): `pnpm lint`
+- Clean (all packages): `pnpm clean`
+- Full validation: `pnpm check:all`
 
 ## Workflow Diagram Example
 

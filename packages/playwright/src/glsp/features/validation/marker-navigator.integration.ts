@@ -14,8 +14,8 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import type { Integration } from '~/integration';
-import { hasProperty } from '~/utils/ts.utils';
+import type { Integration } from '../../../integration';
+import { hasProperty } from '../../../utils/ts.utils';
 import type { GLSPSemanticApp } from '../../app';
 import { MarkerNavigator } from './marker-navigator';
 
@@ -24,14 +24,7 @@ export class StandaloneMarkerNavigator extends MarkerNavigator {
     protected readonly backwardKey = 'Control+,';
 }
 
-/**
- * Implemented by integrations whose host application binds the marker navigation commands to
- * different keys than the GLSP-Client does on its own.
- *
- * Contributing the variant through the integration — instead of a map keyed by integration type —
- * keeps this package free of any knowledge about concrete integrations, and lets a test that runs
- * under several integrations call {@link provideMarkerNavigator} without importing any of them.
- */
+/** Implemented by integrations that provide host-specific marker navigation. */
 export interface MarkerNavigatorIntegration extends Integration {
     createMarkerNavigator(app: GLSPSemanticApp): MarkerNavigator;
 }
@@ -45,13 +38,15 @@ export namespace MarkerNavigatorIntegration {
 /**
  * Returns the {@link MarkerNavigator} for the active integration.
  *
- * Integrations that rebind the navigation keys provide their own navigator; everything else uses
- * the {@link StandaloneMarkerNavigator} key bindings of the GLSP-Client.
+ * Integrations must explicitly provide bindings because host applications can reserve these keys.
  *
  * @param integration Active integration
  * @param app App under test
  * @returns Navigator matching the active integration
  */
 export function provideMarkerNavigator(integration: Integration, app: GLSPSemanticApp): MarkerNavigator {
-    return MarkerNavigatorIntegration.is(integration) ? integration.createMarkerNavigator(app) : new StandaloneMarkerNavigator(app);
+    if (MarkerNavigatorIntegration.is(integration)) {
+        return integration.createMarkerNavigator(app);
+    }
+    throw new Error(`Integration '${integration.type}' does not provide marker navigation`);
 }
