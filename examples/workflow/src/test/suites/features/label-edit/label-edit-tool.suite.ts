@@ -16,82 +16,68 @@
 import { expect } from '@eclipse-glsp/playwright';
 import { TaskManual } from '../../../../graph/elements/task-manual.po';
 import { TaskManualNodes } from '../../../nodes';
-import {
-    customizeWorkflowTestCases,
-    selectWorkflowTest,
-    workflowTestArguments,
-    WorkflowSuiteCustomization,
-    WorkflowTestCase
-} from '../../../suite';
-import { WorkflowTest } from '../../../workflow-test';
+import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
+import type { WorkflowTest } from '../../../workflow-test';
 
-/** Stable identifiers of the test cases provided by {@link defineLabelEditToolSuite}. */
-export type LabelEditToolTestCaseId =
-    | 'shouldAllowNodesToBeRenamed'
-    | 'shouldAllowNodesToBeRenamedByUsingTheKeyboard'
-    | 'shouldNotAllowEmptyText';
+/** Default cases of the reusable label-edit-tool suite, keyed by stable identifiers. */
+export const labelEditToolSuiteCases = {
+    shouldAllowNodesToBeRenamed: {
+        title: 'should allow nodes to be renamed',
+        run: async workflow => {
+            const node = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
 
-/** Integration-specific changes for {@link defineLabelEditToolSuite}. */
-export type LabelEditToolSuiteCustomization = WorkflowSuiteCustomization<Record<LabelEditToolTestCaseId, WorkflowTestCase>>;
+            await node.rename('New Label');
+            expect(await node.label).toBe('New Label');
+        }
+    },
+    shouldAllowNodesToBeRenamedByUsingTheKeyboard: {
+        title: 'should allow nodes to be renamed by using the keyboard',
+        run: async workflow => {
+            const node = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
+
+            await node.click();
+            await node.page.keyboard.press('F2');
+            await node.page.keyboard.type('New Label');
+            await node.page.keyboard.press('Enter');
+            await workflow.app.labelEditor.waitForHidden();
+
+            expect(await node.label).toBe('New Label');
+        }
+    },
+    shouldNotAllowEmptyText: {
+        title: 'should not allow empty text',
+        run: async workflow => {
+            const node = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
+
+            await node.click();
+            await node.page.keyboard.press('F2');
+            await node.page.keyboard.type(' ');
+            await node.page.keyboard.press('Backspace');
+            await node.page.keyboard.press('Enter');
+
+            expect(await workflow.app.labelEditor.getWarning()).toBe('Name must not be empty');
+        }
+    }
+} satisfies WorkflowTestCases;
+
+/** Integration-provided replacement bodies for {@link defineLabelEditToolSuite}. */
+export type LabelEditToolSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof labelEditToolSuiteCases>;
+
+/** Integration-specific skips for {@link defineLabelEditToolSuite}. */
+export type LabelEditToolSuiteOptions = WorkflowSuiteOptions<typeof labelEditToolSuiteCases>;
 
 /**
  * Registers the reusable label-edit-tool suite.
  *
  * @param test test instance whose integration should execute the suite
- * @param customization integration-specific replacements and extensions
+ * @param options integration-specific suite and case skips
  */
-export function defineLabelEditToolSuite(test: WorkflowTest, customization: LabelEditToolSuiteCustomization = {}): void {
+export function defineLabelEditToolSuite(test: WorkflowTest, options?: LabelEditToolSuiteOptions): void {
     test.describe('The label edit tool', () => {
-        test.skip(customization.skip !== undefined, customization.skip);
-
-        const labelEditToolTestCases: Record<LabelEditToolTestCaseId, WorkflowTestCase> = {
-            shouldAllowNodesToBeRenamed: {
-                title: 'should allow nodes to be renamed',
-                run: async workflow => {
-                    const node = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
-
-                    await node.rename('New Label');
-                    expect(await node.label).toBe('New Label');
-                }
-            },
-            shouldAllowNodesToBeRenamedByUsingTheKeyboard: {
-                title: 'should allow nodes to be renamed by using the keyboard',
-                run: async workflow => {
-                    const node = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
-
-                    await node.click();
-                    await node.page.keyboard.press('F2');
-                    await node.page.keyboard.type('New Label');
-                    await node.page.keyboard.press('Enter');
-                    await workflow.app.labelEditor.waitForHidden();
-
-                    expect(await node.label).toBe('New Label');
-                }
-            },
-            shouldNotAllowEmptyText: {
-                title: 'should not allow empty text',
-                run: async workflow => {
-                    const node = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
-
-                    await node.click();
-                    await node.page.keyboard.press('F2');
-                    await node.page.keyboard.type(' ');
-                    await node.page.keyboard.press('Backspace');
-                    await node.page.keyboard.press('Enter');
-
-                    expect(await workflow.app.labelEditor.getWarning()).toBe('Name must not be empty');
-                }
-            }
-        };
-
-        const { cases, additional } = customizeWorkflowTestCases(labelEditToolTestCases, customization);
-
-        selectWorkflowTest(test, cases.shouldAllowNodesToBeRenamed)(...workflowTestArguments(cases.shouldAllowNodesToBeRenamed));
-        selectWorkflowTest(
-            test,
-            cases.shouldAllowNodesToBeRenamedByUsingTheKeyboard
-        )(...workflowTestArguments(cases.shouldAllowNodesToBeRenamedByUsingTheKeyboard));
-        selectWorkflowTest(test, cases.shouldNotAllowEmptyText)(...workflowTestArguments(cases.shouldNotAllowEmptyText));
-        additional?.(test);
+        const suite = workflowSuite(test, 'labelEditTool', labelEditToolSuiteCases, options);
+        test(...suite.args('shouldAllowNodesToBeRenamed'));
+        test(...suite.args('shouldAllowNodesToBeRenamedByUsingTheKeyboard'));
+        test(...suite.args('shouldNotAllowEmptyText'));
+        suite.done();
     });
 }

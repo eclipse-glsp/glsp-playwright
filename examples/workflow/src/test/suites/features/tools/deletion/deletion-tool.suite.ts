@@ -16,85 +16,65 @@
 import { expect } from '@eclipse-glsp/playwright';
 import { TaskManual } from '../../../../../graph/elements/task-manual.po';
 import { TaskManualNodes } from '../../../../nodes';
-import {
-    customizeWorkflowTestCases,
-    selectWorkflowTest,
-    workflowTestArguments,
-    WorkflowSuiteCustomization,
-    WorkflowTestCase
-} from '../../../../suite';
-import { WorkflowTest } from '../../../../workflow-test';
+import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../../suite';
+import type { WorkflowTest } from '../../../../workflow-test';
 
-/** Stable identifiers of the test cases provided by {@link defineDeletionToolSuite}. */
-export type DeletionToolTestCaseId =
-    | 'shouldAllowDeletingElementsInTheGraphByMouse'
-    | 'shouldAllowDeletingElementsInTheGraphByKeyboard'
-    | 'shouldAllowDeletingElementsInTheGraph';
+/** Default cases of the reusable deletion-tool suite, keyed by stable identifiers. */
+export const deletionToolSuiteCases = {
+    shouldAllowDeletingElementsInTheGraphByMouse: {
+        title: 'should allow deleting elements in the graph by mouse',
+        run: async workflow => {
+            await workflow.app.toolPalette.toolbar.deletionTool().click();
 
-/** Integration-specific changes for {@link defineDeletionToolSuite}. */
-export type DeletionToolSuiteCustomization = WorkflowSuiteCustomization<Record<DeletionToolTestCaseId, WorkflowTestCase>>;
+            const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
+            expect(await task.isVisible()).toBeTruthy();
+
+            await task.click();
+            await task.waitFor({ state: 'detached' });
+
+            expect(await task.locate().count()).toBe(0);
+        }
+    },
+    shouldAllowDeletingElementsInTheGraphByKeyboard: {
+        title: 'should allow deleting elements in the graph by keyboard',
+        run: async workflow => {
+            const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
+
+            expect(await task.locate().count()).toBe(1);
+            await task.delete();
+            expect(await task.locate().count()).toBe(0);
+        }
+    },
+    shouldAllowDeletingElementsInTheGraph: {
+        title: 'should allow deleting elements in the graph',
+        run: async workflow => {
+            const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
+
+            expect(await task.locate().count()).toBe(1);
+            await task.delete();
+            expect(await task.locate().count()).toBe(0);
+        }
+    }
+} satisfies WorkflowTestCases;
+
+/** Integration-provided replacement bodies for {@link defineDeletionToolSuite}. */
+export type DeletionToolSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof deletionToolSuiteCases>;
+
+/** Integration-specific skips for {@link defineDeletionToolSuite}. */
+export type DeletionToolSuiteOptions = WorkflowSuiteOptions<typeof deletionToolSuiteCases>;
 
 /**
  * Registers the reusable deletion-tool suite.
  *
  * @param test test instance whose integration should execute the suite
- * @param customization integration-specific replacements and extensions
+ * @param options integration-specific suite and case skips
  */
-export function defineDeletionToolSuite(test: WorkflowTest, customization: DeletionToolSuiteCustomization = {}): void {
+export function defineDeletionToolSuite(test: WorkflowTest, options?: DeletionToolSuiteOptions): void {
     test.describe('The deletion tool', () => {
-        test.skip(customization.skip !== undefined, customization.skip);
-
-        const deletionToolTestCases: Record<DeletionToolTestCaseId, WorkflowTestCase> = {
-            shouldAllowDeletingElementsInTheGraphByMouse: {
-                title: 'should allow deleting elements in the graph by mouse',
-                run: async workflow => {
-                    await workflow.app.toolPalette.toolbar.deletionTool().click();
-
-                    const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
-                    expect(await task.isVisible()).toBeTruthy();
-
-                    await task.click();
-                    await task.waitFor({ state: 'detached' });
-
-                    expect(await task.locate().count()).toBe(0);
-                }
-            },
-            shouldAllowDeletingElementsInTheGraphByKeyboard: {
-                title: 'should allow deleting elements in the graph by keyboard',
-                run: async workflow => {
-                    const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
-
-                    expect(await task.locate().count()).toBe(1);
-                    await task.delete();
-                    expect(await task.locate().count()).toBe(0);
-                }
-            },
-            shouldAllowDeletingElementsInTheGraph: {
-                title: 'should allow deleting elements in the graph',
-                run: async workflow => {
-                    const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
-
-                    expect(await task.locate().count()).toBe(1);
-                    await task.delete();
-                    expect(await task.locate().count()).toBe(0);
-                }
-            }
-        };
-
-        const { cases, additional } = customizeWorkflowTestCases(deletionToolTestCases, customization);
-
-        selectWorkflowTest(
-            test,
-            cases.shouldAllowDeletingElementsInTheGraphByMouse
-        )(...workflowTestArguments(cases.shouldAllowDeletingElementsInTheGraphByMouse));
-        selectWorkflowTest(
-            test,
-            cases.shouldAllowDeletingElementsInTheGraphByKeyboard
-        )(...workflowTestArguments(cases.shouldAllowDeletingElementsInTheGraphByKeyboard));
-        selectWorkflowTest(
-            test,
-            cases.shouldAllowDeletingElementsInTheGraph
-        )(...workflowTestArguments(cases.shouldAllowDeletingElementsInTheGraph));
-        additional?.(test);
+        const suite = workflowSuite(test, 'deletionTool', deletionToolSuiteCases, options);
+        test(...suite.args('shouldAllowDeletingElementsInTheGraphByMouse'));
+        test(...suite.args('shouldAllowDeletingElementsInTheGraphByKeyboard'));
+        test(...suite.args('shouldAllowDeletingElementsInTheGraph'));
+        suite.done();
     });
 }

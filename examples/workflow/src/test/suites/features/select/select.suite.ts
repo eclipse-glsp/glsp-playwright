@@ -16,130 +16,105 @@
 
 import { PModelElement, expect } from '@eclipse-glsp/playwright';
 import { TaskManual } from '../../../../graph/elements/task-manual.po';
-import {
-    customizeWorkflowTestCases,
-    selectWorkflowTest,
-    workflowTestArguments,
-    WorkflowSuiteCustomization,
-    WorkflowTestCase
-} from '../../../suite';
-import { WorkflowTest } from '../../../workflow-test';
+import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
+import type { WorkflowTest } from '../../../workflow-test';
 
-/** Stable identifiers of the test cases provided by {@link defineSelectSuite}. */
-export type SelectTestCaseId =
-    | 'shouldAllowToSelectASingleElement'
-    | 'shouldDeselectAfterANewSelection'
-    | 'shouldAllowToSelectMultipleElements'
-    | 'shouldAllowToSelectAllElementsByUsingAShortcut'
-    | 'shouldAllowToDeselectASingleElementByClickingOutside';
+/** Default cases of the reusable selection suite, keyed by stable identifiers. */
+export const selectSuiteCases = {
+    shouldAllowToSelectASingleElement: {
+        title: 'should allow to select a single element',
+        run: async workflow => {
+            const element = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
+            await element.select();
+            await expect(workflow.app.graph).toHaveSelected({
+                type: TaskManual,
+                elements: [element]
+            });
+        }
+    },
+    shouldDeselectAfterANewSelection: {
+        title: 'should deselect after a new selection',
+        run: async workflow => {
+            const element1 = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
+            await element1.select();
+            await expect(workflow.app.graph).toHaveSelected({
+                type: TaskManual,
+                elements: [element1]
+            });
 
-/** Integration-specific changes for {@link defineSelectSuite}. */
-export type SelectSuiteCustomization = WorkflowSuiteCustomization<Record<SelectTestCaseId, WorkflowTestCase>>;
+            const element2 = await workflow.app.graph.getNodeByLabel('RflWt', TaskManual);
+            await element2.select();
+            await expect(workflow.app.graph).toHaveSelected({
+                type: TaskManual,
+                elements: [element2]
+            });
+        }
+    },
+    shouldAllowToSelectMultipleElements: {
+        title: 'should allow to select multiple elements',
+        run: async workflow => {
+            const element1 = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
+            await element1.select();
+            await expect(workflow.app.graph).toHaveSelected({
+                type: TaskManual,
+                elements: [element1]
+            });
+
+            const element2 = await workflow.app.graph.getNodeByLabel('RflWt', TaskManual);
+            await element2.select({ modifiers: ['Control'] });
+            await expect(workflow.app.graph).toHaveSelected({
+                type: TaskManual,
+                elements: [element1, element2]
+            });
+        }
+    },
+    shouldAllowToSelectAllElementsByUsingAShortcut: {
+        title: 'should allow to select all elements by using a shortcut',
+        run: async workflow => {
+            await workflow.app.graph.locate().click();
+            await workflow.app.page.keyboard.press('Control+A');
+            await expect(workflow.app.graph).toHaveSelected({
+                type: PModelElement,
+                elements: () => workflow.app.graph.getAllModelElements()
+            });
+        }
+    },
+    shouldAllowToDeselectASingleElementByClickingOutside: {
+        title: 'should allow to deselect a single element by clicking outside',
+        run: async workflow => {
+            const element = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
+            await element.select();
+            await expect(workflow.app.graph).toHaveSelected({
+                type: TaskManual,
+                elements: [element]
+            });
+
+            await workflow.app.graph.locate().click();
+            await expect(workflow.app.graph).toBeUnselected();
+        }
+    }
+} satisfies WorkflowTestCases;
+
+/** Integration-provided replacement bodies for {@link defineSelectSuite}. */
+export type SelectSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof selectSuiteCases>;
+
+/** Integration-specific skips for {@link defineSelectSuite}. */
+export type SelectSuiteOptions = WorkflowSuiteOptions<typeof selectSuiteCases>;
 
 /**
  * Registers the reusable selection suite.
  *
  * @param test test instance whose integration should execute the suite
- * @param customization integration-specific replacements and extensions
+ * @param options integration-specific suite and case skips
  */
-export function defineSelectSuite(test: WorkflowTest, customization: SelectSuiteCustomization = {}): void {
+export function defineSelectSuite(test: WorkflowTest, options?: SelectSuiteOptions): void {
     test.describe('The select feature', () => {
-        test.skip(customization.skip !== undefined, customization.skip);
-
-        const selectTestCases: Record<SelectTestCaseId, WorkflowTestCase> = {
-            shouldAllowToSelectASingleElement: {
-                title: 'should allow to select a single element',
-                run: async workflow => {
-                    const element = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
-                    await element.select();
-                    await expect(workflow.app.graph).toHaveSelected({
-                        type: TaskManual,
-                        elements: [element]
-                    });
-                }
-            },
-            shouldDeselectAfterANewSelection: {
-                title: 'should deselect after a new selection',
-                run: async workflow => {
-                    const element1 = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
-                    await element1.select();
-                    await expect(workflow.app.graph).toHaveSelected({
-                        type: TaskManual,
-                        elements: [element1]
-                    });
-
-                    const element2 = await workflow.app.graph.getNodeByLabel('RflWt', TaskManual);
-                    await element2.select();
-                    await expect(workflow.app.graph).toHaveSelected({
-                        type: TaskManual,
-                        elements: [element2]
-                    });
-                }
-            },
-            shouldAllowToSelectMultipleElements: {
-                title: 'should allow to select multiple elements',
-                run: async workflow => {
-                    const element1 = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
-                    await element1.select();
-                    await expect(workflow.app.graph).toHaveSelected({
-                        type: TaskManual,
-                        elements: [element1]
-                    });
-
-                    const element2 = await workflow.app.graph.getNodeByLabel('RflWt', TaskManual);
-                    await element2.select({ modifiers: ['Control'] });
-                    await expect(workflow.app.graph).toHaveSelected({
-                        type: TaskManual,
-                        elements: [element1, element2]
-                    });
-                }
-            },
-            shouldAllowToSelectAllElementsByUsingAShortcut: {
-                title: 'should allow to select all elements by using a shortcut',
-                run: async workflow => {
-                    await workflow.app.graph.locate().click();
-                    await workflow.app.page.keyboard.press('Control+A');
-                    await expect(workflow.app.graph).toHaveSelected({
-                        type: PModelElement,
-                        elements: () => workflow.app.graph.getAllModelElements()
-                    });
-                }
-            },
-            shouldAllowToDeselectASingleElementByClickingOutside: {
-                title: 'should allow to deselect a single element by clicking outside',
-                run: async workflow => {
-                    const element = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
-                    await element.select();
-                    await expect(workflow.app.graph).toHaveSelected({
-                        type: TaskManual,
-                        elements: [element]
-                    });
-
-                    await workflow.app.graph.locate().click();
-                    await expect(workflow.app.graph).toBeUnselected();
-                }
-            }
-        };
-
-        const { cases, additional } = customizeWorkflowTestCases(selectTestCases, customization);
-
-        selectWorkflowTest(
-            test,
-            cases.shouldAllowToSelectASingleElement
-        )(...workflowTestArguments(cases.shouldAllowToSelectASingleElement));
-        selectWorkflowTest(test, cases.shouldDeselectAfterANewSelection)(...workflowTestArguments(cases.shouldDeselectAfterANewSelection));
-        selectWorkflowTest(
-            test,
-            cases.shouldAllowToSelectMultipleElements
-        )(...workflowTestArguments(cases.shouldAllowToSelectMultipleElements));
-        selectWorkflowTest(
-            test,
-            cases.shouldAllowToSelectAllElementsByUsingAShortcut
-        )(...workflowTestArguments(cases.shouldAllowToSelectAllElementsByUsingAShortcut));
-        selectWorkflowTest(
-            test,
-            cases.shouldAllowToDeselectASingleElementByClickingOutside
-        )(...workflowTestArguments(cases.shouldAllowToDeselectASingleElementByClickingOutside));
-        additional?.(test);
+        const suite = workflowSuite(test, 'select', selectSuiteCases, options);
+        test(...suite.args('shouldAllowToSelectASingleElement'));
+        test(...suite.args('shouldDeselectAfterANewSelection'));
+        test(...suite.args('shouldAllowToSelectMultipleElements'));
+        test(...suite.args('shouldAllowToSelectAllElementsByUsingAShortcut'));
+        test(...suite.args('shouldAllowToDeselectASingleElementByClickingOutside'));
+        suite.done();
     });
 }

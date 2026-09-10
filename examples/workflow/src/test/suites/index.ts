@@ -13,32 +13,32 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { WorkflowTest } from '../workflow-test';
-import { defineContextMenuSuite, ContextMenuSuiteCustomization } from './context-menu.suite';
-import { ConnectableElementSuiteCustomization, defineConnectableElementSuite } from './core/connectable-element.suite';
-import { DebugStandaloneSuiteCustomization, defineDebugStandaloneSuite } from './core/debug.standalone.suite';
-import { defineEdgeSuite, EdgeSuiteCustomization } from './core/edge.suite';
-import { defineGraphSuite, GraphSuiteCustomization } from './core/graph.suite';
-import { defineParentSuite, ParentSuiteCustomization } from './core/parent.suite';
-import { defineShortcutsSuite, ShortcutsSuiteCustomization } from './core/shortcuts.suite';
-import { defineResizeHandleSuite, ResizeHandleSuiteCustomization } from './features/change-bounds/resize-handle.suite';
-import { CommandPaletteSuiteCustomization, defineCommandPaletteSuite } from './features/command-palette/command-palette.suite';
-import { definePopupSuite, PopupSuiteCustomization } from './features/hover/popup.suite';
-import { defineLabelEditToolSuite, LabelEditToolSuiteCustomization } from './features/label-edit/label-edit-tool.suite';
-import { defineRoutingPointSuite, RoutingPointSuiteCustomization } from './features/routing/routing-point.suite';
+import type { WorkflowTest } from '../workflow-test';
+import { ContextMenuSuiteOptions, defineContextMenuSuite } from './context-menu.suite';
+import { ConnectableElementSuiteOptions, defineConnectableElementSuite } from './core/connectable-element.suite';
+import { DebugStandaloneSuiteOptions, defineDebugStandaloneSuite } from './core/debug.standalone.suite';
+import { defineEdgeSuite, EdgeSuiteOptions } from './core/edge.suite';
+import { defineGraphSuite, GraphSuiteOptions } from './core/graph.suite';
+import { defineParentSuite, ParentSuiteOptions } from './core/parent.suite';
+import { defineShortcutsSuite, ShortcutsSuiteOptions } from './core/shortcuts.suite';
+import { defineResizeHandleSuite, ResizeHandleSuiteOptions } from './features/change-bounds/resize-handle.suite';
+import { CommandPaletteSuiteOptions, defineCommandPaletteSuite } from './features/command-palette/command-palette.suite';
+import { definePopupSuite, PopupSuiteOptions } from './features/hover/popup.suite';
+import { defineLabelEditToolSuite, LabelEditToolSuiteOptions } from './features/label-edit/label-edit-tool.suite';
+import { defineRoutingPointSuite, RoutingPointSuiteOptions } from './features/routing/routing-point.suite';
 import {
     defineSelectKeybindingStandaloneSuite,
-    SelectKeybindingStandaloneSuiteCustomization
+    SelectKeybindingStandaloneSuiteOptions
 } from './features/select/select-keybinding.standalone.suite';
-import { defineSelectSuite, SelectSuiteCustomization } from './features/select/select.suite';
-import { defineToolPaletteSuite, ToolPaletteSuiteCustomization } from './features/tool-palette/tool-palette.suite';
-import { defineDeletionToolSuite, DeletionToolSuiteCustomization } from './features/tools/deletion/deletion-tool.suite';
-import { defineEdgeCreationToolSuite, EdgeCreationToolSuiteCustomization } from './features/tools/edge-creation/edge-creation-tool.suite';
-import { defineEdgeEditToolSuite, EdgeEditToolSuiteCustomization } from './features/tools/edge-edit/edge-edit-tool.suite';
-import { defineNodeCreationToolSuite, NodeCreationToolSuiteCustomization } from './features/tools/node-creation/node-creation-tool.suite';
-import { defineUndoRedoSuite, UndoRedoSuiteCustomization } from './features/undo-redo/undo-redo.suite';
-import { defineMarkerNavigatorSuite, MarkerNavigatorSuiteCustomization } from './features/validation/marker-navigator.suite';
-import { defineMarkerSuite, MarkerSuiteCustomization } from './features/validation/marker.suite';
+import { defineSelectSuite, SelectSuiteOptions } from './features/select/select.suite';
+import { defineToolPaletteSuite, ToolPaletteSuiteOptions } from './features/tool-palette/tool-palette.suite';
+import { defineDeletionToolSuite, DeletionToolSuiteOptions } from './features/tools/deletion/deletion-tool.suite';
+import { defineEdgeCreationToolSuite, EdgeCreationToolSuiteOptions } from './features/tools/edge-creation/edge-creation-tool.suite';
+import { defineEdgeEditToolSuite, EdgeEditToolSuiteOptions } from './features/tools/edge-edit/edge-edit-tool.suite';
+import { defineNodeCreationToolSuite, NodeCreationToolSuiteOptions } from './features/tools/node-creation/node-creation-tool.suite';
+import { defineUndoRedoSuite, UndoRedoSuiteOptions } from './features/undo-redo/undo-redo.suite';
+import { defineMarkerNavigatorSuite, MarkerNavigatorSuiteOptions } from './features/validation/marker-navigator.suite';
+import { defineMarkerSuite, MarkerSuiteOptions } from './features/validation/marker.suite';
 
 export * from './context-menu.suite';
 export * from './core/connectable-element.suite';
@@ -63,73 +63,77 @@ export * from './features/undo-redo/undo-redo.suite';
 export * from './features/validation/marker-navigator.suite';
 export * from './features/validation/marker.suite';
 
-/** Customizations and explicit skips for all integration-independent Workflow suites. */
-export interface WorkflowSuiteCustomizations {
-    commandPalette?: CommandPaletteSuiteCustomization;
-    connectableElement?: ConnectableElementSuiteCustomization;
-    contextMenu?: ContextMenuSuiteCustomization;
-    deletionTool?: DeletionToolSuiteCustomization;
-    edge?: EdgeSuiteCustomization;
-    edgeCreationTool?: EdgeCreationToolSuiteCustomization;
-    edgeEditTool?: EdgeEditToolSuiteCustomization;
-    graph?: GraphSuiteCustomization;
-    labelEditTool?: LabelEditToolSuiteCustomization;
-    marker?: MarkerSuiteCustomization;
-    markerNavigator?: MarkerNavigatorSuiteCustomization;
-    nodeCreationTool?: NodeCreationToolSuiteCustomization;
-    parent?: ParentSuiteCustomization;
-    popup?: PopupSuiteCustomization;
-    resizeHandle?: ResizeHandleSuiteCustomization;
-    routingPoint?: RoutingPointSuiteCustomization;
-    select?: SelectSuiteCustomization;
-    shortcuts?: ShortcutsSuiteCustomization;
-    toolPalette?: ToolPaletteSuiteCustomization;
-    undoRedo?: UndoRedoSuiteCustomization;
+/**
+ * Collection-time options (suite and case skips, title overrides) for all
+ * integration-independent Workflow suites. Test-body overrides are provided separately
+ * through the `suiteCases` option fixture.
+ */
+export interface WorkflowSuitesOptions {
+    commandPalette?: CommandPaletteSuiteOptions;
+    connectableElement?: ConnectableElementSuiteOptions;
+    contextMenu?: ContextMenuSuiteOptions;
+    deletionTool?: DeletionToolSuiteOptions;
+    edge?: EdgeSuiteOptions;
+    edgeCreationTool?: EdgeCreationToolSuiteOptions;
+    edgeEditTool?: EdgeEditToolSuiteOptions;
+    graph?: GraphSuiteOptions;
+    labelEditTool?: LabelEditToolSuiteOptions;
+    marker?: MarkerSuiteOptions;
+    markerNavigator?: MarkerNavigatorSuiteOptions;
+    nodeCreationTool?: NodeCreationToolSuiteOptions;
+    parent?: ParentSuiteOptions;
+    popup?: PopupSuiteOptions;
+    resizeHandle?: ResizeHandleSuiteOptions;
+    routingPoint?: RoutingPointSuiteOptions;
+    select?: SelectSuiteOptions;
+    shortcuts?: ShortcutsSuiteOptions;
+    toolPalette?: ToolPaletteSuiteOptions;
+    undoRedo?: UndoRedoSuiteOptions;
 }
 
-/** Customizations for suites that only apply to the standalone Workflow application. */
-export interface StandaloneWorkflowSuiteCustomizations extends WorkflowSuiteCustomizations {
-    debug?: DebugStandaloneSuiteCustomization;
-    selectKeybinding?: SelectKeybindingStandaloneSuiteCustomization;
+/** Options for suites that only apply to the standalone Workflow application. */
+export interface StandaloneWorkflowSuitesOptions extends WorkflowSuitesOptions {
+    debug?: DebugStandaloneSuiteOptions;
+    selectKeybinding?: SelectKeybindingStandaloneSuiteOptions;
 }
 
 /**
  * Registers the complete Workflow contract shared by standalone, Theia and VS Code integrations.
  *
  * @param test test instance configured for the target integration
- * @param customizations per-suite replacements, extensions, additional cases and explicit skips
+ * @param options per-suite and per-case skips and title overrides
  */
-export function defineWorkflowSuites(test: WorkflowTest, customizations: WorkflowSuiteCustomizations = {}): void {
-    defineConnectableElementSuite(test, customizations.connectableElement);
-    defineEdgeSuite(test, customizations.edge);
-    defineGraphSuite(test, customizations.graph);
-    defineParentSuite(test, customizations.parent);
-    defineShortcutsSuite(test, customizations.shortcuts);
-    defineContextMenuSuite(test, customizations.contextMenu);
-    defineResizeHandleSuite(test, customizations.resizeHandle);
-    defineCommandPaletteSuite(test, customizations.commandPalette);
-    definePopupSuite(test, customizations.popup);
-    defineLabelEditToolSuite(test, customizations.labelEditTool);
-    defineRoutingPointSuite(test, customizations.routingPoint);
-    defineSelectSuite(test, customizations.select);
-    defineToolPaletteSuite(test, customizations.toolPalette);
-    defineDeletionToolSuite(test, customizations.deletionTool);
-    defineEdgeCreationToolSuite(test, customizations.edgeCreationTool);
-    defineEdgeEditToolSuite(test, customizations.edgeEditTool);
-    defineNodeCreationToolSuite(test, customizations.nodeCreationTool);
-    defineUndoRedoSuite(test, customizations.undoRedo);
-    defineMarkerNavigatorSuite(test, customizations.markerNavigator);
-    defineMarkerSuite(test, customizations.marker);
+export function defineWorkflowSuites(test: WorkflowTest, options: WorkflowSuitesOptions = {}): void {
+    defineConnectableElementSuite(test, options.connectableElement);
+    defineEdgeSuite(test, options.edge);
+    defineGraphSuite(test, options.graph);
+    defineParentSuite(test, options.parent);
+    defineShortcutsSuite(test, options.shortcuts);
+    defineContextMenuSuite(test, options.contextMenu);
+    defineResizeHandleSuite(test, options.resizeHandle);
+    defineCommandPaletteSuite(test, options.commandPalette);
+    definePopupSuite(test, options.popup);
+    defineLabelEditToolSuite(test, options.labelEditTool);
+    defineRoutingPointSuite(test, options.routingPoint);
+    defineSelectSuite(test, options.select);
+    defineToolPaletteSuite(test, options.toolPalette);
+    defineDeletionToolSuite(test, options.deletionTool);
+    defineEdgeCreationToolSuite(test, options.edgeCreationTool);
+    defineEdgeEditToolSuite(test, options.edgeEditTool);
+    defineNodeCreationToolSuite(test, options.nodeCreationTool);
+    defineUndoRedoSuite(test, options.undoRedo);
+    defineMarkerNavigatorSuite(test, options.markerNavigator);
+    defineMarkerSuite(test, options.marker);
 }
 
 /**
  * Registers the full standalone contract, including suites that do not apply to editor integrations.
  *
  * @param test test instance configured for a standalone Workflow application
- * @param customizations per-suite replacements, extensions, additional cases and explicit skips
+ * @param options per-suite and per-case skips and title overrides
  */
-export function defineStandaloneWorkflowSuites(test: WorkflowTest, customizations: StandaloneWorkflowSuiteCustomizations = {}): void {
-    defineWorkflowSuites(test, customizations);
-    defineDebugStandaloneSuite(test, customizations.debug);
-    defineSelectKeybindingStandaloneSuite(test, customizations.selectKeybinding);
+export function defineStandaloneWorkflowSuites(test: WorkflowTest, options: StandaloneWorkflowSuitesOptions = {}): void {
+    defineWorkflowSuites(test, options);
+    defineDebugStandaloneSuite(test, options.debug);
+    defineSelectKeybindingStandaloneSuite(test, options.selectKeybinding);
 }

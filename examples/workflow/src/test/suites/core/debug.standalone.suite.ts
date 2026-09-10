@@ -16,14 +16,8 @@
 
 import { expect, extractDebugInformationOfGLSPLocator, extractMetaTree } from '@eclipse-glsp/playwright';
 import { TaskManual } from '../../../graph/elements/task-manual.po';
-import {
-    customizeWorkflowTestCases,
-    selectWorkflowTest,
-    workflowTestArguments,
-    WorkflowSuiteCustomization,
-    WorkflowTestCase
-} from '../../suite';
-import { WorkflowTest } from '../../workflow-test';
+import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../suite';
+import type { WorkflowTest } from '../../workflow-test';
 
 const taskSelector = '[id$="task_Push"]';
 const expectedElementMetadata = {
@@ -63,55 +57,47 @@ const expectedGLSPLocatorData = [
     { locator: "locator('body')", children: ['<body>...</body>'] }
 ];
 
-/** Stable identifiers of the test cases provided by {@link defineDebugStandaloneSuite}. */
-export type DebugStandaloneTestCaseId = 'shouldAllowToExtractTheMetadataOfALocator' | 'shouldAllowToExtractDebugInformationOfAGLSPLocator';
+/** Default cases of the reusable debug-functions suite, keyed by stable identifiers. */
+export const debugStandaloneSuiteCases = {
+    /** It is possible to extract all accessible SVG metadata of a locator as a tree structure. */
+    shouldAllowToExtractTheMetadataOfALocator: {
+        title: 'should allow to extract the metadata of a locator',
+        run: async workflow => {
+            const node = await workflow.app.graph.getNode(taskSelector, TaskManual);
 
-/** Integration-specific changes for {@link defineDebugStandaloneSuite}. */
-export type DebugStandaloneSuiteCustomization = WorkflowSuiteCustomization<Record<DebugStandaloneTestCaseId, WorkflowTestCase>>;
+            const metadata = await extractMetaTree(node.locate());
+            expect(metadata).toMatchObject(expectedElementMetadata);
+        }
+    },
+    /** It is possible to retrieve all located HTML elements of a GLSPLocator and its ancestors. */
+    shouldAllowToExtractDebugInformationOfAGLSPLocator: {
+        title: 'should allow to extract debug information of a GLSPLocator',
+        run: async workflow => {
+            const node = await workflow.app.graph.getNode(taskSelector, TaskManual);
+
+            const extracted = await extractDebugInformationOfGLSPLocator(node.locator);
+            expect(extracted).toMatchObject(expectedGLSPLocatorData);
+        }
+    }
+} satisfies WorkflowTestCases;
+
+/** Integration-provided replacement bodies for {@link defineDebugStandaloneSuite}. */
+export type DebugStandaloneSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof debugStandaloneSuiteCases>;
+
+/** Integration-specific skips for {@link defineDebugStandaloneSuite}. */
+export type DebugStandaloneSuiteOptions = WorkflowSuiteOptions<typeof debugStandaloneSuiteCases>;
 
 /**
  * Registers the reusable debug-functions suite.
  *
  * @param test test instance whose integration should execute the suite
- * @param customization integration-specific replacements and extensions
+ * @param options integration-specific suite and case skips
  */
-export function defineDebugStandaloneSuite(test: WorkflowTest, customization: DebugStandaloneSuiteCustomization = {}): void {
+export function defineDebugStandaloneSuite(test: WorkflowTest, options?: DebugStandaloneSuiteOptions): void {
     test.describe('The debug functions', () => {
-        test.skip(customization.skip !== undefined, customization.skip);
-
-        const debugStandaloneTestCases: Record<DebugStandaloneTestCaseId, WorkflowTestCase> = {
-            /** It is possible to extract all accessible SVG metadata of a locator as a tree structure. */
-            shouldAllowToExtractTheMetadataOfALocator: {
-                title: 'should allow to extract the metadata of a locator',
-                run: async workflow => {
-                    const node = await workflow.app.graph.getNode(taskSelector, TaskManual);
-
-                    const metadata = await extractMetaTree(node.locate());
-                    expect(metadata).toMatchObject(expectedElementMetadata);
-                }
-            },
-            /** It is possible to retrieve all located HTML elements of a GLSPLocator and its ancestors. */
-            shouldAllowToExtractDebugInformationOfAGLSPLocator: {
-                title: 'should allow to extract debug information of a GLSPLocator',
-                run: async workflow => {
-                    const node = await workflow.app.graph.getNode(taskSelector, TaskManual);
-
-                    const extracted = await extractDebugInformationOfGLSPLocator(node.locator);
-                    expect(extracted).toMatchObject(expectedGLSPLocatorData);
-                }
-            }
-        };
-
-        const { cases, additional } = customizeWorkflowTestCases(debugStandaloneTestCases, customization);
-
-        selectWorkflowTest(
-            test,
-            cases.shouldAllowToExtractTheMetadataOfALocator
-        )(...workflowTestArguments(cases.shouldAllowToExtractTheMetadataOfALocator));
-        selectWorkflowTest(
-            test,
-            cases.shouldAllowToExtractDebugInformationOfAGLSPLocator
-        )(...workflowTestArguments(cases.shouldAllowToExtractDebugInformationOfAGLSPLocator));
-        additional?.(test);
+        const suite = workflowSuite(test, 'debug', debugStandaloneSuiteCases, options);
+        test(...suite.args('shouldAllowToExtractTheMetadataOfALocator'));
+        test(...suite.args('shouldAllowToExtractDebugInformationOfAGLSPLocator'));
+        suite.done();
     });
 }

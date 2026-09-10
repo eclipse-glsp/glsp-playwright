@@ -16,14 +16,8 @@
 import { expect, provideMarkerNavigator } from '@eclipse-glsp/playwright';
 import { TaskAutomated } from '../../../../graph/elements/task-automated.po';
 import { TaskAutomatedNodes } from '../../../nodes';
-import {
-    customizeWorkflowTestCases,
-    selectWorkflowTest,
-    workflowTestArguments,
-    WorkflowSuiteCustomization,
-    WorkflowTestCase
-} from '../../../suite';
-import { WorkflowTest } from '../../../workflow-test';
+import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
+import type { WorkflowTest } from '../../../workflow-test';
 
 const element1 = TaskAutomatedNodes.chkwtLabel;
 const element2 = TaskAutomatedNodes.wtokLabel;
@@ -35,79 +29,68 @@ const element6 = TaskAutomatedNodes.preheatLabel;
 const forwardOrder = [element1, element2, element3, element4, element5, element6, element1];
 const backwardOrder = [element1, element6, element5, element4, element3, element2, element1, element6];
 
-/** Stable identifiers of the test cases provided by {@link defineMarkerNavigatorSuite}. */
-export type MarkerNavigatorTestCaseId =
-    | 'shouldNavigateToTheFirstElement'
-    | 'shouldNavigateForwardsThroughTheElements'
-    | 'shouldNavigateBackwardsThroughTheElements';
+/** Default cases of the reusable marker-navigator suite, keyed by stable identifiers. */
+export const markerNavigatorSuiteCases = {
+    shouldNavigateToTheFirstElement: {
+        title: 'should navigate to the first element',
+        run: async workflow => {
+            const navigator = provideMarkerNavigator(workflow.integration, workflow.app);
+            await navigator.trigger();
+            await navigator.navigateForward();
+            await expect(workflow.app.graph).toHaveSelected({
+                type: TaskAutomated,
+                elements: [await workflow.app.graph.getNodeByLabel(element1, TaskAutomated)]
+            });
+        }
+    },
+    shouldNavigateForwardsThroughTheElements: {
+        title: 'should navigate forwards through the elements',
+        run: async workflow => {
+            const navigator = provideMarkerNavigator(workflow.integration, workflow.app);
+            await navigator.trigger();
+            for (const order of forwardOrder) {
+                await navigator.navigateForward();
+                await expect(workflow.app.graph).toHaveSelected({
+                    type: TaskAutomated,
+                    elements: [await workflow.app.graph.getNodeByLabel(order, TaskAutomated)]
+                });
+            }
+        }
+    },
+    shouldNavigateBackwardsThroughTheElements: {
+        title: 'should navigate backwards through the elements',
+        run: async workflow => {
+            const navigator = provideMarkerNavigator(workflow.integration, workflow.app);
+            await navigator.trigger();
+            for (const order of backwardOrder) {
+                await navigator.navigateBackward();
+                await expect(workflow.app.graph).toHaveSelected({
+                    type: TaskAutomated,
+                    elements: [await workflow.app.graph.getNodeByLabel(order, TaskAutomated)]
+                });
+            }
+        }
+    }
+} satisfies WorkflowTestCases;
 
-/** Integration-specific changes for {@link defineMarkerNavigatorSuite}. */
-export type MarkerNavigatorSuiteCustomization = WorkflowSuiteCustomization<Record<MarkerNavigatorTestCaseId, WorkflowTestCase>>;
+/** Integration-provided replacement bodies for {@link defineMarkerNavigatorSuite}. */
+export type MarkerNavigatorSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof markerNavigatorSuiteCases>;
+
+/** Integration-specific skips for {@link defineMarkerNavigatorSuite}. */
+export type MarkerNavigatorSuiteOptions = WorkflowSuiteOptions<typeof markerNavigatorSuiteCases>;
 
 /**
  * Registers the reusable marker-navigator suite.
  *
  * @param test test instance whose integration should execute the suite
- * @param customization integration-specific replacements and extensions
+ * @param options integration-specific suite and case skips
  */
-export function defineMarkerNavigatorSuite(test: WorkflowTest, customization: MarkerNavigatorSuiteCustomization = {}): void {
+export function defineMarkerNavigatorSuite(test: WorkflowTest, options?: MarkerNavigatorSuiteOptions): void {
     test.describe('The marker navigator', () => {
-        test.skip(customization.skip !== undefined, customization.skip);
-
-        const markerNavigatorTestCases: Record<MarkerNavigatorTestCaseId, WorkflowTestCase> = {
-            shouldNavigateToTheFirstElement: {
-                title: 'should navigate to the first element',
-                run: async workflow => {
-                    const navigator = provideMarkerNavigator(workflow.integration, workflow.app);
-                    await navigator.trigger();
-                    await navigator.navigateForward();
-                    await expect(workflow.app.graph).toHaveSelected({
-                        type: TaskAutomated,
-                        elements: [await workflow.app.graph.getNodeByLabel(element1, TaskAutomated)]
-                    });
-                }
-            },
-            shouldNavigateForwardsThroughTheElements: {
-                title: 'should navigate forwards through the elements',
-                run: async workflow => {
-                    const navigator = provideMarkerNavigator(workflow.integration, workflow.app);
-                    await navigator.trigger();
-                    for (const order of forwardOrder) {
-                        await navigator.navigateForward();
-                        await expect(workflow.app.graph).toHaveSelected({
-                            type: TaskAutomated,
-                            elements: [await workflow.app.graph.getNodeByLabel(order, TaskAutomated)]
-                        });
-                    }
-                }
-            },
-            shouldNavigateBackwardsThroughTheElements: {
-                title: 'should navigate backwards through the elements',
-                run: async workflow => {
-                    const navigator = provideMarkerNavigator(workflow.integration, workflow.app);
-                    await navigator.trigger();
-                    for (const order of backwardOrder) {
-                        await navigator.navigateBackward();
-                        await expect(workflow.app.graph).toHaveSelected({
-                            type: TaskAutomated,
-                            elements: [await workflow.app.graph.getNodeByLabel(order, TaskAutomated)]
-                        });
-                    }
-                }
-            }
-        };
-
-        const { cases, additional } = customizeWorkflowTestCases(markerNavigatorTestCases, customization);
-
-        selectWorkflowTest(test, cases.shouldNavigateToTheFirstElement)(...workflowTestArguments(cases.shouldNavigateToTheFirstElement));
-        selectWorkflowTest(
-            test,
-            cases.shouldNavigateForwardsThroughTheElements
-        )(...workflowTestArguments(cases.shouldNavigateForwardsThroughTheElements));
-        selectWorkflowTest(
-            test,
-            cases.shouldNavigateBackwardsThroughTheElements
-        )(...workflowTestArguments(cases.shouldNavigateBackwardsThroughTheElements));
-        additional?.(test);
+        const suite = workflowSuite(test, 'markerNavigator', markerNavigatorSuiteCases, options);
+        test(...suite.args('shouldNavigateToTheFirstElement'));
+        test(...suite.args('shouldNavigateForwardsThroughTheElements'));
+        test(...suite.args('shouldNavigateBackwardsThroughTheElements'));
+        suite.done();
     });
 }

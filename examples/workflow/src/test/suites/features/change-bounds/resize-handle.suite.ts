@@ -16,81 +16,73 @@
 import { PMetadata, ResizeHandle, expect } from '@eclipse-glsp/playwright';
 import { TaskManual } from '../../../../graph/elements/task-manual.po';
 import { TaskManualNodes } from '../../../nodes';
-import {
-    customizeWorkflowTestCases,
-    selectWorkflowTest,
-    workflowTestArguments,
-    WorkflowSuiteCustomization,
-    WorkflowTestCase
-} from '../../../suite';
-import { WorkflowTest } from '../../../workflow-test';
+import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
+import type { WorkflowTest } from '../../../workflow-test';
 
-/** Stable identifiers of the test cases provided by {@link defineResizeHandleSuite}. */
-export type ResizeHandleTestCaseId = 'shouldAllowResizing' | 'shouldShow4Handles';
+/** Default cases of the reusable resize-handle suite, keyed by stable identifiers. */
+export const resizeHandleSuiteCases = {
+    shouldAllowResizing: {
+        title: 'should allow resizing',
+        run: async workflow => {
+            const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
 
-/** Integration-specific changes for {@link defineResizeHandleSuite}. */
-export type ResizeHandleSuiteCustomization = WorkflowSuiteCustomization<Record<ResizeHandleTestCaseId, WorkflowTestCase>>;
+            const oldBounds = await task.bounds();
+            const oldTopLeft = oldBounds.position('top_left');
+
+            const resizeHandle = await task.resizeHandles().ofKind('top-left');
+            const newPosition = oldTopLeft.moveRelative(-50, 0);
+            await resizeHandle.dragToAbsolutePosition(newPosition.data);
+
+            const newBounds = await task.bounds();
+            expect(newBounds.data.width).toBe(oldBounds.data.width + 50);
+
+            const newTopLeft = newBounds.position('top_left');
+
+            expect(newTopLeft.data.x).toBe(oldTopLeft.data.x - 50);
+            expect(newTopLeft.data.y).toBe(oldTopLeft.data.y);
+        }
+    },
+    shouldShow4Handles: {
+        title: 'should show 4 handles',
+        run: async workflow => {
+            const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
+
+            await workflow.app.graph.waitForCreation(PMetadata.getType(ResizeHandle), async () => {
+                await task.click();
+            });
+
+            const topLeft = await task.resizeHandles().waitForKind('top-left');
+            expect(await topLeft.locate().count()).toBe(1);
+
+            const topRight = await task.resizeHandles().waitForKind('top-right');
+            expect(await topRight.locate().count()).toBe(1);
+
+            const bottomLeft = await task.resizeHandles().waitForKind('bottom-left');
+            expect(await bottomLeft.locate().count()).toBe(1);
+
+            const bottomRight = await task.resizeHandles().waitForKind('bottom-right');
+            expect(await bottomRight.locate().count()).toBe(1);
+        }
+    }
+} satisfies WorkflowTestCases;
+
+/** Integration-provided replacement bodies for {@link defineResizeHandleSuite}. */
+export type ResizeHandleSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof resizeHandleSuiteCases>;
+
+/** Integration-specific skips for {@link defineResizeHandleSuite}. */
+export type ResizeHandleSuiteOptions = WorkflowSuiteOptions<typeof resizeHandleSuiteCases>;
 
 /**
  * Registers the reusable resize-handle suite.
  *
  * @param test test instance whose integration should execute the suite
- * @param customization integration-specific replacements and extensions
+ * @param options integration-specific suite and case skips
  */
-export function defineResizeHandleSuite(test: WorkflowTest, customization: ResizeHandleSuiteCustomization = {}): void {
+export function defineResizeHandleSuite(test: WorkflowTest, options?: ResizeHandleSuiteOptions): void {
     test.describe('The resizing handle', () => {
-        test.skip(customization.skip !== undefined, customization.skip);
-
-        const resizeHandleTestCases: Record<ResizeHandleTestCaseId, WorkflowTestCase> = {
-            shouldAllowResizing: {
-                title: 'should allow resizing',
-                run: async workflow => {
-                    const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
-
-                    const oldBounds = await task.bounds();
-                    const oldTopLeft = oldBounds.position('top_left');
-
-                    const resizeHandle = await task.resizeHandles().ofKind('top-left');
-                    const newPosition = oldTopLeft.moveRelative(-50, 0);
-                    await resizeHandle.dragToAbsolutePosition(newPosition.data);
-
-                    const newBounds = await task.bounds();
-                    expect(newBounds.data.width).toBe(oldBounds.data.width + 50);
-
-                    const newTopLeft = newBounds.position('top_left');
-
-                    expect(newTopLeft.data.x).toBe(oldTopLeft.data.x - 50);
-                    expect(newTopLeft.data.y).toBe(oldTopLeft.data.y);
-                }
-            },
-            shouldShow4Handles: {
-                title: 'should show 4 handles',
-                run: async workflow => {
-                    const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
-
-                    await workflow.app.graph.waitForCreation(PMetadata.getType(ResizeHandle), async () => {
-                        await task.click();
-                    });
-
-                    const topLeft = await task.resizeHandles().waitForKind('top-left');
-                    expect(await topLeft.locate().count()).toBe(1);
-
-                    const topRight = await task.resizeHandles().waitForKind('top-right');
-                    expect(await topRight.locate().count()).toBe(1);
-
-                    const bottomLeft = await task.resizeHandles().waitForKind('bottom-left');
-                    expect(await bottomLeft.locate().count()).toBe(1);
-
-                    const bottomRight = await task.resizeHandles().waitForKind('bottom-right');
-                    expect(await bottomRight.locate().count()).toBe(1);
-                }
-            }
-        };
-
-        const { cases, additional } = customizeWorkflowTestCases(resizeHandleTestCases, customization);
-
-        selectWorkflowTest(test, cases.shouldAllowResizing)(...workflowTestArguments(cases.shouldAllowResizing));
-        selectWorkflowTest(test, cases.shouldShow4Handles)(...workflowTestArguments(cases.shouldShow4Handles));
-        additional?.(test);
+        const suite = workflowSuite(test, 'resizeHandle', resizeHandleSuiteCases, options);
+        test(...suite.args('shouldAllowResizing'));
+        test(...suite.args('shouldShow4Handles'));
+        suite.done();
     });
 }

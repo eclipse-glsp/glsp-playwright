@@ -16,63 +16,55 @@
 import { expect, provideUndoRedoTrigger } from '@eclipse-glsp/playwright';
 import { TaskManual } from '../../../../graph/elements/task-manual.po';
 import { TaskManualNodes } from '../../../nodes';
-import {
-    customizeWorkflowTestCases,
-    selectWorkflowTest,
-    workflowTestArguments,
-    WorkflowSuiteCustomization,
-    WorkflowTestCase
-} from '../../../suite';
-import { WorkflowTest } from '../../../workflow-test';
+import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
+import type { WorkflowTest } from '../../../workflow-test';
 
-/** Stable identifiers of the test cases provided by {@link defineUndoRedoSuite}. */
-export type UndoRedoTestCaseId = 'shouldAllowUndoAndRedo';
+/** Default cases of the reusable undo/redo suite, keyed by stable identifiers. */
+export const undoRedoSuiteCases = {
+    shouldAllowUndoAndRedo: {
+        title: 'should allow undo and redo',
+        run: async workflow => {
+            const trigger = provideUndoRedoTrigger(workflow.integration, workflow.app);
+            await expect(workflow.app.graph).toContainElement({ type: TaskManual, query: { label: TaskManualNodes.pushLabel } });
 
-/** Integration-specific changes for {@link defineUndoRedoSuite}. */
-export type UndoRedoSuiteCustomization = WorkflowSuiteCustomization<Record<UndoRedoTestCaseId, WorkflowTestCase>>;
+            const node = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
+            await node.delete();
+
+            await expect(workflow.app.graph).not.toContainElement({
+                type: TaskManual,
+                query: { label: TaskManualNodes.pushLabel }
+            });
+
+            await trigger.undo();
+
+            await expect(workflow.app.graph).toContainElement({ type: TaskManual, query: { label: TaskManualNodes.pushLabel } });
+
+            await trigger.redo();
+
+            await expect(workflow.app.graph).not.toContainElement({
+                type: TaskManual,
+                query: { label: TaskManualNodes.pushLabel }
+            });
+        }
+    }
+} satisfies WorkflowTestCases;
+
+/** Integration-provided replacement bodies for {@link defineUndoRedoSuite}. */
+export type UndoRedoSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof undoRedoSuiteCases>;
+
+/** Integration-specific skips for {@link defineUndoRedoSuite}. */
+export type UndoRedoSuiteOptions = WorkflowSuiteOptions<typeof undoRedoSuiteCases>;
 
 /**
  * Registers the reusable undo/redo suite.
  *
  * @param test test instance whose integration should execute the suite
- * @param customization integration-specific replacements and extensions
+ * @param options integration-specific suite and case skips
  */
-export function defineUndoRedoSuite(test: WorkflowTest, customization: UndoRedoSuiteCustomization = {}): void {
+export function defineUndoRedoSuite(test: WorkflowTest, options?: UndoRedoSuiteOptions): void {
     test.describe('The undo redo trigger', () => {
-        test.skip(customization.skip !== undefined, customization.skip);
-
-        const undoRedoTestCases: Record<UndoRedoTestCaseId, WorkflowTestCase> = {
-            shouldAllowUndoAndRedo: {
-                title: 'should allow undo and redo',
-                run: async workflow => {
-                    const trigger = provideUndoRedoTrigger(workflow.integration, workflow.app);
-                    await expect(workflow.app.graph).toContainElement({ type: TaskManual, query: { label: TaskManualNodes.pushLabel } });
-
-                    const node = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
-                    await node.delete();
-
-                    await expect(workflow.app.graph).not.toContainElement({
-                        type: TaskManual,
-                        query: { label: TaskManualNodes.pushLabel }
-                    });
-
-                    await trigger.undo();
-
-                    await expect(workflow.app.graph).toContainElement({ type: TaskManual, query: { label: TaskManualNodes.pushLabel } });
-
-                    await trigger.redo();
-
-                    await expect(workflow.app.graph).not.toContainElement({
-                        type: TaskManual,
-                        query: { label: TaskManualNodes.pushLabel }
-                    });
-                }
-            }
-        };
-
-        const { cases, additional } = customizeWorkflowTestCases(undoRedoTestCases, customization);
-
-        selectWorkflowTest(test, cases.shouldAllowUndoAndRedo)(...workflowTestArguments(cases.shouldAllowUndoAndRedo));
-        additional?.(test);
+        const suite = workflowSuite(test, 'undoRedo', undoRedoSuiteCases, options);
+        test(...suite.args('shouldAllowUndoAndRedo'));
+        suite.done();
     });
 }

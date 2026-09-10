@@ -18,93 +18,76 @@ import { ActivityNodeFork } from '../../../graph/elements/activity-node-fork.po'
 import { Edge } from '../../../graph/elements/edge.po';
 import { TaskManual } from '../../../graph/elements/task-manual.po';
 import { TaskManualNodes } from '../../nodes';
-import {
-    customizeWorkflowTestCases,
-    selectWorkflowTest,
-    workflowTestArguments,
-    WorkflowSuiteCustomization,
-    WorkflowTestCase
-} from '../../suite';
-import { WorkflowTest } from '../../workflow-test';
+import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../suite';
+import type { WorkflowTest } from '../../workflow-test';
 
-/** Stable identifiers of the test cases provided by {@link defineConnectableElementSuite}. */
-export type ConnectableElementTestCaseId =
-    | 'shouldAllowAccessingAllEdgesOfAType'
-    | 'shouldReturnTypedSourcesOnAccess'
-    | 'shouldAllowAccessingAllEdgesOfATypeAgainstATargetType';
+/** Default cases of the reusable connectable-element edge-accessor suite, keyed by stable identifiers. */
+export const connectableElementSuiteCases = {
+    shouldAllowAccessingAllEdgesOfAType: {
+        title: 'should allow accessing all edges of a type',
+        run: async workflow => {
+            const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
+            const edges = await task.edges().outgoingEdgesOfType(Edge);
 
-/** Integration-specific changes for {@link defineConnectableElementSuite}. */
-export type ConnectableElementSuiteCustomization = WorkflowSuiteCustomization<Record<ConnectableElementTestCaseId, WorkflowTestCase>>;
+            const ids = await Promise.all(edges.map(async e => e.idAttr()));
+            const expectedIds = ['edge_task_Push_fork_1'];
+
+            expect(ids.length).toBe(expectedIds.length);
+            ids.forEach(id => {
+                if (!expectedIds.some(e => id.includes(e))) {
+                    throw new Error(`${id} is not in the list of expected ids: ${expectedIds}`);
+                }
+            });
+        }
+    },
+    shouldReturnTypedSourcesOnAccess: {
+        title: 'should return typed sources on access',
+        run: async workflow => {
+            const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
+            const edges = await task.edges().outgoingEdgesOfType(Edge);
+            expect(edges.length).toBe(1);
+
+            const source = await edges[0].source();
+            expect(await source.idAttr()).toContain('task_Push');
+            expect(source instanceof TaskManual).toBeTruthy();
+        }
+    },
+    shouldAllowAccessingAllEdgesOfATypeAgainstATargetType: {
+        title: 'should allow accessing all edges of a type against a target type',
+        run: async workflow => {
+            const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
+            const edges = await task.edges().outgoingEdgesOfType(Edge, { targetConstructor: ActivityNodeFork });
+            expect(edges.length).toBe(1);
+
+            const source = await edges[0].source();
+            expect(await source.idAttr()).toContain('task_Push');
+            expect(source instanceof TaskManual).toBeTruthy();
+
+            const target = await edges[0].target();
+            expect(await target.idAttr()).toContain('fork_1');
+            expect(target instanceof ActivityNodeFork).toBeTruthy();
+        }
+    }
+} satisfies WorkflowTestCases;
+
+/** Integration-provided replacement bodies for {@link defineConnectableElementSuite}. */
+export type ConnectableElementSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof connectableElementSuiteCases>;
+
+/** Integration-specific skips for {@link defineConnectableElementSuite}. */
+export type ConnectableElementSuiteOptions = WorkflowSuiteOptions<typeof connectableElementSuiteCases>;
 
 /**
  * Registers the reusable connectable-element edge-accessor suite.
  *
  * @param test test instance whose integration should execute the suite
- * @param customization integration-specific replacements and extensions
+ * @param options integration-specific suite and case skips
  */
-export function defineConnectableElementSuite(test: WorkflowTest, customization: ConnectableElementSuiteCustomization = {}): void {
+export function defineConnectableElementSuite(test: WorkflowTest, options?: ConnectableElementSuiteOptions): void {
     test.describe('The edge accessor of a connectable element', () => {
-        test.skip(customization.skip !== undefined, customization.skip);
-
-        const connectableElementTestCases: Record<ConnectableElementTestCaseId, WorkflowTestCase> = {
-            shouldAllowAccessingAllEdgesOfAType: {
-                title: 'should allow accessing all edges of a type',
-                run: async workflow => {
-                    const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
-                    const edges = await task.edges().outgoingEdgesOfType(Edge);
-
-                    const ids = await Promise.all(edges.map(async e => e.idAttr()));
-                    const expectedIds = ['edge_task_Push_fork_1'];
-
-                    expect(ids.length).toBe(expectedIds.length);
-                    ids.forEach(id => {
-                        if (!expectedIds.some(e => id.includes(e))) {
-                            throw new Error(`${id} is not in the list of expected ids: ${expectedIds}`);
-                        }
-                    });
-                }
-            },
-            shouldReturnTypedSourcesOnAccess: {
-                title: 'should return typed sources on access',
-                run: async workflow => {
-                    const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
-                    const edges = await task.edges().outgoingEdgesOfType(Edge);
-                    expect(edges.length).toBe(1);
-
-                    const source = await edges[0].source();
-                    expect(await source.idAttr()).toContain('task_Push');
-                    expect(source instanceof TaskManual).toBeTruthy();
-                }
-            },
-            shouldAllowAccessingAllEdgesOfATypeAgainstATargetType: {
-                title: 'should allow accessing all edges of a type against a target type',
-                run: async workflow => {
-                    const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
-                    const edges = await task.edges().outgoingEdgesOfType(Edge, { targetConstructor: ActivityNodeFork });
-                    expect(edges.length).toBe(1);
-
-                    const source = await edges[0].source();
-                    expect(await source.idAttr()).toContain('task_Push');
-                    expect(source instanceof TaskManual).toBeTruthy();
-
-                    const target = await edges[0].target();
-                    expect(await target.idAttr()).toContain('fork_1');
-                    expect(target instanceof ActivityNodeFork).toBeTruthy();
-                }
-            }
-        };
-
-        const { cases, additional } = customizeWorkflowTestCases(connectableElementTestCases, customization);
-
-        selectWorkflowTest(
-            test,
-            cases.shouldAllowAccessingAllEdgesOfAType
-        )(...workflowTestArguments(cases.shouldAllowAccessingAllEdgesOfAType));
-        selectWorkflowTest(test, cases.shouldReturnTypedSourcesOnAccess)(...workflowTestArguments(cases.shouldReturnTypedSourcesOnAccess));
-        selectWorkflowTest(
-            test,
-            cases.shouldAllowAccessingAllEdgesOfATypeAgainstATargetType
-        )(...workflowTestArguments(cases.shouldAllowAccessingAllEdgesOfATypeAgainstATargetType));
-        additional?.(test);
+        const suite = workflowSuite(test, 'connectableElement', connectableElementSuiteCases, options);
+        test(...suite.args('shouldAllowAccessingAllEdgesOfAType'));
+        test(...suite.args('shouldReturnTypedSourcesOnAccess'));
+        test(...suite.args('shouldAllowAccessingAllEdgesOfATypeAgainstATargetType'));
+        suite.done();
     });
 }

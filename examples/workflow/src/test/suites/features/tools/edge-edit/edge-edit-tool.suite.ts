@@ -18,130 +18,110 @@ import { Edge } from '../../../../../graph/elements/edge.po';
 import { TaskAutomated } from '../../../../../graph/elements/task-automated.po';
 import { TaskManual } from '../../../../../graph/elements/task-manual.po';
 import { TaskAutomatedNodes, TaskManualNodes } from '../../../../nodes';
-import {
-    customizeWorkflowTestCases,
-    selectWorkflowTest,
-    workflowTestArguments,
-    WorkflowSuiteCustomization,
-    WorkflowTestCase
-} from '../../../../suite';
-import { WorkflowTest } from '../../../../workflow-test';
+import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../../suite';
+import type { WorkflowTest } from '../../../../workflow-test';
 
-/** Stable identifiers of the test cases provided by {@link defineEdgeEditToolSuite}. */
-export type EdgeEditToolTestCaseId =
-    | 'shouldAllowReconnectingEdgesInTheGraph'
-    | 'shouldAllowMovingTheRoutingPointsInTheGraph'
-    | 'shouldAllowRemovingTheRoutingPointsInTheGraphByRealigning';
+/** Default cases of the reusable edge-edit-tool suite, keyed by stable identifiers. */
+export const edgeEditToolSuiteCases = {
+    shouldAllowReconnectingEdgesInTheGraph: {
+        title: 'should allow reconnecting edges in the graph',
+        run: async workflow => {
+            const source = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
+            const newSource = await workflow.app.graph.getNodeByLabel(TaskAutomatedNodes.chktpLabel, TaskAutomated);
+            const newTarget = await workflow.app.graph.getNodeByLabel(TaskAutomatedNodes.chkwtLabel, TaskAutomated);
 
-/** Integration-specific changes for {@link defineEdgeEditToolSuite}. */
-export type EdgeEditToolSuiteCustomization = WorkflowSuiteCustomization<Record<EdgeEditToolTestCaseId, WorkflowTestCase>>;
+            const edge = await source.edges().outgoingEdgeOfType(Edge);
+            await edge.reconnectTarget(newTarget);
+            expect(await edge.targetId()).toBe(await newTarget.idAttr());
+
+            await edge.reconnectSource(newSource);
+            expect(await edge.sourceId()).toBe(await newSource.idAttr());
+        }
+    },
+    shouldAllowMovingTheRoutingPointsInTheGraph: {
+        title: 'should allow moving the routing points in the graph',
+        run: async workflow => {
+            const source = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
+
+            const edge = await source.edges().outgoingEdgeOfType(Edge);
+            const routingPoints = edge.routingPoints();
+            await routingPoints.enable();
+            let points = await routingPoints.points();
+            const currentPointsLength = points.length;
+
+            let volatilePoints = await routingPoints.volatilePoints();
+            expect(volatilePoints).toHaveLength(1);
+
+            const volatilePoint = volatilePoints[0];
+            await workflow.app.graph.waitForReplacement(PMetadata.getType(VolatileRoutingPoint), async () => {
+                await volatilePoint.dragToRelativePosition({ x: 50, y: 50 });
+            });
+
+            points = await routingPoints.points();
+            expect(points).toHaveLength(currentPointsLength + 1);
+
+            volatilePoints = await routingPoints.volatilePoints();
+            expect(volatilePoints).toHaveLength(2);
+        }
+    },
+    shouldAllowRemovingTheRoutingPointsInTheGraphByRealigning: {
+        title: 'should allow removing the routing points in the graph by realigning',
+        run: async workflow => {
+            const source = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
+
+            const edge = await source.edges().outgoingEdgeOfType(Edge);
+            const routingPoints = edge.routingPoints();
+            await routingPoints.enable();
+            let points = await routingPoints.points();
+            const currentPointsLength = points.length;
+
+            let volatilePoints = await routingPoints.volatilePoints();
+            expect(volatilePoints).toHaveLength(1);
+
+            // Middle one
+            await workflow.app.graph.waitForReplacement(PMetadata.getType(VolatileRoutingPoint), async () => {
+                await volatilePoints[0].dragToRelativePosition({ x: 0, y: 50 });
+            });
+
+            points = await routingPoints.points();
+            expect(points).toHaveLength(currentPointsLength + 1);
+
+            volatilePoints = await routingPoints.volatilePoints();
+            expect(volatilePoints).toHaveLength(2);
+
+            // Junction
+            const junction = points.find(p => p.lastSnapshot?.kind === 'junction')!;
+            await workflow.app.graph.waitForHide(junction.locator, async () => {
+                await junction.dragToRelativePosition({ x: 20, y: -40 });
+            });
+
+            points = await routingPoints.points();
+            expect(points).toHaveLength(currentPointsLength);
+
+            volatilePoints = await routingPoints.volatilePoints();
+            expect(volatilePoints).toHaveLength(1);
+        }
+    }
+} satisfies WorkflowTestCases;
+
+/** Integration-provided replacement bodies for {@link defineEdgeEditToolSuite}. */
+export type EdgeEditToolSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof edgeEditToolSuiteCases>;
+
+/** Integration-specific skips for {@link defineEdgeEditToolSuite}. */
+export type EdgeEditToolSuiteOptions = WorkflowSuiteOptions<typeof edgeEditToolSuiteCases>;
 
 /**
  * Registers the reusable edge-edit-tool suite.
  *
  * @param test test instance whose integration should execute the suite
- * @param customization integration-specific replacements and extensions
+ * @param options integration-specific suite and case skips
  */
-export function defineEdgeEditToolSuite(test: WorkflowTest, customization: EdgeEditToolSuiteCustomization = {}): void {
+export function defineEdgeEditToolSuite(test: WorkflowTest, options?: EdgeEditToolSuiteOptions): void {
     test.describe('The edge edit tool', () => {
-        test.skip(customization.skip !== undefined, customization.skip);
-
-        const edgeEditToolTestCases: Record<EdgeEditToolTestCaseId, WorkflowTestCase> = {
-            shouldAllowReconnectingEdgesInTheGraph: {
-                title: 'should allow reconnecting edges in the graph',
-                run: async workflow => {
-                    const source = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
-                    const newSource = await workflow.app.graph.getNodeByLabel(TaskAutomatedNodes.chktpLabel, TaskAutomated);
-                    const newTarget = await workflow.app.graph.getNodeByLabel(TaskAutomatedNodes.chkwtLabel, TaskAutomated);
-
-                    const edge = await source.edges().outgoingEdgeOfType(Edge);
-                    await edge.reconnectTarget(newTarget);
-                    expect(await edge.targetId()).toBe(await newTarget.idAttr());
-
-                    await edge.reconnectSource(newSource);
-                    expect(await edge.sourceId()).toBe(await newSource.idAttr());
-                }
-            },
-            shouldAllowMovingTheRoutingPointsInTheGraph: {
-                title: 'should allow moving the routing points in the graph',
-                run: async workflow => {
-                    const source = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
-
-                    const edge = await source.edges().outgoingEdgeOfType(Edge);
-                    const routingPoints = edge.routingPoints();
-                    await routingPoints.enable();
-                    let points = await routingPoints.points();
-                    const currentPointsLength = points.length;
-
-                    let volatilePoints = await routingPoints.volatilePoints();
-                    expect(volatilePoints).toHaveLength(1);
-
-                    const volatilePoint = volatilePoints[0];
-                    await workflow.app.graph.waitForReplacement(PMetadata.getType(VolatileRoutingPoint), async () => {
-                        await volatilePoint.dragToRelativePosition({ x: 50, y: 50 });
-                    });
-
-                    points = await routingPoints.points();
-                    expect(points).toHaveLength(currentPointsLength + 1);
-
-                    volatilePoints = await routingPoints.volatilePoints();
-                    expect(volatilePoints).toHaveLength(2);
-                }
-            },
-            shouldAllowRemovingTheRoutingPointsInTheGraphByRealigning: {
-                title: 'should allow removing the routing points in the graph by realigning',
-                run: async workflow => {
-                    const source = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
-
-                    const edge = await source.edges().outgoingEdgeOfType(Edge);
-                    const routingPoints = edge.routingPoints();
-                    await routingPoints.enable();
-                    let points = await routingPoints.points();
-                    const currentPointsLength = points.length;
-
-                    let volatilePoints = await routingPoints.volatilePoints();
-                    expect(volatilePoints).toHaveLength(1);
-
-                    // Middle one
-                    await workflow.app.graph.waitForReplacement(PMetadata.getType(VolatileRoutingPoint), async () => {
-                        await volatilePoints[0].dragToRelativePosition({ x: 0, y: 50 });
-                    });
-
-                    points = await routingPoints.points();
-                    expect(points).toHaveLength(currentPointsLength + 1);
-
-                    volatilePoints = await routingPoints.volatilePoints();
-                    expect(volatilePoints).toHaveLength(2);
-
-                    // Junction
-                    const junction = points.find(p => p.lastSnapshot?.kind === 'junction')!;
-                    await workflow.app.graph.waitForHide(junction.locator, async () => {
-                        await junction.dragToRelativePosition({ x: 20, y: -40 });
-                    });
-
-                    points = await routingPoints.points();
-                    expect(points).toHaveLength(currentPointsLength);
-
-                    volatilePoints = await routingPoints.volatilePoints();
-                    expect(volatilePoints).toHaveLength(1);
-                }
-            }
-        };
-
-        const { cases, additional } = customizeWorkflowTestCases(edgeEditToolTestCases, customization);
-
-        selectWorkflowTest(
-            test,
-            cases.shouldAllowReconnectingEdgesInTheGraph
-        )(...workflowTestArguments(cases.shouldAllowReconnectingEdgesInTheGraph));
-        selectWorkflowTest(
-            test,
-            cases.shouldAllowMovingTheRoutingPointsInTheGraph
-        )(...workflowTestArguments(cases.shouldAllowMovingTheRoutingPointsInTheGraph));
-        selectWorkflowTest(
-            test,
-            cases.shouldAllowRemovingTheRoutingPointsInTheGraphByRealigning
-        )(...workflowTestArguments(cases.shouldAllowRemovingTheRoutingPointsInTheGraphByRealigning));
-        additional?.(test);
+        const suite = workflowSuite(test, 'edgeEditTool', edgeEditToolSuiteCases, options);
+        test(...suite.args('shouldAllowReconnectingEdgesInTheGraph'));
+        test(...suite.args('shouldAllowMovingTheRoutingPointsInTheGraph'));
+        test(...suite.args('shouldAllowRemovingTheRoutingPointsInTheGraphByRealigning'));
+        suite.done();
     });
 }

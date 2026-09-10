@@ -17,181 +17,158 @@ import { expect, provideDiagramShortcut } from '@eclipse-glsp/playwright';
 import { TaskAutomated } from '../../../../graph/elements/task-automated.po';
 import { TaskManual } from '../../../../graph/elements/task-manual.po';
 import { assertPopup, automatedLabel, expectedAutomatedPopupText, expectedManualPopupText, manualLabel } from '../../../../popup-text';
-import {
-    customizeWorkflowTestCases,
-    selectWorkflowTest,
-    workflowTestArguments,
-    WorkflowSuiteCustomization,
-    WorkflowTestCase
-} from '../../../suite';
-import { WorkflowTest, WorkflowTestContext } from '../../../workflow-test';
+import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
+import type { WorkflowTest, WorkflowTestContext } from '../../../workflow-test';
 
 function configureExpectedPopupText(workflow: WorkflowTestContext): void {
     expectedManualPopupText.setServer(workflow.glspServer);
     expectedAutomatedPopupText.setServer(workflow.glspServer);
 }
 
-/** Stable identifiers of the test cases provided by {@link definePopupSuite}. */
-export type PopupTestCaseId =
-    | 'shouldBeShownOnHoveringATaskManual'
-    | 'shouldAllowToAccessTheTextDirectlyInElements'
-    | 'shouldBeClosedOnEscape'
-    | 'shouldBeClosedOnNewHover'
-    | 'shouldBeClosedOnMouseMovedAway'
-    | 'shouldBeClosedOnFocusLost'
-    | 'shouldBeClosedOnCenterCommand'
-    | 'shouldBeClosedOnFitToScreenCommand'
-    | 'shouldBeClosedOnLayoutCommand';
+/** Default cases of the reusable popup suite, keyed by stable identifiers. */
+export const popupSuiteCases = {
+    shouldBeShownOnHoveringATaskManual: {
+        title: 'should be shown on hovering a task manual',
+        run: async workflow => {
+            configureExpectedPopupText(workflow);
+            const task = await workflow.app.graph.getNodeByLabel(manualLabel, TaskManual);
 
-/** Integration-specific changes for {@link definePopupSuite}. */
-export type PopupSuiteCustomization = WorkflowSuiteCustomization<Record<PopupTestCaseId, WorkflowTestCase>>;
+            await expect(workflow.app.popup.locate()).toBeHidden();
+            await task.hover();
+            await workflow.app.popup.waitForVisible();
+            await expect(workflow.app.popup.locate()).toBeVisible();
+
+            const popup = task.popup();
+            expect(await popup.innerText()).toBe(expectedManualPopupText.get());
+        }
+    },
+    shouldAllowToAccessTheTextDirectlyInElements: {
+        title: 'should allow to access the text directly in elements',
+        run: async workflow => {
+            configureExpectedPopupText(workflow);
+            const task = await workflow.app.graph.getNodeByLabel(manualLabel, TaskManual);
+            await expect(workflow.app.popup.locate()).toBeHidden();
+            const text = await task.popupText();
+            await expect(workflow.app.popup.locate()).toBeVisible();
+            expect(text).toBe(expectedManualPopupText.get());
+        }
+    },
+    shouldBeClosedOnEscape: {
+        title: 'escape',
+        run: async workflow => {
+            configureExpectedPopupText(workflow);
+            await workflow.app.graph.focus();
+            await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
+
+            await workflow.app.page.keyboard.press('Escape');
+            await workflow.app.popup.waitForHidden();
+
+            await expect(workflow.app.popup.locate()).toBeHidden();
+        }
+    },
+    shouldBeClosedOnNewHover: {
+        title: 'new hover',
+        run: async workflow => {
+            configureExpectedPopupText(workflow);
+            await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
+
+            await workflow.app.popup.close();
+
+            await assertPopup(workflow.app, automatedLabel, TaskAutomated, expectedAutomatedPopupText.get());
+        }
+    },
+    shouldBeClosedOnMouseMovedAway: {
+        title: 'mouse moved away',
+        run: async workflow => {
+            configureExpectedPopupText(workflow);
+            await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
+
+            const bounds = await workflow.app.graph.bounds();
+            await bounds.position('middle_center').move();
+            await workflow.app.popup.waitForHidden();
+
+            await expect(workflow.app.popup.locate()).toBeHidden();
+        }
+    },
+    shouldBeClosedOnFocusLost: {
+        title: 'focus lost',
+        run: async workflow => {
+            configureExpectedPopupText(workflow);
+            const task = await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
+
+            await workflow.app.graph.locate().click();
+            await workflow.app.popup.waitForHidden();
+
+            await expect(task.popup().locate()).toBeHidden();
+        }
+    },
+    shouldBeClosedOnCenterCommand: {
+        title: 'center command',
+        run: async workflow => {
+            configureExpectedPopupText(workflow);
+            await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
+            await workflow.app.graph.focus();
+            await workflow.app.page.keyboard.press(provideDiagramShortcut(workflow.integration, 'center'));
+            await workflow.app.popup.waitForHidden();
+
+            await expect(workflow.app.popup.locate()).toBeHidden();
+        }
+    },
+    shouldBeClosedOnFitToScreenCommand: {
+        title: 'fit to screen command',
+        run: async workflow => {
+            configureExpectedPopupText(workflow);
+            await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
+            await workflow.app.graph.focus();
+            await workflow.app.page.keyboard.press(provideDiagramShortcut(workflow.integration, 'fitToScreen'));
+            await workflow.app.popup.waitForHidden();
+
+            await expect(workflow.app.popup.locate()).toBeHidden();
+        }
+    },
+    shouldBeClosedOnLayoutCommand: {
+        title: 'layout command',
+        run: async workflow => {
+            configureExpectedPopupText(workflow);
+            await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
+            await workflow.app.graph.focus();
+            await workflow.app.page.keyboard.press(provideDiagramShortcut(workflow.integration, 'layout'));
+            await workflow.app.popup.waitForHidden();
+
+            await expect(workflow.app.popup.locate()).toBeHidden();
+        }
+    }
+} satisfies WorkflowTestCases;
+
+/** Integration-provided replacement bodies for {@link definePopupSuite}. */
+export type PopupSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof popupSuiteCases>;
+
+/** Integration-specific skips for {@link definePopupSuite}. */
+export type PopupSuiteOptions = WorkflowSuiteOptions<typeof popupSuiteCases>;
 
 /**
  * Registers the reusable popup suite.
  *
  * @param test test instance whose integration should execute the suite
- * @param customization integration-specific replacements and extensions
+ * @param options integration-specific suite and case skips
  */
-export function definePopupSuite(test: WorkflowTest, customization: PopupSuiteCustomization = {}): void {
+export function definePopupSuite(test: WorkflowTest, options?: PopupSuiteOptions): void {
     test.describe('The popup', () => {
-        test.skip(customization.skip !== undefined, customization.skip);
+        const suite = workflowSuite(test, 'popup', popupSuiteCases, options);
 
-        const popupTestCases: Record<PopupTestCaseId, WorkflowTestCase> = {
-            shouldBeShownOnHoveringATaskManual: {
-                title: 'should be shown on hovering a task manual',
-                run: async workflow => {
-                    configureExpectedPopupText(workflow);
-                    const task = await workflow.app.graph.getNodeByLabel(manualLabel, TaskManual);
+        test(...suite.args('shouldBeShownOnHoveringATaskManual'));
+        test(...suite.args('shouldAllowToAccessTheTextDirectlyInElements'));
 
-                    await expect(workflow.app.popup.locate()).toBeHidden();
-                    await task.hover();
-                    await workflow.app.popup.waitForVisible();
-                    await expect(workflow.app.popup.locate()).toBeVisible();
-
-                    const popup = task.popup();
-                    expect(await popup.innerText()).toBe(expectedManualPopupText.get());
-                }
-            },
-            shouldAllowToAccessTheTextDirectlyInElements: {
-                title: 'should allow to access the text directly in elements',
-                run: async workflow => {
-                    configureExpectedPopupText(workflow);
-                    const task = await workflow.app.graph.getNodeByLabel(manualLabel, TaskManual);
-                    await expect(workflow.app.popup.locate()).toBeHidden();
-                    const text = await task.popupText();
-                    await expect(workflow.app.popup.locate()).toBeVisible();
-                    expect(text).toBe(expectedManualPopupText.get());
-                }
-            },
-            shouldBeClosedOnEscape: {
-                title: 'escape',
-                run: async workflow => {
-                    configureExpectedPopupText(workflow);
-                    await workflow.app.graph.focus();
-                    await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
-
-                    await workflow.app.page.keyboard.press('Escape');
-                    await workflow.app.popup.waitForHidden();
-
-                    await expect(workflow.app.popup.locate()).toBeHidden();
-                }
-            },
-            shouldBeClosedOnNewHover: {
-                title: 'new hover',
-                run: async workflow => {
-                    configureExpectedPopupText(workflow);
-                    await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
-
-                    await workflow.app.popup.close();
-
-                    await assertPopup(workflow.app, automatedLabel, TaskAutomated, expectedAutomatedPopupText.get());
-                }
-            },
-            shouldBeClosedOnMouseMovedAway: {
-                title: 'mouse moved away',
-                run: async workflow => {
-                    configureExpectedPopupText(workflow);
-                    await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
-
-                    const bounds = await workflow.app.graph.bounds();
-                    await bounds.position('middle_center').move();
-                    await workflow.app.popup.waitForHidden();
-
-                    await expect(workflow.app.popup.locate()).toBeHidden();
-                }
-            },
-            shouldBeClosedOnFocusLost: {
-                title: 'focus lost',
-                run: async workflow => {
-                    configureExpectedPopupText(workflow);
-                    const task = await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
-
-                    await workflow.app.graph.locate().click();
-                    await workflow.app.popup.waitForHidden();
-
-                    await expect(task.popup().locate()).toBeHidden();
-                }
-            },
-            shouldBeClosedOnCenterCommand: {
-                title: 'center command',
-                run: async workflow => {
-                    configureExpectedPopupText(workflow);
-                    await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
-                    await workflow.app.graph.focus();
-                    await workflow.app.page.keyboard.press(provideDiagramShortcut(workflow.integration, 'center'));
-                    await workflow.app.popup.waitForHidden();
-
-                    await expect(workflow.app.popup.locate()).toBeHidden();
-                }
-            },
-            shouldBeClosedOnFitToScreenCommand: {
-                title: 'fit to screen command',
-                run: async workflow => {
-                    configureExpectedPopupText(workflow);
-                    await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
-                    await workflow.app.graph.focus();
-                    await workflow.app.page.keyboard.press(provideDiagramShortcut(workflow.integration, 'fitToScreen'));
-                    await workflow.app.popup.waitForHidden();
-
-                    await expect(workflow.app.popup.locate()).toBeHidden();
-                }
-            },
-            shouldBeClosedOnLayoutCommand: {
-                title: 'layout command',
-                run: async workflow => {
-                    configureExpectedPopupText(workflow);
-                    await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
-                    await workflow.app.graph.focus();
-                    await workflow.app.page.keyboard.press(provideDiagramShortcut(workflow.integration, 'layout'));
-                    await workflow.app.popup.waitForHidden();
-
-                    await expect(workflow.app.popup.locate()).toBeHidden();
-                }
-            }
-        };
-
-        const { cases, additional } = customizeWorkflowTestCases(popupTestCases, customization);
-
-        selectWorkflowTest(
-            test,
-            cases.shouldBeShownOnHoveringATaskManual
-        )(...workflowTestArguments(cases.shouldBeShownOnHoveringATaskManual));
-        selectWorkflowTest(
-            test,
-            cases.shouldAllowToAccessTheTextDirectlyInElements
-        )(...workflowTestArguments(cases.shouldAllowToAccessTheTextDirectlyInElements));
         test.describe('should be closed on', () => {
-            selectWorkflowTest(test, cases.shouldBeClosedOnEscape)(...workflowTestArguments(cases.shouldBeClosedOnEscape));
-            selectWorkflowTest(test, cases.shouldBeClosedOnNewHover)(...workflowTestArguments(cases.shouldBeClosedOnNewHover));
-            selectWorkflowTest(test, cases.shouldBeClosedOnMouseMovedAway)(...workflowTestArguments(cases.shouldBeClosedOnMouseMovedAway));
-            selectWorkflowTest(test, cases.shouldBeClosedOnFocusLost)(...workflowTestArguments(cases.shouldBeClosedOnFocusLost));
-            selectWorkflowTest(test, cases.shouldBeClosedOnCenterCommand)(...workflowTestArguments(cases.shouldBeClosedOnCenterCommand));
-            selectWorkflowTest(
-                test,
-                cases.shouldBeClosedOnFitToScreenCommand
-            )(...workflowTestArguments(cases.shouldBeClosedOnFitToScreenCommand));
-            selectWorkflowTest(test, cases.shouldBeClosedOnLayoutCommand)(...workflowTestArguments(cases.shouldBeClosedOnLayoutCommand));
+            test(...suite.args('shouldBeClosedOnEscape'));
+            test(...suite.args('shouldBeClosedOnNewHover'));
+            test(...suite.args('shouldBeClosedOnMouseMovedAway'));
+            test(...suite.args('shouldBeClosedOnFocusLost'));
+            test(...suite.args('shouldBeClosedOnCenterCommand'));
+            test(...suite.args('shouldBeClosedOnFitToScreenCommand'));
+            test(...suite.args('shouldBeClosedOnLayoutCommand'));
         });
-        additional?.(test);
+
+        suite.done();
     });
 }

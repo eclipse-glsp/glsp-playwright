@@ -15,78 +15,67 @@
  ********************************************************************************/
 import { expect } from '@eclipse-glsp/playwright';
 import { TaskAutomated } from '../../../../graph/elements/task-automated.po';
-import {
-    customizeWorkflowTestCases,
-    selectWorkflowTest,
-    workflowTestArguments,
-    WorkflowSuiteCustomization,
-    WorkflowTestCase
-} from '../../../suite';
-import { WorkflowTest } from '../../../workflow-test';
+import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
+import type { WorkflowTest } from '../../../workflow-test';
 
 const label = 'ChkWt';
 const expectedAutomatedPopupText = 'INFO: This is an automated task';
 
-/** Stable identifiers of the test cases provided by {@link defineMarkerSuite}. */
-export type MarkerTestCaseId = 'shouldBeShownAfterValidation' | 'shouldShowAPopupOnHover' | 'shouldBeStillVisibleAfterResizing';
+/** Default cases of the reusable marker suite, keyed by stable identifiers. */
+export const markerSuiteCases = {
+    shouldBeShownAfterValidation: {
+        title: 'should be shown after validation',
+        run: async workflow => {
+            await workflow.app.toolPalette.toolbar.validateTool().trigger();
+            const task = await workflow.app.graph.getNodeByLabel(label, TaskAutomated);
 
-/** Integration-specific changes for {@link defineMarkerSuite}. */
-export type MarkerSuiteCustomization = WorkflowSuiteCustomization<Record<MarkerTestCaseId, WorkflowTestCase>>;
+            const marker = task.marker();
+            await expect(marker.locate()).toBeVisible();
+        }
+    },
+    shouldShowAPopupOnHover: {
+        title: 'should show a popup on hover',
+        run: async workflow => {
+            await workflow.app.toolPalette.toolbar.validateTool().trigger();
+            const task = await workflow.app.graph.getNodeByLabel(label, TaskAutomated);
+            expect(await task.marker().popupText()).toBe(expectedAutomatedPopupText);
+        }
+    },
+    shouldBeStillVisibleAfterResizing: {
+        title: 'should be still visible after resizing',
+        run: async workflow => {
+            await workflow.app.toolPalette.toolbar.validateTool().trigger();
+            const task = await workflow.app.graph.getNodeByLabel(label, TaskAutomated);
+            expect(await task.marker().popupText()).toBe(expectedAutomatedPopupText);
+
+            await workflow.app.popup.close();
+            await expect(task.popup().locate()).toBeHidden();
+
+            const handle = await task.resizeHandles().ofKind('top-left');
+            await handle.dragToRelativePosition({ x: 10, y: 10 });
+            expect(await task.marker().popupText()).toBe(expectedAutomatedPopupText);
+        }
+    }
+} satisfies WorkflowTestCases;
+
+/** Integration-provided replacement bodies for {@link defineMarkerSuite}. */
+export type MarkerSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof markerSuiteCases>;
+
+/** Integration-specific skips for {@link defineMarkerSuite}. */
+export type MarkerSuiteOptions = WorkflowSuiteOptions<typeof markerSuiteCases>;
 
 /**
  * Registers the reusable marker suite.
  *
  * @param test test instance whose integration should execute the suite
- * @param customization integration-specific replacements and extensions
+ * @param options integration-specific suite and case skips
  */
-export function defineMarkerSuite(test: WorkflowTest, customization: MarkerSuiteCustomization = {}): void {
+export function defineMarkerSuite(test: WorkflowTest, options?: MarkerSuiteOptions): void {
     test.describe('The marker', () => {
-        test.skip(customization.skip !== undefined, customization.skip);
-
-        const markerTestCases: Record<MarkerTestCaseId, WorkflowTestCase> = {
-            shouldBeShownAfterValidation: {
-                title: 'should be shown after validation',
-                run: async workflow => {
-                    await workflow.app.toolPalette.toolbar.validateTool().trigger();
-                    const task = await workflow.app.graph.getNodeByLabel(label, TaskAutomated);
-
-                    const marker = task.marker();
-                    await expect(marker.locate()).toBeVisible();
-                }
-            },
-            shouldShowAPopupOnHover: {
-                title: 'should show a popup on hover',
-                run: async workflow => {
-                    await workflow.app.toolPalette.toolbar.validateTool().trigger();
-                    const task = await workflow.app.graph.getNodeByLabel(label, TaskAutomated);
-                    expect(await task.marker().popupText()).toBe(expectedAutomatedPopupText);
-                }
-            },
-            shouldBeStillVisibleAfterResizing: {
-                title: 'should be still visible after resizing',
-                run: async workflow => {
-                    await workflow.app.toolPalette.toolbar.validateTool().trigger();
-                    const task = await workflow.app.graph.getNodeByLabel(label, TaskAutomated);
-                    expect(await task.marker().popupText()).toBe(expectedAutomatedPopupText);
-
-                    await workflow.app.popup.close();
-                    await expect(task.popup().locate()).toBeHidden();
-
-                    const handle = await task.resizeHandles().ofKind('top-left');
-                    await handle.dragToRelativePosition({ x: 10, y: 10 });
-                    expect(await task.marker().popupText()).toBe(expectedAutomatedPopupText);
-                }
-            }
-        };
-
-        const { cases, additional } = customizeWorkflowTestCases(markerTestCases, customization);
-
-        selectWorkflowTest(test, cases.shouldBeShownAfterValidation)(...workflowTestArguments(cases.shouldBeShownAfterValidation));
-        selectWorkflowTest(test, cases.shouldShowAPopupOnHover)(...workflowTestArguments(cases.shouldShowAPopupOnHover));
-        selectWorkflowTest(
-            test,
-            cases.shouldBeStillVisibleAfterResizing
-        )(...workflowTestArguments(cases.shouldBeStillVisibleAfterResizing));
-        additional?.(test);
+        const suite = workflowSuite(test, 'marker', markerSuiteCases, options);
+        test(...suite.args('shouldBeShownAfterValidation'));
+        test(...suite.args('shouldShowAPopupOnHover'));
+        test(...suite.args('shouldBeStillVisibleAfterResizing'));
+        suite.done();
     });
 }

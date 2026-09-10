@@ -14,22 +14,14 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { expect } from '@eclipse-glsp/playwright';
-import {
-    customizeWorkflowTestCases,
-    selectWorkflowTest,
-    workflowTestArguments,
-    WorkflowSuiteCustomization,
-    WorkflowTestCase
-} from '../suite';
-import { WorkflowTest } from '../workflow-test';
-
-/** Stable identifiers of the test cases provided by {@link defineContextMenuSuite}. */
-export type ContextMenuTestCaseId = 'open' | 'close';
+import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../suite';
+import type { WorkflowTest } from '../workflow-test';
 
 /**
- * Default context-menu behavior for integrations without context-menu support.
+ * Default cases of the reusable context-menu suite, keyed by stable identifiers.
+ * The defaults describe integrations without context-menu support.
  */
-export const contextMenuTestCases: Record<ContextMenuTestCaseId, WorkflowTestCase> = {
+export const contextMenuSuiteCases = {
     open: {
         title: 'should throw an error when opening is not supported',
         run: async ({ app }) => {
@@ -42,24 +34,25 @@ export const contextMenuTestCases: Record<ContextMenuTestCaseId, WorkflowTestCas
             expect(() => app.contextMenu.close()).toThrow();
         }
     }
-};
+} satisfies WorkflowTestCases;
 
-/** Integration-specific changes for {@link defineContextMenuSuite}. */
-export type ContextMenuSuiteCustomization = WorkflowSuiteCustomization<Record<ContextMenuTestCaseId, WorkflowTestCase>>;
+/** Integration-provided replacement bodies for {@link defineContextMenuSuite}. */
+export type ContextMenuSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof contextMenuSuiteCases>;
+
+/** Integration-specific skips for {@link defineContextMenuSuite}. */
+export type ContextMenuSuiteOptions = WorkflowSuiteOptions<typeof contextMenuSuiteCases>;
 
 /**
- * Registers the reusable context-menu contract with optional integration-specific behavior.
+ * Registers the reusable context-menu contract.
  *
  * @param test test instance whose integration should execute the suite
- * @param customization integration-specific replacements and extensions
+ * @param options integration-specific suite and case skips
  */
-export function defineContextMenuSuite(test: WorkflowTest, customization: ContextMenuSuiteCustomization = {}): void {
+export function defineContextMenuSuite(test: WorkflowTest, options?: ContextMenuSuiteOptions): void {
     test.describe('The context menu', () => {
-        test.skip(customization.skip !== undefined, customization.skip);
-        const { cases, additional } = customizeWorkflowTestCases(contextMenuTestCases, customization);
-
-        selectWorkflowTest(test, cases.open)(...workflowTestArguments(cases.open));
-        selectWorkflowTest(test, cases.close)(...workflowTestArguments(cases.close));
-        additional?.(test);
+        const suite = workflowSuite(test, 'contextMenu', contextMenuSuiteCases, options);
+        test(...suite.args('open'));
+        test(...suite.args('close'));
+        suite.done();
     });
 }

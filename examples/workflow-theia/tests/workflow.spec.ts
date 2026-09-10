@@ -16,13 +16,16 @@
 import { expect } from '@eclipse-glsp/playwright';
 import { defineWorkflowSuites, test } from '@eclipse-glsp/workflow';
 
+// Theia is the only integration with a context menu, so the default contract
+// (opening/closing throws) is overridden with the actual behavior.
 defineWorkflowSuites(test, {
     contextMenu: {
-        replace: {
+        cases: {
             open: {
                 title: 'should allow to open the context menu',
                 run: async ({ app }) => {
                     await app.contextMenu.open();
+                    await expect(app.contextMenu.locate()).toBeVisible();
                 }
             },
             close: {
@@ -33,13 +36,6 @@ defineWorkflowSuites(test, {
                     await app.contextMenu.close();
                     await expect(app.contextMenu.locate()).toBeHidden();
                 }
-            }
-        },
-        // Exercise extending an effective case separately from replacing its implementation.
-        extend: {
-            open: base => async (context, testInfo) => {
-                await base(context, testInfo);
-                await expect(context.app.contextMenu.locate()).toBeVisible();
             }
         }
     }

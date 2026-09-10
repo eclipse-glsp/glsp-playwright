@@ -18,51 +18,43 @@ import { ActivityNodeFork } from '../../../graph/elements/activity-node-fork.po'
 import { Edge } from '../../../graph/elements/edge.po';
 import { TaskManual } from '../../../graph/elements/task-manual.po';
 import { TaskManualNodes } from '../../nodes';
-import {
-    customizeWorkflowTestCases,
-    selectWorkflowTest,
-    workflowTestArguments,
-    WorkflowSuiteCustomization,
-    WorkflowTestCase
-} from '../../suite';
-import { WorkflowTest } from '../../workflow-test';
+import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../suite';
+import type { WorkflowTest } from '../../workflow-test';
 
-/** Stable identifiers of the test cases provided by {@link defineEdgeSuite}. */
-export type EdgeTestCaseId = 'shouldHaveSourceAndTargetNodes';
+/** Default cases of the reusable Edges suite, keyed by stable identifiers. */
+export const edgeSuiteCases = {
+    shouldHaveSourceAndTargetNodes: {
+        title: 'should have source and target nodes',
+        run: async workflow => {
+            const source = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
+            const target = await workflow.app.graph.getNode('[id$="fork_1"]', ActivityNodeFork);
+            const edge = await workflow.app.graph.getEdgeBetween(Edge, { sourceNode: source, targetNode: target });
 
-/** Integration-specific changes for {@link defineEdgeSuite}. */
-export type EdgeSuiteCustomization = WorkflowSuiteCustomization<Record<EdgeTestCaseId, WorkflowTestCase>>;
+            const sourceId = await edge.sourceId();
+            expect(sourceId).toBe(await source.idAttr());
+
+            const targetId = await edge.targetId();
+            expect(targetId).toBe(await target.idAttr());
+        }
+    }
+} satisfies WorkflowTestCases;
+
+/** Integration-provided replacement bodies for {@link defineEdgeSuite}. */
+export type EdgeSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof edgeSuiteCases>;
+
+/** Integration-specific skips for {@link defineEdgeSuite}. */
+export type EdgeSuiteOptions = WorkflowSuiteOptions<typeof edgeSuiteCases>;
 
 /**
  * Registers the reusable Edges suite.
  *
  * @param test test instance whose integration should execute the suite
- * @param customization integration-specific replacements and extensions
+ * @param options integration-specific suite and case skips
  */
-export function defineEdgeSuite(test: WorkflowTest, customization: EdgeSuiteCustomization = {}): void {
+export function defineEdgeSuite(test: WorkflowTest, options?: EdgeSuiteOptions): void {
     test.describe('Edges', () => {
-        test.skip(customization.skip !== undefined, customization.skip);
-
-        const edgeTestCases: Record<EdgeTestCaseId, WorkflowTestCase> = {
-            shouldHaveSourceAndTargetNodes: {
-                title: 'should have source and target nodes',
-                run: async workflow => {
-                    const source = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
-                    const target = await workflow.app.graph.getNode('[id$="fork_1"]', ActivityNodeFork);
-                    const edge = await workflow.app.graph.getEdgeBetween(Edge, { sourceNode: source, targetNode: target });
-
-                    const sourceId = await edge.sourceId();
-                    expect(sourceId).toBe(await source.idAttr());
-
-                    const targetId = await edge.targetId();
-                    expect(targetId).toBe(await target.idAttr());
-                }
-            }
-        };
-
-        const { cases, additional } = customizeWorkflowTestCases(edgeTestCases, customization);
-
-        selectWorkflowTest(test, cases.shouldHaveSourceAndTargetNodes)(...workflowTestArguments(cases.shouldHaveSourceAndTargetNodes));
-        additional?.(test);
+        const suite = workflowSuite(test, 'edge', edgeSuiteCases, options);
+        test(...suite.args('shouldHaveSourceAndTargetNodes'));
+        suite.done();
     });
 }

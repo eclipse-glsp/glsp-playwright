@@ -16,76 +16,68 @@
 import { PMetadata, RoutingPoint, expect } from '@eclipse-glsp/playwright';
 import { Edge } from '../../../../graph/elements/edge.po';
 import { TaskManual } from '../../../../graph/elements/task-manual.po';
-import {
-    customizeWorkflowTestCases,
-    selectWorkflowTest,
-    workflowTestArguments,
-    WorkflowSuiteCustomization,
-    WorkflowTestCase
-} from '../../../suite';
-import { WorkflowTest } from '../../../workflow-test';
+import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
+import type { WorkflowTest } from '../../../workflow-test';
 
-/** Stable identifiers of the test cases provided by {@link defineRoutingPointSuite}. */
-export type RoutingPointTestCaseId = 'shouldBeAccessible' | 'shouldHaveTheDataKindAttribute';
+/** Default cases of the reusable edge-routing-point suite, keyed by stable identifiers. */
+export const routingPointSuiteCases = {
+    shouldBeAccessible: {
+        title: 'should be accessible',
+        run: async workflow => {
+            const node = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
+            const edge = await node.edges().outgoingEdgeOfType(Edge);
 
-/** Integration-specific changes for {@link defineRoutingPointSuite}. */
-export type RoutingPointSuiteCustomization = WorkflowSuiteCustomization<Record<RoutingPointTestCaseId, WorkflowTestCase>>;
+            const routingPoints = edge.routingPoints();
+            expect((await routingPoints.points({ wait: false })).length).toBe(0);
+            expect((await routingPoints.volatilePoints({ wait: false })).length).toBe(0);
+
+            await workflow.app.graph.waitForCreation(PMetadata.getType(RoutingPoint), async () => {
+                await edge.click();
+            });
+
+            expect((await routingPoints.points()).length).toBeGreaterThan(0);
+            expect((await routingPoints.volatilePoints()).length).toBe(1);
+        }
+    },
+    shouldHaveTheDataKindAttribute: {
+        title: 'should have the data kind attribute',
+        run: async workflow => {
+            const node = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
+            const edge = await node.edges().outgoingEdgeOfType(Edge);
+
+            const routingPoints = edge.routingPoints();
+            expect((await routingPoints.volatilePoints({ wait: false })).length).toBe(0);
+
+            await workflow.app.graph.waitForCreation(PMetadata.getType(RoutingPoint), async () => {
+                await edge.click();
+            });
+
+            const points = await routingPoints.volatilePoints();
+            expect(points.length).toBe(1);
+
+            const point = points[0];
+            expect(await point.dataKindAttr()).toBe('line');
+        }
+    }
+} satisfies WorkflowTestCases;
+
+/** Integration-provided replacement bodies for {@link defineRoutingPointSuite}. */
+export type RoutingPointSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof routingPointSuiteCases>;
+
+/** Integration-specific skips for {@link defineRoutingPointSuite}. */
+export type RoutingPointSuiteOptions = WorkflowSuiteOptions<typeof routingPointSuiteCases>;
 
 /**
  * Registers the reusable edge-routing-point suite.
  *
  * @param test test instance whose integration should execute the suite
- * @param customization integration-specific replacements and extensions
+ * @param options integration-specific suite and case skips
  */
-export function defineRoutingPointSuite(test: WorkflowTest, customization: RoutingPointSuiteCustomization = {}): void {
+export function defineRoutingPointSuite(test: WorkflowTest, options?: RoutingPointSuiteOptions): void {
     test.describe('The routing points of an edge', () => {
-        test.skip(customization.skip !== undefined, customization.skip);
-
-        const routingPointTestCases: Record<RoutingPointTestCaseId, WorkflowTestCase> = {
-            shouldBeAccessible: {
-                title: 'should be accessible',
-                run: async workflow => {
-                    const node = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
-                    const edge = await node.edges().outgoingEdgeOfType(Edge);
-
-                    const routingPoints = edge.routingPoints();
-                    expect((await routingPoints.points({ wait: false })).length).toBe(0);
-                    expect((await routingPoints.volatilePoints({ wait: false })).length).toBe(0);
-
-                    await workflow.app.graph.waitForCreation(PMetadata.getType(RoutingPoint), async () => {
-                        await edge.click();
-                    });
-
-                    expect((await routingPoints.points()).length).toBeGreaterThan(0);
-                    expect((await routingPoints.volatilePoints()).length).toBe(1);
-                }
-            },
-            shouldHaveTheDataKindAttribute: {
-                title: 'should have the data kind attribute',
-                run: async workflow => {
-                    const node = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
-                    const edge = await node.edges().outgoingEdgeOfType(Edge);
-
-                    const routingPoints = edge.routingPoints();
-                    expect((await routingPoints.volatilePoints({ wait: false })).length).toBe(0);
-
-                    await workflow.app.graph.waitForCreation(PMetadata.getType(RoutingPoint), async () => {
-                        await edge.click();
-                    });
-
-                    const points = await routingPoints.volatilePoints();
-                    expect(points.length).toBe(1);
-
-                    const point = points[0];
-                    expect(await point.dataKindAttr()).toBe('line');
-                }
-            }
-        };
-
-        const { cases, additional } = customizeWorkflowTestCases(routingPointTestCases, customization);
-
-        selectWorkflowTest(test, cases.shouldBeAccessible)(...workflowTestArguments(cases.shouldBeAccessible));
-        selectWorkflowTest(test, cases.shouldHaveTheDataKindAttribute)(...workflowTestArguments(cases.shouldHaveTheDataKindAttribute));
-        additional?.(test);
+        const suite = workflowSuite(test, 'routingPoint', routingPointSuiteCases, options);
+        test(...suite.args('shouldBeAccessible'));
+        test(...suite.args('shouldHaveTheDataKindAttribute'));
+        suite.done();
     });
 }

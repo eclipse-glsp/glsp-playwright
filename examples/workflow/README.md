@@ -79,15 +79,17 @@ Within this package:
 ### Shared tests
 
 The test bodies live in reusable suite factories under [./src/test/suites](./src/test/suites/).
-Each test case has a stable identifier, allowing an integration to replace or extend individual
-cases and to add integration-specific cases without copying the base implementation:
+Each test case has a stable identifier. Integrations customize the suites at registration: per
+case, the title and body can be replaced (wrap the exported default case inside `run` to extend
+it), individual cases or whole suites can be skipped. Skipped cases declare no fixtures, so the
+integration never starts for them.
 
 ```ts
 import { defineWorkflowSuites, test } from '@eclipse-glsp/workflow';
 
 defineWorkflowSuites(test, {
     contextMenu: {
-        replace: {
+        cases: {
             open: {
                 title: 'should open the native context menu',
                 run: async ({ app }) => app.contextMenu.open()
@@ -98,6 +100,23 @@ defineWorkflowSuites(test, {
 });
 ```
 
+Bodies can also be overridden at runtime through the `suiteCases` Playwright option fixture —
+e.g. per project in the Playwright configuration, or when composing a derived test instance with
+`test.extend`. Fixture-provided bodies take precedence over `cases[id].run`:
+
+```ts
+test.use({
+    suiteCases: {
+        contextMenu: {
+            open: async ({ app }) => app.contextMenu.open()
+        }
+    }
+});
+```
+
+Integration-specific cases do not need a dedicated mechanism: they are plain Playwright tests in
+the integration's own spec files (see `workflow-theia/tests/popup-context-menu.spec.ts`).
+
 The aggregate function is the integration contract. It registers every shared suite by default, so
 updating `@eclipse-glsp/workflow` automatically includes newly published suites. Integrations
 only configure case-level differences and mark unsupported suites with a `skip` reason so they
@@ -106,10 +125,10 @@ Playwright still executes a local test entry point; integration repositories do 
 spec files from the core package. The reusable suites depend only on `@eclipse-glsp/playwright`, so
 they do not couple the core package to Theia or VS Code.
 
-Replaced cases keep the source location of their declaration in the shared suite factory. Report
-links and IDE navigation therefore open the shared registration rather than the
-integration-specific replacement body. This is an intentional consequence of retaining stable,
-per-case Playwright locations.
+Every case is declared with `test(...suite.args('caseId'))` in the shared suite factory, so each
+case keeps its own Playwright source location for reports and IDE navigation. Overridden cases
+still point at the shared declaration rather than the integration-specific body — an intentional
+consequence of retaining stable, per-case Playwright locations.
 
 ## Preparations
 

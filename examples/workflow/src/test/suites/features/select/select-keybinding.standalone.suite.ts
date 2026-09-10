@@ -16,62 +16,46 @@
 
 import { expect } from '@eclipse-glsp/playwright';
 import { TaskManual } from '../../../../graph/elements/task-manual.po';
-import {
-    customizeWorkflowTestCases,
-    selectWorkflowTest,
-    workflowTestArguments,
-    WorkflowSuiteCustomization,
-    WorkflowTestCase
-} from '../../../suite';
-import { WorkflowTest } from '../../../workflow-test';
+import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
+import type { WorkflowTest } from '../../../workflow-test';
 
-/** Stable identifiers of the test cases provided by {@link defineSelectKeybindingStandaloneSuite}. */
-export type SelectKeybindingStandaloneTestCaseId = 'shouldAllowToDeselectASingleElementThroughAKeybinding';
+/** Default cases of the reusable standalone select-keybinding suite, keyed by stable identifiers. */
+export const selectKeybindingStandaloneSuiteCases = {
+    shouldAllowToDeselectASingleElementThroughAKeybinding: {
+        title: 'should allow to deselect a single element through a keybinding',
+        run: async workflow => {
+            const page = workflow.app.page;
+            const element = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
+            await element.select();
+            await expect(workflow.app.graph).toHaveSelected({
+                type: TaskManual,
+                elements: [element]
+            });
 
-/** Integration-specific changes for {@link defineSelectKeybindingStandaloneSuite}. */
-export type SelectKeybindingStandaloneSuiteCustomization = WorkflowSuiteCustomization<
-    Record<SelectKeybindingStandaloneTestCaseId, WorkflowTestCase>
->;
+            // Selection
+            await page.keyboard.press('Escape');
+
+            await expect(workflow.app.graph).toBeUnselected();
+        }
+    }
+} satisfies WorkflowTestCases;
+
+/** Integration-provided replacement bodies for {@link defineSelectKeybindingStandaloneSuite}. */
+export type SelectKeybindingStandaloneSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof selectKeybindingStandaloneSuiteCases>;
+
+/** Integration-specific skips for {@link defineSelectKeybindingStandaloneSuite}. */
+export type SelectKeybindingStandaloneSuiteOptions = WorkflowSuiteOptions<typeof selectKeybindingStandaloneSuiteCases>;
 
 /**
  * Registers the reusable standalone select-keybinding suite.
  *
  * @param test test instance whose integration should execute the suite
- * @param customization integration-specific replacements and extensions
+ * @param options integration-specific suite and case skips
  */
-export function defineSelectKeybindingStandaloneSuite(
-    test: WorkflowTest,
-    customization: SelectKeybindingStandaloneSuiteCustomization = {}
-): void {
+export function defineSelectKeybindingStandaloneSuite(test: WorkflowTest, options?: SelectKeybindingStandaloneSuiteOptions): void {
     test.describe('The select keybinding', () => {
-        test.skip(customization.skip !== undefined, customization.skip);
-
-        const selectKeybindingStandaloneTestCases: Record<SelectKeybindingStandaloneTestCaseId, WorkflowTestCase> = {
-            shouldAllowToDeselectASingleElementThroughAKeybinding: {
-                title: 'should allow to deselect a single element through a keybinding',
-                run: async workflow => {
-                    const page = workflow.app.page;
-                    const element = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
-                    await element.select();
-                    await expect(workflow.app.graph).toHaveSelected({
-                        type: TaskManual,
-                        elements: [element]
-                    });
-
-                    // Selection
-                    await page.keyboard.press('Escape');
-
-                    await expect(workflow.app.graph).toBeUnselected();
-                }
-            }
-        };
-
-        const { cases, additional } = customizeWorkflowTestCases(selectKeybindingStandaloneTestCases, customization);
-
-        selectWorkflowTest(
-            test,
-            cases.shouldAllowToDeselectASingleElementThroughAKeybinding
-        )(...workflowTestArguments(cases.shouldAllowToDeselectASingleElementThroughAKeybinding));
-        additional?.(test);
+        const suite = workflowSuite(test, 'selectKeybinding', selectKeybindingStandaloneSuiteCases, options);
+        test(...suite.args('shouldAllowToDeselectASingleElementThroughAKeybinding'));
+        suite.done();
     });
 }

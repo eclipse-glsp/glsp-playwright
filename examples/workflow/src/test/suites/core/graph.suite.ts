@@ -17,188 +17,149 @@ import { expect } from '@eclipse-glsp/playwright';
 import { ActivityNodeFork } from '../../../graph/elements/activity-node-fork.po';
 import { Edge } from '../../../graph/elements/edge.po';
 import { TaskManual } from '../../../graph/elements/task-manual.po';
-import {
-    customizeWorkflowTestCases,
-    selectWorkflowTest,
-    workflowTestArguments,
-    WorkflowSuiteCustomization,
-    WorkflowTestCase
-} from '../../suite';
-import { WorkflowTest } from '../../workflow-test';
+import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../suite';
+import type { WorkflowTest } from '../../workflow-test';
 
-/** Stable identifiers of the test cases provided by {@link defineGraphSuite}. */
-export type GraphTestCaseId =
-    | 'shouldAllowAccessingTheEdgeByUsingASelector'
-    | 'shouldAllowAccessingTheEdgeByUsingASourceType'
-    | 'shouldAllowAccessingTheEdgeByUsingASourceSelector'
-    | 'shouldAllowAccessingTheEdgeByUsingTheSourceTypeWithMultipleElements'
-    | 'shouldAllowAccessingTheEdgeByUsingATargetType'
-    | 'shouldAllowAccessingTheEdgeByUsingTheSourceAndTargetType'
-    | 'shouldAllowAccessingTheNodeSemanticallyByUsingALabel'
-    | 'shouldAllowAccessingTheNodeSemanticallyByUsingALabelAndThrowAnErrorOnInvalidLabels';
+/** Default cases of the reusable graph suite, keyed by stable identifiers. */
+export const graphSuiteCases = {
+    shouldAllowAccessingTheEdgeByUsingASelector: {
+        title: 'by using a selector',
+        run: async workflow => {
+            const edge = await workflow.app.graph.getEdge('[id$="edge_task_Push_fork_1"]', Edge);
+            const task = await edge.sourceOfType(TaskManual);
 
-/** Integration-specific changes for {@link defineGraphSuite}. */
-export type GraphSuiteCustomization = WorkflowSuiteCustomization<Record<GraphTestCaseId, WorkflowTestCase>>;
+            expect(await (await task.children.label()).textContent()).toBe('Push');
+        }
+    },
+    shouldAllowAccessingTheEdgeByUsingASourceType: {
+        title: 'by using a source type',
+        run: async workflow => {
+            const edges = await workflow.app.graph.getEdgesOfType(Edge, { sourceConstructor: TaskManual });
+
+            const ids = await Promise.all(edges.map(async e => e.idAttr()));
+            const expectedIds = ['edge_task_Push_fork_1', 'edge_task_RflWt_merge_1'];
+
+            expect(ids.length).toBe(expectedIds.length);
+            ids.forEach(id => {
+                if (!expectedIds.some(e => id.includes(e))) {
+                    throw new Error(`${id} is not in the list of expected ids: ${expectedIds}`);
+                }
+            });
+        }
+    },
+    shouldAllowAccessingTheEdgeByUsingASourceSelector: {
+        title: 'by using a source selector',
+        run: async workflow => {
+            const sourceNode = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
+            const edges = await workflow.app.graph.getEdgesOfType(Edge, { sourceSelectorOrLocator: sourceNode.locate() });
+            expect(edges.length).toBe(1);
+
+            const source = await edges[0].sourceOfType(TaskManual);
+            expect(await source.idAttr()).toContain(await sourceNode.idAttr());
+        }
+    },
+    shouldAllowAccessingTheEdgeByUsingTheSourceTypeWithMultipleElements: {
+        title: 'by using the source type with multiple elements',
+        run: async workflow => {
+            const edges = await workflow.app.graph.getEdgesOfType(Edge, { sourceConstructor: TaskManual });
+
+            const ids = await Promise.all(edges.map(async e => e.idAttr()));
+            const expectedIds = ['edge_task_Push_fork_1', 'edge_task_RflWt_merge_1'];
+
+            expect(ids.length).toBe(expectedIds.length);
+            for await (const [index, id] of ids.entries()) {
+                expect(await edges[index].source()).toBeInstanceOf(TaskManual);
+                if (!expectedIds.some(e => id.includes(e))) {
+                    throw new Error(`${id} is not in the list of expected ids: ${expectedIds}`);
+                }
+            }
+        }
+    },
+    shouldAllowAccessingTheEdgeByUsingATargetType: {
+        title: 'by using a target type',
+        run: async workflow => {
+            const edges = await workflow.app.graph.getEdgesOfType(Edge, { targetConstructor: ActivityNodeFork });
+
+            const ids = await Promise.all(edges.map(async e => e.idAttr()));
+            const expectedIds = ['edge_task_Push_fork_1'];
+
+            expect(ids.length).toBe(expectedIds.length);
+            for await (const [index, id] of ids.entries()) {
+                expect(await edges[index].target()).toBeInstanceOf(ActivityNodeFork);
+                if (!expectedIds.some(e => id.includes(e))) {
+                    throw new Error(`${id} is not in the list of expected ids: ${expectedIds}`);
+                }
+            }
+        }
+    },
+    shouldAllowAccessingTheEdgeByUsingTheSourceAndTargetType: {
+        title: 'by using the source and target type',
+        run: async workflow => {
+            const edges = await workflow.app.graph.getEdgesOfType(Edge, {
+                sourceConstructor: TaskManual,
+                targetConstructor: ActivityNodeFork
+            });
+
+            const ids = await Promise.all(edges.map(async e => e.idAttr()));
+            const expectedIds = ['edge_task_Push_fork_1'];
+
+            expect(ids.length).toBe(expectedIds.length);
+            for await (const [index, id] of ids.entries()) {
+                expect(await edges[index].source()).toBeInstanceOf(TaskManual);
+                expect(await edges[index].target()).toBeInstanceOf(ActivityNodeFork);
+                if (!expectedIds.some(e => id.includes(e))) {
+                    throw new Error(`${id} is not in the list of expected ids: ${expectedIds}`);
+                }
+            }
+        }
+    },
+    shouldAllowAccessingTheNodeSemanticallyByUsingALabel: {
+        title: 'semantically by using a label',
+        run: async workflow => {
+            const task = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
+
+            const label = await task.label;
+            expect(label).toBe('Push');
+        }
+    },
+    shouldAllowAccessingTheNodeSemanticallyByUsingALabelAndThrowAnErrorOnInvalidLabels: {
+        title: 'semantically by using a label and throw an error on invalid labels',
+        run: async workflow => {
+            await expect(workflow.app.graph.getNodeByLabel('Not Existing', TaskManual)).rejects.toThrow();
+        }
+    }
+} satisfies WorkflowTestCases;
+
+/** Integration-provided replacement bodies for {@link defineGraphSuite}. */
+export type GraphSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof graphSuiteCases>;
+
+/** Integration-specific skips for {@link defineGraphSuite}. */
+export type GraphSuiteOptions = WorkflowSuiteOptions<typeof graphSuiteCases>;
 
 /**
  * Registers the reusable graph suite.
  *
  * @param test test instance whose integration should execute the suite
- * @param customization integration-specific replacements and extensions
+ * @param options integration-specific suite and case skips
  */
-export function defineGraphSuite(test: WorkflowTest, customization: GraphSuiteCustomization = {}): void {
+export function defineGraphSuite(test: WorkflowTest, options?: GraphSuiteOptions): void {
     test.describe('The graph', () => {
-        test.skip(customization.skip !== undefined, customization.skip);
-
-        const graphTestCases: Record<GraphTestCaseId, WorkflowTestCase> = {
-            shouldAllowAccessingTheEdgeByUsingASelector: {
-                title: 'by using a selector',
-                run: async workflow => {
-                    const edge = await workflow.app.graph.getEdge('[id$="edge_task_Push_fork_1"]', Edge);
-                    const task = await edge.sourceOfType(TaskManual);
-
-                    expect(await (await task.children.label()).textContent()).toBe('Push');
-                }
-            },
-            shouldAllowAccessingTheEdgeByUsingASourceType: {
-                title: 'by using a source type',
-                run: async workflow => {
-                    const edges = await workflow.app.graph.getEdgesOfType(Edge, { sourceConstructor: TaskManual });
-
-                    const ids = await Promise.all(edges.map(async e => e.idAttr()));
-                    const expectedIds = ['edge_task_Push_fork_1', 'edge_task_RflWt_merge_1'];
-
-                    expect(ids.length).toBe(expectedIds.length);
-                    ids.forEach(id => {
-                        if (!expectedIds.some(e => id.includes(e))) {
-                            throw new Error(`${id} is not in the list of expected ids: ${expectedIds}`);
-                        }
-                    });
-                }
-            },
-            shouldAllowAccessingTheEdgeByUsingASourceSelector: {
-                title: 'by using a source selector',
-                run: async workflow => {
-                    const sourceNode = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
-                    const edges = await workflow.app.graph.getEdgesOfType(Edge, { sourceSelectorOrLocator: sourceNode.locate() });
-                    expect(edges.length).toBe(1);
-
-                    const source = await edges[0].sourceOfType(TaskManual);
-                    expect(await source.idAttr()).toContain(await sourceNode.idAttr());
-                }
-            },
-            shouldAllowAccessingTheEdgeByUsingTheSourceTypeWithMultipleElements: {
-                title: 'by using the source type with multiple elements',
-                run: async workflow => {
-                    const edges = await workflow.app.graph.getEdgesOfType(Edge, { sourceConstructor: TaskManual });
-
-                    const ids = await Promise.all(edges.map(async e => e.idAttr()));
-                    const expectedIds = ['edge_task_Push_fork_1', 'edge_task_RflWt_merge_1'];
-
-                    expect(ids.length).toBe(expectedIds.length);
-                    for await (const [index, id] of ids.entries()) {
-                        expect(await edges[index].source()).toBeInstanceOf(TaskManual);
-                        if (!expectedIds.some(e => id.includes(e))) {
-                            throw new Error(`${id} is not in the list of expected ids: ${expectedIds}`);
-                        }
-                    }
-                }
-            },
-            shouldAllowAccessingTheEdgeByUsingATargetType: {
-                title: 'by using a target type',
-                run: async workflow => {
-                    const edges = await workflow.app.graph.getEdgesOfType(Edge, { targetConstructor: ActivityNodeFork });
-
-                    const ids = await Promise.all(edges.map(async e => e.idAttr()));
-                    const expectedIds = ['edge_task_Push_fork_1'];
-
-                    expect(ids.length).toBe(expectedIds.length);
-                    for await (const [index, id] of ids.entries()) {
-                        expect(await edges[index].target()).toBeInstanceOf(ActivityNodeFork);
-                        if (!expectedIds.some(e => id.includes(e))) {
-                            throw new Error(`${id} is not in the list of expected ids: ${expectedIds}`);
-                        }
-                    }
-                }
-            },
-            shouldAllowAccessingTheEdgeByUsingTheSourceAndTargetType: {
-                title: 'by using the source and target type',
-                run: async workflow => {
-                    const edges = await workflow.app.graph.getEdgesOfType(Edge, {
-                        sourceConstructor: TaskManual,
-                        targetConstructor: ActivityNodeFork
-                    });
-
-                    const ids = await Promise.all(edges.map(async e => e.idAttr()));
-                    const expectedIds = ['edge_task_Push_fork_1'];
-
-                    expect(ids.length).toBe(expectedIds.length);
-                    for await (const [index, id] of ids.entries()) {
-                        expect(await edges[index].source()).toBeInstanceOf(TaskManual);
-                        expect(await edges[index].target()).toBeInstanceOf(ActivityNodeFork);
-                        if (!expectedIds.some(e => id.includes(e))) {
-                            throw new Error(`${id} is not in the list of expected ids: ${expectedIds}`);
-                        }
-                    }
-                }
-            },
-            shouldAllowAccessingTheNodeSemanticallyByUsingALabel: {
-                title: 'semantically by using a label',
-                run: async workflow => {
-                    const task = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
-
-                    const label = await task.label;
-                    expect(label).toBe('Push');
-                }
-            },
-            shouldAllowAccessingTheNodeSemanticallyByUsingALabelAndThrowAnErrorOnInvalidLabels: {
-                title: 'semantically by using a label and throw an error on invalid labels',
-                run: async workflow => {
-                    await expect(workflow.app.graph.getNodeByLabel('Not Existing', TaskManual)).rejects.toThrow();
-                }
-            }
-        };
-
-        const { cases, additional } = customizeWorkflowTestCases(graphTestCases, customization);
+        const suite = workflowSuite(test, 'graph', graphSuiteCases, options);
 
         test.describe('should allow accessing the edge', () => {
-            selectWorkflowTest(
-                test,
-                cases.shouldAllowAccessingTheEdgeByUsingASelector
-            )(...workflowTestArguments(cases.shouldAllowAccessingTheEdgeByUsingASelector));
-            selectWorkflowTest(
-                test,
-                cases.shouldAllowAccessingTheEdgeByUsingASourceType
-            )(...workflowTestArguments(cases.shouldAllowAccessingTheEdgeByUsingASourceType));
-            selectWorkflowTest(
-                test,
-                cases.shouldAllowAccessingTheEdgeByUsingASourceSelector
-            )(...workflowTestArguments(cases.shouldAllowAccessingTheEdgeByUsingASourceSelector));
-            selectWorkflowTest(
-                test,
-                cases.shouldAllowAccessingTheEdgeByUsingTheSourceTypeWithMultipleElements
-            )(...workflowTestArguments(cases.shouldAllowAccessingTheEdgeByUsingTheSourceTypeWithMultipleElements));
-            selectWorkflowTest(
-                test,
-                cases.shouldAllowAccessingTheEdgeByUsingATargetType
-            )(...workflowTestArguments(cases.shouldAllowAccessingTheEdgeByUsingATargetType));
-            selectWorkflowTest(
-                test,
-                cases.shouldAllowAccessingTheEdgeByUsingTheSourceAndTargetType
-            )(...workflowTestArguments(cases.shouldAllowAccessingTheEdgeByUsingTheSourceAndTargetType));
+            test(...suite.args('shouldAllowAccessingTheEdgeByUsingASelector'));
+            test(...suite.args('shouldAllowAccessingTheEdgeByUsingASourceType'));
+            test(...suite.args('shouldAllowAccessingTheEdgeByUsingASourceSelector'));
+            test(...suite.args('shouldAllowAccessingTheEdgeByUsingTheSourceTypeWithMultipleElements'));
+            test(...suite.args('shouldAllowAccessingTheEdgeByUsingATargetType'));
+            test(...suite.args('shouldAllowAccessingTheEdgeByUsingTheSourceAndTargetType'));
         });
 
         test.describe('should allow accessing the node', () => {
-            selectWorkflowTest(
-                test,
-                cases.shouldAllowAccessingTheNodeSemanticallyByUsingALabel
-            )(...workflowTestArguments(cases.shouldAllowAccessingTheNodeSemanticallyByUsingALabel));
-            selectWorkflowTest(
-                test,
-                cases.shouldAllowAccessingTheNodeSemanticallyByUsingALabelAndThrowAnErrorOnInvalidLabels
-            )(...workflowTestArguments(cases.shouldAllowAccessingTheNodeSemanticallyByUsingALabelAndThrowAnErrorOnInvalidLabels));
+            test(...suite.args('shouldAllowAccessingTheNodeSemanticallyByUsingALabel'));
+            test(...suite.args('shouldAllowAccessingTheNodeSemanticallyByUsingALabelAndThrowAnErrorOnInvalidLabels'));
         });
 
-        additional?.(test);
+        suite.done();
     });
 }

@@ -5,7 +5,8 @@ Theia integration tests for the `Workflow Example`.
 This package holds what is specific to Theia:
 
 - [./tests](./tests/): One registration of the complete reusable Workflow contract plus tests that
-  only apply to Theia. Its context-menu customization demonstrates replacing and extending cases.
+  only apply to Theia. Its context-menu override demonstrates replacing the title and body of
+  default cases.
 - [./configs](./configs/): The Theia project and the web server that starts the Theia browser
   application.
 
