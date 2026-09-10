@@ -40,9 +40,6 @@ importers:
       dotenv:
         specifier: ^16.0.3
         version: 16.6.1
-      reflect-metadata:
-        specifier: ^0.2.2
-        version: 0.2.2
       ts-dedent:
         specifier: ^2.2.0
         version: 2.3.0
@@ -67,9 +64,6 @@ importers:
       dotenv:
         specifier: ^16.0.3
         version: 16.6.1
-      reflect-metadata:
-        specifier: ^0.2.2
-        version: 0.2.2
 
   examples/workflow-vscode:
     devDependencies:
@@ -88,9 +82,6 @@ importers:
       dotenv:
         specifier: ^16.0.3
         version: 16.6.1
-      reflect-metadata:
-        specifier: ^0.2.2
-        version: 0.2.2
 
   packages/playwright:
     dependencies:

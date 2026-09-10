@@ -13,30 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { expect } from '@eclipse-glsp/playwright';
 import { defineWorkflowSuites, test } from '@eclipse-glsp/workflow';
 
-// Theia is the only integration with a context menu, so the default contract
-// (opening/closing throws) is overridden with the actual behavior.
-defineWorkflowSuites(test, {
-    contextMenu: {
-        cases: {
-            open: {
-                title: 'should allow to open the context menu',
-                run: async ({ app }) => {
-                    await app.contextMenu.open();
-                    await expect(app.contextMenu.locate()).toBeVisible();
-                }
-            },
-            close: {
-                title: 'should allow to close the context menu',
-                run: async ({ app }) => {
-                    await app.contextMenu.open();
-                    await expect(app.contextMenu.locate()).toBeVisible();
-                    await app.contextMenu.close();
-                    await expect(app.contextMenu.locate()).toBeHidden();
-                }
-            }
-        }
-    }
-});
+defineWorkflowSuites(test);

@@ -21,7 +21,7 @@ import * as os from 'os';
 import * as platformPath from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import type { DiagramShortcutIntegration, DiagramShortcuts, IntegrationArgs } from '@eclipse-glsp/playwright';
-import { Integration, SVGMetadataUtils } from '@eclipse-glsp/playwright';
+import { hostDiagramShortcuts, Integration, SVGMetadataUtils } from '@eclipse-glsp/playwright';
 import { VSCodeWorkbenchActivitybar } from './po/workbench-activitybar.po';
 import type { VSCodeIntegrationConfig, VSCodeIntegrationOptions } from './vscode.options';
 import { VSCodeStorage } from './vscode.storage';
@@ -57,11 +57,7 @@ export class VSCodeIntegration extends Integration implements DiagramShortcutInt
     protected _page: Page;
     workbenchActivitybar: VSCodeWorkbenchActivitybar;
 
-    readonly diagramShortcuts: DiagramShortcuts = {
-        center: 'Alt+C',
-        fitToScreen: 'Alt+F',
-        layout: 'Alt+L'
-    };
+    readonly diagramShortcuts: DiagramShortcuts = hostDiagramShortcuts;
 
     protected runConfig: VSCodeRunConfig;
     protected electronApp: ElectronApplication;

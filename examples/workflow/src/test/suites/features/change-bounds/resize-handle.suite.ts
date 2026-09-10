@@ -16,12 +16,12 @@
 import { PMetadata, ResizeHandle, expect } from '@eclipse-glsp/playwright';
 import { TaskManual } from '../../../../graph/elements/task-manual.po';
 import { TaskManualNodes } from '../../../nodes';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
 import type { WorkflowTest } from '../../../workflow-test';
 
 /** Default cases of the reusable resize-handle suite, keyed by stable identifiers. */
 export const resizeHandleSuiteCases = {
-    shouldAllowResizing: {
+    resize: {
         title: 'should allow resizing',
         run: async workflow => {
             const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -42,7 +42,7 @@ export const resizeHandleSuiteCases = {
             expect(newTopLeft.data.y).toBe(oldTopLeft.data.y);
         }
     },
-    shouldShow4Handles: {
+    handleCount: {
         title: 'should show 4 handles',
         run: async workflow => {
             const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -66,9 +66,6 @@ export const resizeHandleSuiteCases = {
     }
 } satisfies WorkflowTestCases;
 
-/** Integration-provided replacement bodies for {@link defineResizeHandleSuite}. */
-export type ResizeHandleSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof resizeHandleSuiteCases>;
-
 /** Integration-specific skips for {@link defineResizeHandleSuite}. */
 export type ResizeHandleSuiteOptions = WorkflowSuiteOptions<typeof resizeHandleSuiteCases>;
 
@@ -81,8 +78,8 @@ export type ResizeHandleSuiteOptions = WorkflowSuiteOptions<typeof resizeHandleS
 export function defineResizeHandleSuite(test: WorkflowTest, options?: ResizeHandleSuiteOptions): void {
     test.describe('The resizing handle', () => {
         const suite = workflowSuite(test, 'resizeHandle', resizeHandleSuiteCases, options);
-        test(...suite.args('shouldAllowResizing'));
-        test(...suite.args('shouldShow4Handles'));
+        test(...suite.args('resize'));
+        test(...suite.args('handleCount'));
         suite.done();
     });
 }

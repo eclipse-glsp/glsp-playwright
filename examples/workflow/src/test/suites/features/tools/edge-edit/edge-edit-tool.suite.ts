@@ -18,12 +18,12 @@ import { Edge } from '../../../../../graph/elements/edge.po';
 import { TaskAutomated } from '../../../../../graph/elements/task-automated.po';
 import { TaskManual } from '../../../../../graph/elements/task-manual.po';
 import { TaskAutomatedNodes, TaskManualNodes } from '../../../../nodes';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../../suite';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../../../suite';
 import type { WorkflowTest } from '../../../../workflow-test';
 
 /** Default cases of the reusable edge-edit-tool suite, keyed by stable identifiers. */
 export const edgeEditToolSuiteCases = {
-    shouldAllowReconnectingEdgesInTheGraph: {
+    reconnect: {
         title: 'should allow reconnecting edges in the graph',
         run: async workflow => {
             const source = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -38,7 +38,7 @@ export const edgeEditToolSuiteCases = {
             expect(await edge.sourceId()).toBe(await newSource.idAttr());
         }
     },
-    shouldAllowMovingTheRoutingPointsInTheGraph: {
+    moveRoutingPoints: {
         title: 'should allow moving the routing points in the graph',
         run: async workflow => {
             const source = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -64,7 +64,7 @@ export const edgeEditToolSuiteCases = {
             expect(volatilePoints).toHaveLength(2);
         }
     },
-    shouldAllowRemovingTheRoutingPointsInTheGraphByRealigning: {
+    removeRoutingPointsByRealigning: {
         title: 'should allow removing the routing points in the graph by realigning',
         run: async workflow => {
             const source = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -104,9 +104,6 @@ export const edgeEditToolSuiteCases = {
     }
 } satisfies WorkflowTestCases;
 
-/** Integration-provided replacement bodies for {@link defineEdgeEditToolSuite}. */
-export type EdgeEditToolSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof edgeEditToolSuiteCases>;
-
 /** Integration-specific skips for {@link defineEdgeEditToolSuite}. */
 export type EdgeEditToolSuiteOptions = WorkflowSuiteOptions<typeof edgeEditToolSuiteCases>;
 
@@ -119,9 +116,9 @@ export type EdgeEditToolSuiteOptions = WorkflowSuiteOptions<typeof edgeEditToolS
 export function defineEdgeEditToolSuite(test: WorkflowTest, options?: EdgeEditToolSuiteOptions): void {
     test.describe('The edge edit tool', () => {
         const suite = workflowSuite(test, 'edgeEditTool', edgeEditToolSuiteCases, options);
-        test(...suite.args('shouldAllowReconnectingEdgesInTheGraph'));
-        test(...suite.args('shouldAllowMovingTheRoutingPointsInTheGraph'));
-        test(...suite.args('shouldAllowRemovingTheRoutingPointsInTheGraphByRealigning'));
+        test(...suite.args('reconnect'));
+        test(...suite.args('moveRoutingPoints'));
+        test(...suite.args('removeRoutingPointsByRealigning'));
         suite.done();
     });
 }

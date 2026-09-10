@@ -28,10 +28,25 @@ export default [
         rules: {
             '@typescript-eslint/no-floating-promises': 'error',
             'no-null/no-null': 'off',
-            'no-restricted-imports': [
+            // The typescript-eslint variant is required for `allowTypeImports` below.
+            'no-restricted-imports': 'off',
+            '@typescript-eslint/no-restricted-imports': [
                 'error',
                 {
                     paths: [
+                        // `'..'`, `'../..'`, ... resolve to a parent barrel, which re-exports the
+                        // importing module itself. Type-only is fine, because the import erases; a
+                        // value import closes a runtime cycle and yields a partially initialized
+                        // module. Listed as exact paths rather than a pattern, because
+                        // `no-restricted-imports` matches patterns gitignore-style and `'..'` would
+                        // then match every relative import.
+                        ...['..', '../..', '../../..', '../../../..', '../../../../..'].map(name => ({
+                            name,
+                            allowTypeImports: true,
+                            message:
+                                'Importing a parent barrel closes a runtime import cycle. Import the defining module ' +
+                                'directly, or keep the import type-only with `import type`.'
+                        })),
                         {
                             name: 'sprotty',
                             message:

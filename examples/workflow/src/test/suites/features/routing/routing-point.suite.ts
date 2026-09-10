@@ -16,12 +16,12 @@
 import { PMetadata, RoutingPoint, expect } from '@eclipse-glsp/playwright';
 import { Edge } from '../../../../graph/elements/edge.po';
 import { TaskManual } from '../../../../graph/elements/task-manual.po';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
 import type { WorkflowTest } from '../../../workflow-test';
 
 /** Default cases of the reusable edge-routing-point suite, keyed by stable identifiers. */
 export const routingPointSuiteCases = {
-    shouldBeAccessible: {
+    accessible: {
         title: 'should be accessible',
         run: async workflow => {
             const node = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
@@ -39,7 +39,7 @@ export const routingPointSuiteCases = {
             expect((await routingPoints.volatilePoints()).length).toBe(1);
         }
     },
-    shouldHaveTheDataKindAttribute: {
+    dataKindAttribute: {
         title: 'should have the data kind attribute',
         run: async workflow => {
             const node = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
@@ -61,9 +61,6 @@ export const routingPointSuiteCases = {
     }
 } satisfies WorkflowTestCases;
 
-/** Integration-provided replacement bodies for {@link defineRoutingPointSuite}. */
-export type RoutingPointSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof routingPointSuiteCases>;
-
 /** Integration-specific skips for {@link defineRoutingPointSuite}. */
 export type RoutingPointSuiteOptions = WorkflowSuiteOptions<typeof routingPointSuiteCases>;
 
@@ -76,8 +73,8 @@ export type RoutingPointSuiteOptions = WorkflowSuiteOptions<typeof routingPointS
 export function defineRoutingPointSuite(test: WorkflowTest, options?: RoutingPointSuiteOptions): void {
     test.describe('The routing points of an edge', () => {
         const suite = workflowSuite(test, 'routingPoint', routingPointSuiteCases, options);
-        test(...suite.args('shouldBeAccessible'));
-        test(...suite.args('shouldHaveTheDataKindAttribute'));
+        test(...suite.args('accessible'));
+        test(...suite.args('dataKindAttribute'));
         suite.done();
     });
 }

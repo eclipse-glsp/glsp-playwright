@@ -18,12 +18,12 @@ import { ActivityNodeFork } from '../../../graph/elements/activity-node-fork.po'
 import { Edge } from '../../../graph/elements/edge.po';
 import { TaskManual } from '../../../graph/elements/task-manual.po';
 import { TaskManualNodes } from '../../nodes';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../suite';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../suite';
 import type { WorkflowTest } from '../../workflow-test';
 
 /** Default cases of the reusable Edges suite, keyed by stable identifiers. */
 export const edgeSuiteCases = {
-    shouldHaveSourceAndTargetNodes: {
+    sourceAndTargetNodes: {
         title: 'should have source and target nodes',
         run: async workflow => {
             const source = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -39,9 +39,6 @@ export const edgeSuiteCases = {
     }
 } satisfies WorkflowTestCases;
 
-/** Integration-provided replacement bodies for {@link defineEdgeSuite}. */
-export type EdgeSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof edgeSuiteCases>;
-
 /** Integration-specific skips for {@link defineEdgeSuite}. */
 export type EdgeSuiteOptions = WorkflowSuiteOptions<typeof edgeSuiteCases>;
 
@@ -54,7 +51,7 @@ export type EdgeSuiteOptions = WorkflowSuiteOptions<typeof edgeSuiteCases>;
 export function defineEdgeSuite(test: WorkflowTest, options?: EdgeSuiteOptions): void {
     test.describe('Edges', () => {
         const suite = workflowSuite(test, 'edge', edgeSuiteCases, options);
-        test(...suite.args('shouldHaveSourceAndTargetNodes'));
+        test(...suite.args('sourceAndTargetNodes'));
         suite.done();
     });
 }

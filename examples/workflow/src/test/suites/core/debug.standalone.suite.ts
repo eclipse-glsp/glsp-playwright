@@ -16,7 +16,7 @@
 
 import { expect, extractDebugInformationOfGLSPLocator, extractMetaTree } from '@eclipse-glsp/playwright';
 import { TaskManual } from '../../../graph/elements/task-manual.po';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../suite';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../suite';
 import type { WorkflowTest } from '../../workflow-test';
 
 const taskSelector = '[id$="task_Push"]';
@@ -60,7 +60,7 @@ const expectedGLSPLocatorData = [
 /** Default cases of the reusable debug-functions suite, keyed by stable identifiers. */
 export const debugStandaloneSuiteCases = {
     /** It is possible to extract all accessible SVG metadata of a locator as a tree structure. */
-    shouldAllowToExtractTheMetadataOfALocator: {
+    locatorMetadata: {
         title: 'should allow to extract the metadata of a locator',
         run: async workflow => {
             const node = await workflow.app.graph.getNode(taskSelector, TaskManual);
@@ -70,7 +70,7 @@ export const debugStandaloneSuiteCases = {
         }
     },
     /** It is possible to retrieve all located HTML elements of a GLSPLocator and its ancestors. */
-    shouldAllowToExtractDebugInformationOfAGLSPLocator: {
+    glspLocatorDebugInfo: {
         title: 'should allow to extract debug information of a GLSPLocator',
         run: async workflow => {
             const node = await workflow.app.graph.getNode(taskSelector, TaskManual);
@@ -80,9 +80,6 @@ export const debugStandaloneSuiteCases = {
         }
     }
 } satisfies WorkflowTestCases;
-
-/** Integration-provided replacement bodies for {@link defineDebugStandaloneSuite}. */
-export type DebugStandaloneSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof debugStandaloneSuiteCases>;
 
 /** Integration-specific skips for {@link defineDebugStandaloneSuite}. */
 export type DebugStandaloneSuiteOptions = WorkflowSuiteOptions<typeof debugStandaloneSuiteCases>;
@@ -96,8 +93,8 @@ export type DebugStandaloneSuiteOptions = WorkflowSuiteOptions<typeof debugStand
 export function defineDebugStandaloneSuite(test: WorkflowTest, options?: DebugStandaloneSuiteOptions): void {
     test.describe('The debug functions', () => {
         const suite = workflowSuite(test, 'debug', debugStandaloneSuiteCases, options);
-        test(...suite.args('shouldAllowToExtractTheMetadataOfALocator'));
-        test(...suite.args('shouldAllowToExtractDebugInformationOfAGLSPLocator'));
+        test(...suite.args('locatorMetadata'));
+        test(...suite.args('glspLocatorDebugInfo'));
         suite.done();
     });
 }

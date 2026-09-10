@@ -15,7 +15,6 @@
  ********************************************************************************/
 import type { Locator, Page } from '@playwright/test';
 import { SVGMetadataUtils } from '../glsp/graph';
-import { hasProperty } from '../utils/ts.utils';
 import type { IntegrationArgs, IntegrationType } from './integration.type';
 
 /**
@@ -107,15 +106,5 @@ export abstract class Integration {
         return this.prefixRootSelector(SVGMetadataUtils.apiAttr).waitFor({
             state: 'attached'
         });
-    }
-}
-
-export interface ContextMenuIntegration extends Integration {
-    contextMenuLocator: Locator;
-}
-
-export namespace ContextMenuIntegration {
-    export function is(integration: Integration): integration is ContextMenuIntegration {
-        return hasProperty<ContextMenuIntegration>(integration, 'contextMenuLocator');
     }
 }

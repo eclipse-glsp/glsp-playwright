@@ -64,9 +64,8 @@ export * from './features/validation/marker-navigator.suite';
 export * from './features/validation/marker.suite';
 
 /**
- * Collection-time options (suite and case skips, title overrides) for all
- * integration-independent Workflow suites. Test-body overrides are provided separately
- * through the `suiteCases` option fixture.
+ * Registration options (suite and case skips, title and body overrides) for all
+ * integration-independent Workflow suites.
  */
 export interface WorkflowSuitesOptions {
     commandPalette?: CommandPaletteSuiteOptions;
@@ -96,6 +95,9 @@ export interface StandaloneWorkflowSuitesOptions extends WorkflowSuitesOptions {
     debug?: DebugStandaloneSuiteOptions;
     selectKeybinding?: SelectKeybindingStandaloneSuiteOptions;
 }
+
+/** Name of a reusable Workflow suite, i.e. the key its options are registered under. */
+export type WorkflowSuiteName = keyof StandaloneWorkflowSuitesOptions;
 
 /**
  * Registers the complete Workflow contract shared by standalone, Theia and VS Code integrations.

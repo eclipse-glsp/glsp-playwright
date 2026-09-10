@@ -15,7 +15,7 @@
  ********************************************************************************/
 import { expect } from '@eclipse-glsp/playwright';
 import { TaskAutomated } from '../../../../graph/elements/task-automated.po';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
 import type { WorkflowTest } from '../../../workflow-test';
 
 const label = 'ChkWt';
@@ -23,7 +23,7 @@ const expectedAutomatedPopupText = 'INFO: This is an automated task';
 
 /** Default cases of the reusable marker suite, keyed by stable identifiers. */
 export const markerSuiteCases = {
-    shouldBeShownAfterValidation: {
+    shownAfterValidation: {
         title: 'should be shown after validation',
         run: async workflow => {
             await workflow.app.toolPalette.toolbar.validateTool().trigger();
@@ -33,7 +33,7 @@ export const markerSuiteCases = {
             await expect(marker.locate()).toBeVisible();
         }
     },
-    shouldShowAPopupOnHover: {
+    popupOnHover: {
         title: 'should show a popup on hover',
         run: async workflow => {
             await workflow.app.toolPalette.toolbar.validateTool().trigger();
@@ -41,7 +41,7 @@ export const markerSuiteCases = {
             expect(await task.marker().popupText()).toBe(expectedAutomatedPopupText);
         }
     },
-    shouldBeStillVisibleAfterResizing: {
+    visibleAfterResizing: {
         title: 'should be still visible after resizing',
         run: async workflow => {
             await workflow.app.toolPalette.toolbar.validateTool().trigger();
@@ -58,9 +58,6 @@ export const markerSuiteCases = {
     }
 } satisfies WorkflowTestCases;
 
-/** Integration-provided replacement bodies for {@link defineMarkerSuite}. */
-export type MarkerSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof markerSuiteCases>;
-
 /** Integration-specific skips for {@link defineMarkerSuite}. */
 export type MarkerSuiteOptions = WorkflowSuiteOptions<typeof markerSuiteCases>;
 
@@ -73,9 +70,9 @@ export type MarkerSuiteOptions = WorkflowSuiteOptions<typeof markerSuiteCases>;
 export function defineMarkerSuite(test: WorkflowTest, options?: MarkerSuiteOptions): void {
     test.describe('The marker', () => {
         const suite = workflowSuite(test, 'marker', markerSuiteCases, options);
-        test(...suite.args('shouldBeShownAfterValidation'));
-        test(...suite.args('shouldShowAPopupOnHover'));
-        test(...suite.args('shouldBeStillVisibleAfterResizing'));
+        test(...suite.args('shownAfterValidation'));
+        test(...suite.args('popupOnHover'));
+        test(...suite.args('visibleAfterResizing'));
         suite.done();
     });
 }

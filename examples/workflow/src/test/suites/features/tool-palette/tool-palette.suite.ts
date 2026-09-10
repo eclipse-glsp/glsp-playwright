@@ -14,12 +14,12 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { Marker, expect } from '@eclipse-glsp/playwright';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
 import type { WorkflowTest } from '../../../workflow-test';
 
 /** Default cases of the reusable tool-palette suite, keyed by stable identifiers. */
 export const toolPaletteSuiteCases = {
-    shouldAllowToAccessTheContentItems: {
+    contentItems: {
         title: 'should allow to access the content items',
         run: async workflow => {
             await workflow.app.toolPalette.waitForVisible();
@@ -49,7 +49,7 @@ export const toolPaletteSuiteCases = {
             expect(await toolElement.text()).toBe('Merge Node');
         }
     },
-    shouldAllowToAccessTheToolbarItems: {
+    toolbarItems: {
         title: 'should allow to access the toolbar items',
         run: async workflow => {
             await workflow.app.toolPalette.waitForVisible();
@@ -82,7 +82,7 @@ export const toolPaletteSuiteCases = {
             expect(await elements0[0].text()).toBe('Automated Task');
         }
     },
-    shouldAllowToValidate: {
+    validate: {
         title: 'should allow to validate',
         run: async workflow => {
             const markers = await workflow.app.graph.waitForCreationOfType(Marker, async () => {
@@ -93,9 +93,6 @@ export const toolPaletteSuiteCases = {
         }
     }
 } satisfies WorkflowTestCases;
-
-/** Integration-provided replacement bodies for {@link defineToolPaletteSuite}. */
-export type ToolPaletteSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof toolPaletteSuiteCases>;
 
 /** Integration-specific skips for {@link defineToolPaletteSuite}. */
 export type ToolPaletteSuiteOptions = WorkflowSuiteOptions<typeof toolPaletteSuiteCases>;
@@ -109,9 +106,9 @@ export type ToolPaletteSuiteOptions = WorkflowSuiteOptions<typeof toolPaletteSui
 export function defineToolPaletteSuite(test: WorkflowTest, options?: ToolPaletteSuiteOptions): void {
     test.describe('The tool palette', () => {
         const suite = workflowSuite(test, 'toolPalette', toolPaletteSuiteCases, options);
-        test(...suite.args('shouldAllowToAccessTheContentItems'));
-        test(...suite.args('shouldAllowToAccessTheToolbarItems'));
-        test(...suite.args('shouldAllowToValidate'));
+        test(...suite.args('contentItems'));
+        test(...suite.args('toolbarItems'));
+        test(...suite.args('validate'));
         suite.done();
     });
 }

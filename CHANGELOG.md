@@ -6,7 +6,11 @@
 
 - [framework] Split the framework into `@eclipse-glsp/playwright`, `@eclipse-glsp/playwright-theia` and `@eclipse-glsp/playwright-vscode`, so that testing one tool platform no longer pulls in the others. The Theia and VS Code packages depend on the core package but never on each other.
 - [framework] `IntegrationType` and `IntegrationOptions` are now extensible: an integration in any package contributes itself by merging into the global `GLSPPlaywright.IntegrationOptionsMap` interface.
-- [framework] Added the `MarkerNavigatorIntegration`, `UndoRedoIntegration`, and `DiagramShortcutIntegration` capability interfaces, so an integration contributes its own key bindings instead of the framework hardcoding them per platform.
+- [framework] Added the `MarkerNavigatorIntegration`, `UndoRedoIntegration`, and `DiagramShortcutIntegration` capability interfaces, so an integration contributes its own key bindings instead of the framework hardcoding them per platform. Every capability interface now lives next to the feature it belongs to, under `glsp/features/<feature>/<feature>.integration.ts`; `ContextMenuIntegration` moved there from `integration/integration.base.ts`. All of them are still exported from the package root.
+- [framework] `defaultDiagramShortcuts` (the GLSP-Client bindings) and `hostDiagramShortcuts` (the `Alt+*` bindings used by tool platforms that reserve `Control+Shift+*`) are exported, so a third-party integration can reuse either instead of restating the map. Theia and VS Code now use `hostDiagramShortcuts`.
+- [framework] The framework imports `reflect-metadata` itself, so consumers no longer need `import 'reflect-metadata'` in their Playwright configuration.
+- [framework] `Clickable.click` awaits its `dispatchEvent` calls, which previously were floating promises. `click({ dispatch: true })` now resolves only after `mouseover`, `mousedown` and `mouseup` have been dispatched.
+- [framework] Added the `vscodeSetupOptions` test option, which replaces the previously hardcoded `{ enableLogging: true }` passed to `VSCodeSetup`. It keeps that value as its default.
 - [example] Split the `Workflow Example` into `examples/workflow`, `examples/workflow-theia` and `examples/workflow-vscode`. The integration-agnostic test bodies are reusable suites in `examples/workflow`; each target owns thin registration files that can replace, extend or add cases.
 - [build] Replace TypeScript path aliases with relative package-internal imports and remove the legacy Madge configuration and alias build steps.
 - [example] `.repositories` and `.env` moved to `examples/` and are shared by all three example packages. `GLSP_REPO_DIR` is honoured consistently by the repository setup, access, and cleanup commands.
@@ -20,6 +24,7 @@
 - [framework] The redundant `TheiaUndoRedoTrigger` and `VscodeUndoRedoTrigger` exports were removed; `provideUndoRedoTrigger` now uses the shared standalone key bindings when an integration does not provide its own. `TheiaMarkerNavigator` moved to `@eclipse-glsp/playwright-theia`.
 - [framework] `runInIntegration`, `skipNonIntegration` and `skipIntegration` are deprecated in favor of project configuration and integration capability checks.
 - [framework] Deep imports such as `@eclipse-glsp/glsp-playwright/src/glsp` are no longer supported; import from the package root. Deep imports caused a second copy of the module graph to be loaded.
+- [framework] The unused `VSCodeIntegrationOptions.isConsoleLogEnabled` option was removed. It was never read.
 
 ## [v2.8.0 - 31/08/2026](https://github.com/eclipse-glsp/glsp-playwright/releases/tag/v2.8.0)
 

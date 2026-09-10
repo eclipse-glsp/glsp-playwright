@@ -13,31 +13,46 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { expect } from '@eclipse-glsp/playwright';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../suite';
+import { ContextMenuIntegration, expect } from '@eclipse-glsp/playwright';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../suite';
 import type { WorkflowTest } from '../workflow-test';
 
 /**
  * Default cases of the reusable context-menu suite, keyed by stable identifiers.
- * The defaults describe integrations without context-menu support.
+ *
+ * A context menu is a capability of the host application, not of the diagram: only integrations
+ * implementing {@link ContextMenuIntegration} have one, and `GLSPApp.contextMenu` is a stub that
+ * throws for the others. Both halves of the contract are asserted here so that an integration
+ * does not have to replace the cases to get the behavior its platform actually has.
  */
 export const contextMenuSuiteCases = {
     open: {
-        title: 'should throw an error when opening is not supported',
-        run: async ({ app }) => {
-            expect(() => app.contextMenu.open()).toThrow();
+        title: 'should be openable, or throw when the integration has no context menu',
+        run: async ({ app, integration }) => {
+            if (!ContextMenuIntegration.is(integration)) {
+                expect(() => app.contextMenu.open()).toThrow();
+                return;
+            }
+
+            await app.contextMenu.open();
+            await expect(app.contextMenu.locate()).toBeVisible();
         }
     },
     close: {
-        title: 'should throw an error when closing is not supported',
-        run: async ({ app }) => {
-            expect(() => app.contextMenu.close()).toThrow();
+        title: 'should be closeable, or throw when the integration has no context menu',
+        run: async ({ app, integration }) => {
+            if (!ContextMenuIntegration.is(integration)) {
+                expect(() => app.contextMenu.close()).toThrow();
+                return;
+            }
+
+            await app.contextMenu.open();
+            await expect(app.contextMenu.locate()).toBeVisible();
+            await app.contextMenu.close();
+            await expect(app.contextMenu.locate()).toBeHidden();
         }
     }
 } satisfies WorkflowTestCases;
-
-/** Integration-provided replacement bodies for {@link defineContextMenuSuite}. */
-export type ContextMenuSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof contextMenuSuiteCases>;
 
 /** Integration-specific skips for {@link defineContextMenuSuite}. */
 export type ContextMenuSuiteOptions = WorkflowSuiteOptions<typeof contextMenuSuiteCases>;

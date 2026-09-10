@@ -16,12 +16,12 @@
 import { expect, provideUndoRedoTrigger } from '@eclipse-glsp/playwright';
 import { TaskManual } from '../../../../graph/elements/task-manual.po';
 import { TaskManualNodes } from '../../../nodes';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
 import type { WorkflowTest } from '../../../workflow-test';
 
 /** Default cases of the reusable undo/redo suite, keyed by stable identifiers. */
 export const undoRedoSuiteCases = {
-    shouldAllowUndoAndRedo: {
+    undoRedo: {
         title: 'should allow undo and redo',
         run: async workflow => {
             const trigger = provideUndoRedoTrigger(workflow.integration, workflow.app);
@@ -49,9 +49,6 @@ export const undoRedoSuiteCases = {
     }
 } satisfies WorkflowTestCases;
 
-/** Integration-provided replacement bodies for {@link defineUndoRedoSuite}. */
-export type UndoRedoSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof undoRedoSuiteCases>;
-
 /** Integration-specific skips for {@link defineUndoRedoSuite}. */
 export type UndoRedoSuiteOptions = WorkflowSuiteOptions<typeof undoRedoSuiteCases>;
 
@@ -64,7 +61,7 @@ export type UndoRedoSuiteOptions = WorkflowSuiteOptions<typeof undoRedoSuiteCase
 export function defineUndoRedoSuite(test: WorkflowTest, options?: UndoRedoSuiteOptions): void {
     test.describe('The undo redo trigger', () => {
         const suite = workflowSuite(test, 'undoRedo', undoRedoSuiteCases, options);
-        test(...suite.args('shouldAllowUndoAndRedo'));
+        test(...suite.args('undoRedo'));
         suite.done();
     });
 }

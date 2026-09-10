@@ -19,10 +19,6 @@ import { assertPopup, expectedManualPopupText, manualLabel, TaskManual, test } f
 // Closing the popup through the context menu is only reachable in Theia, the only integration
 // that provides a context menu.
 test.describe('The popup', () => {
-    test.beforeEach(async ({ workflow }) => {
-        expectedManualPopupText.setServer(workflow.glspServer);
-    });
-
     test.describe('should be closed on', () => {
         test('context menu', async ({ workflow: { app } }) => {
             await assertPopup(app, manualLabel, TaskManual, expectedManualPopupText.get());

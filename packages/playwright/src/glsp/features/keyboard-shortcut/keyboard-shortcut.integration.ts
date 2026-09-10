@@ -20,10 +20,23 @@ export type DiagramShortcut = 'center' | 'fitToScreen' | 'layout';
 
 export type DiagramShortcuts = Record<DiagramShortcut, string>;
 
-const defaultDiagramShortcuts: DiagramShortcuts = {
+/** Key bindings of the plain GLSP-Client, used when an integration does not rebind them. */
+export const defaultDiagramShortcuts: DiagramShortcuts = {
     center: 'Control+Shift+C',
     fitToScreen: 'Control+Shift+F',
     layout: 'Control+Shift+L'
+};
+
+/**
+ * Key bindings used by the tool platforms, which reserve `Control+Shift+*` for their own commands.
+ *
+ * Theia and VS Code both rebind the diagram commands this way. Third-party integrations for
+ * platforms with the same conflict can reuse the convention instead of restating it.
+ */
+export const hostDiagramShortcuts: DiagramShortcuts = {
+    center: 'Alt+C',
+    fitToScreen: 'Alt+F',
+    layout: 'Alt+L'
 };
 
 /** Implemented by host integrations that rebind the GLSP diagram commands. */

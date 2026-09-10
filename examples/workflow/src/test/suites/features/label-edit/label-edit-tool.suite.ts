@@ -16,12 +16,12 @@
 import { expect } from '@eclipse-glsp/playwright';
 import { TaskManual } from '../../../../graph/elements/task-manual.po';
 import { TaskManualNodes } from '../../../nodes';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
 import type { WorkflowTest } from '../../../workflow-test';
 
 /** Default cases of the reusable label-edit-tool suite, keyed by stable identifiers. */
 export const labelEditToolSuiteCases = {
-    shouldAllowNodesToBeRenamed: {
+    rename: {
         title: 'should allow nodes to be renamed',
         run: async workflow => {
             const node = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -30,7 +30,7 @@ export const labelEditToolSuiteCases = {
             expect(await node.label).toBe('New Label');
         }
     },
-    shouldAllowNodesToBeRenamedByUsingTheKeyboard: {
+    renameByKeyboard: {
         title: 'should allow nodes to be renamed by using the keyboard',
         run: async workflow => {
             const node = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -44,7 +44,7 @@ export const labelEditToolSuiteCases = {
             expect(await node.label).toBe('New Label');
         }
     },
-    shouldNotAllowEmptyText: {
+    rejectEmptyText: {
         title: 'should not allow empty text',
         run: async workflow => {
             const node = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -60,9 +60,6 @@ export const labelEditToolSuiteCases = {
     }
 } satisfies WorkflowTestCases;
 
-/** Integration-provided replacement bodies for {@link defineLabelEditToolSuite}. */
-export type LabelEditToolSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof labelEditToolSuiteCases>;
-
 /** Integration-specific skips for {@link defineLabelEditToolSuite}. */
 export type LabelEditToolSuiteOptions = WorkflowSuiteOptions<typeof labelEditToolSuiteCases>;
 
@@ -75,9 +72,9 @@ export type LabelEditToolSuiteOptions = WorkflowSuiteOptions<typeof labelEditToo
 export function defineLabelEditToolSuite(test: WorkflowTest, options?: LabelEditToolSuiteOptions): void {
     test.describe('The label edit tool', () => {
         const suite = workflowSuite(test, 'labelEditTool', labelEditToolSuiteCases, options);
-        test(...suite.args('shouldAllowNodesToBeRenamed'));
-        test(...suite.args('shouldAllowNodesToBeRenamedByUsingTheKeyboard'));
-        test(...suite.args('shouldNotAllowEmptyText'));
+        test(...suite.args('rename'));
+        test(...suite.args('renameByKeyboard'));
+        test(...suite.args('rejectEmptyText'));
         suite.done();
     });
 }

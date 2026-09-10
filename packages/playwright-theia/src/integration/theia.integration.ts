@@ -24,7 +24,7 @@ import type {
     MarkerNavigator,
     MarkerNavigatorIntegration
 } from '@eclipse-glsp/playwright';
-import { ContextMenuIntegration, Integration, SVGMetadataUtils } from '@eclipse-glsp/playwright';
+import { ContextMenuIntegration, hostDiagramShortcuts, Integration, SVGMetadataUtils } from '@eclipse-glsp/playwright';
 import { TheiaMarkerNavigator } from './theia-keybindings';
 import { TheiaGLSPApp } from './po/theia-glsp-app.po';
 import { TheiaGLSPEditor } from './po/theia-glsp-editor.po';
@@ -40,11 +40,7 @@ export class TheiaIntegration
 {
     protected theiaApp: TheiaGLSPApp;
 
-    readonly diagramShortcuts: DiagramShortcuts = {
-        center: 'Alt+C',
-        fitToScreen: 'Alt+F',
-        layout: 'Alt+L'
-    };
+    readonly diagramShortcuts: DiagramShortcuts = hostDiagramShortcuts;
 
     override get page(): Page {
         return this.theiaApp.page;

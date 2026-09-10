@@ -18,12 +18,12 @@ import { CursorCSS } from '../../../../../cursors-css';
 import { Category } from '../../../../../graph/elements/category.po';
 import { TaskManual } from '../../../../../graph/elements/task-manual.po';
 import { CategoryNodes, TaskManualNodes } from '../../../../nodes';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../../suite';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../../../suite';
 import type { WorkflowTest } from '../../../../workflow-test';
 
 /** Default cases of the reusable node-creation-tool suite, keyed by stable identifiers. */
 export const nodeCreationToolSuiteCases = {
-    shouldAllowCreatingNewNodesInTheGraph: {
+    createNode: {
         title: 'should allow creating new nodes in the graph',
         run: async workflow => {
             const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -45,7 +45,7 @@ export const nodeCreationToolSuiteCases = {
             expect(await label.textContent()).toBe(TaskManualNodes.createdLabel(workflow.glspServer).get());
         }
     },
-    shouldAllowCreatingNewChildNodes: {
+    createChildNode: {
         title: 'should allow creating new child nodes',
         run: async workflow => {
             // Create a new category
@@ -90,7 +90,7 @@ export const nodeCreationToolSuiteCases = {
             expect(await children[0].idAttr()).toBe(await newTask.idAttr());
         }
     },
-    shouldPreventInvalidCombinations: {
+    preventInvalidCombinations: {
         title: 'should prevent invalid combinations',
         run: async workflow => {
             const paletteItem = await workflow.app.toolPalette.content.toolElement('Nodes', 'Manual Task');
@@ -106,7 +106,7 @@ export const nodeCreationToolSuiteCases = {
             await expect(workflow.app.graph).toContainClass(CursorCSS.OPERATION_NOT_ALLOWED);
         }
     },
-    shouldAllowToCancelTheOperation: {
+    cancel: {
         title: 'should allow to cancel the operation',
         run: async workflow => {
             const paletteItem = await workflow.app.toolPalette.content.toolElement('Nodes', 'Manual Task');
@@ -122,9 +122,6 @@ export const nodeCreationToolSuiteCases = {
     }
 } satisfies WorkflowTestCases;
 
-/** Integration-provided replacement bodies for {@link defineNodeCreationToolSuite}. */
-export type NodeCreationToolSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof nodeCreationToolSuiteCases>;
-
 /** Integration-specific skips for {@link defineNodeCreationToolSuite}. */
 export type NodeCreationToolSuiteOptions = WorkflowSuiteOptions<typeof nodeCreationToolSuiteCases>;
 
@@ -137,10 +134,10 @@ export type NodeCreationToolSuiteOptions = WorkflowSuiteOptions<typeof nodeCreat
 export function defineNodeCreationToolSuite(test: WorkflowTest, options?: NodeCreationToolSuiteOptions): void {
     test.describe('The node creation tool', () => {
         const suite = workflowSuite(test, 'nodeCreationTool', nodeCreationToolSuiteCases, options);
-        test(...suite.args('shouldAllowCreatingNewNodesInTheGraph'));
-        test(...suite.args('shouldAllowCreatingNewChildNodes'));
-        test(...suite.args('shouldPreventInvalidCombinations'));
-        test(...suite.args('shouldAllowToCancelTheOperation'));
+        test(...suite.args('createNode'));
+        test(...suite.args('createChildNode'));
+        test(...suite.args('preventInvalidCombinations'));
+        test(...suite.args('cancel'));
         suite.done();
     });
 }

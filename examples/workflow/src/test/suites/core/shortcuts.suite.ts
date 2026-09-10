@@ -16,12 +16,12 @@
 import { expect } from '@eclipse-glsp/playwright';
 import { TaskManual } from '../../../graph/elements/task-manual.po';
 import { TaskManualNodes } from '../../nodes';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../suite';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../suite';
 import type { WorkflowTest } from '../../workflow-test';
 
 /** Default cases of the reusable Shortcuts suite, keyed by stable identifiers. */
 export const shortcutsSuiteCases = {
-    shouldAllowDeletingTheElementInTheGraph: {
+    delete: {
         title: 'should allow deleting the element in the graph',
         run: async workflow => {
             const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -36,9 +36,6 @@ export const shortcutsSuiteCases = {
     }
 } satisfies WorkflowTestCases;
 
-/** Integration-provided replacement bodies for {@link defineShortcutsSuite}. */
-export type ShortcutsSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof shortcutsSuiteCases>;
-
 /** Integration-specific skips for {@link defineShortcutsSuite}. */
 export type ShortcutsSuiteOptions = WorkflowSuiteOptions<typeof shortcutsSuiteCases>;
 
@@ -51,7 +48,7 @@ export type ShortcutsSuiteOptions = WorkflowSuiteOptions<typeof shortcutsSuiteCa
 export function defineShortcutsSuite(test: WorkflowTest, options?: ShortcutsSuiteOptions): void {
     test.describe('Shortcuts', () => {
         const suite = workflowSuite(test, 'shortcuts', shortcutsSuiteCases, options);
-        test(...suite.args('shouldAllowDeletingTheElementInTheGraph'));
+        test(...suite.args('delete'));
         suite.done();
     });
 }

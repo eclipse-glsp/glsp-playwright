@@ -88,11 +88,11 @@ integration never starts for them.
 import { defineWorkflowSuites, test } from '@eclipse-glsp/workflow';
 
 defineWorkflowSuites(test, {
-    contextMenu: {
+    labelEditTool: {
         cases: {
-            open: {
-                title: 'should open the native context menu',
-                run: async ({ app }) => app.contextMenu.open()
+            renameByKeyboard: {
+                title: 'should allow nodes to be renamed with the platform keybinding',
+                run: async ({ app }) => { ... }
             }
         }
     },
@@ -100,19 +100,11 @@ defineWorkflowSuites(test, {
 });
 ```
 
-Bodies can also be overridden at runtime through the `suiteCases` Playwright option fixture —
-e.g. per project in the Playwright configuration, or when composing a derived test instance with
-`test.extend`. Fixture-provided bodies take precedence over `cases[id].run`:
-
-```ts
-test.use({
-    suiteCases: {
-        contextMenu: {
-            open: async ({ app }) => app.contextMenu.open()
-        }
-    }
-});
-```
+Prefer a capability interface over an override when the difference is a platform capability rather
+than a quirk of one integration: a shared case can branch on `ContextMenuIntegration.is(integration)`
+or resolve its key binding through `provideDiagramShortcut(integration, ...)`, which keeps both
+halves of the assertion in the suite instead of splitting them across an override. See
+[integration.md](../../docs/concepts/integration.md#capability-interfaces).
 
 Integration-specific cases do not need a dedicated mechanism: they are plain Playwright tests in
 the integration's own spec files (see `workflow-theia/tests/popup-context-menu.spec.ts`).

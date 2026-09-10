@@ -58,7 +58,7 @@ The helper is not a convenience: the returned options carry the factory that cre
 
 To add an integration from another package:
 
-1. Extend `Integration` (or implement one of the capability interfaces such as `ContextMenuIntegration`).
+1. Extend `Integration` and implement any [capability interface](#capability-interfaces) your platform supports.
 2. Declare an options interface extending `BaseIntegrationOptions` with a literal `type` and a required `integrationFactory`.
 3. Register the options type by merging into the global options map, which is what adds the new discriminator to `IntegrationType` and `IntegrationOptions`:
 
@@ -76,13 +76,28 @@ To add an integration from another package:
 
 4. Export a `defineMyPlatformIntegration()` helper that fills in `type` and `integrationFactory`.
 
-If your platform rebinds keys that the framework drives, implement the matching capability
-interface (`UndoRedoIntegration`, `MarkerNavigatorIntegration`, or
-`DiagramShortcutIntegration`) instead of branching on the integration type in a test. The
-matching `provide*` helper then picks your variant up automatically, which keeps shared tests free
+## Capability interfaces
+
+A capability interface declares that an integration supports a feature the framework drives, or that
+it drives it differently than the plain **GLSP-Client** does. Each one lives next to the feature it
+belongs to, under `glsp/features/<feature>/<feature>.integration.ts`, and is exported from the
+package root:
+
+| Capability                   | Feature folder               | Resolved through         |
+| ---------------------------- | ---------------------------- | ------------------------ |
+| `ContextMenuIntegration`     | `features/context-menu`      | `GLSPApp.contextMenu`    |
+| `DiagramShortcutIntegration` | `features/keyboard-shortcut` | `provideDiagramShortcut` |
+| `MarkerNavigatorIntegration` | `features/validation`        | `provideMarkerNavigator` |
+| `UndoRedoIntegration`        | `features/undo-redo`         | `provideUndoRedoTrigger` |
+
+Implement the matching interface instead of branching on the integration type in a test. Shared
+tests then either pick the variant up automatically through the `provide*` helper, or branch on
+`<Capability>.is(integration)` where the two behaviors genuinely differ — either way they stay free
 of any platform import.
 
 `provideUndoRedoTrigger` and `provideDiagramShortcut` use the client key bindings when an
 integration does not implement their capability. Marker navigation is deliberately stricter:
 `provideMarkerNavigator` requires an explicit capability because host applications can reserve
 its keys. The Page, Standalone, and Theia integrations provide one; VS Code currently does not.
+`ContextMenuIntegration` has no default: `GLSPApp.contextMenu` is a stub that throws for
+integrations without a context menu, so tests must guard with `ContextMenuIntegration.is`.

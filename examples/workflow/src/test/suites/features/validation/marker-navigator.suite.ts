@@ -16,7 +16,7 @@
 import { expect, provideMarkerNavigator } from '@eclipse-glsp/playwright';
 import { TaskAutomated } from '../../../../graph/elements/task-automated.po';
 import { TaskAutomatedNodes } from '../../../nodes';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
 import type { WorkflowTest } from '../../../workflow-test';
 
 const element1 = TaskAutomatedNodes.chkwtLabel;
@@ -31,7 +31,7 @@ const backwardOrder = [element1, element6, element5, element4, element3, element
 
 /** Default cases of the reusable marker-navigator suite, keyed by stable identifiers. */
 export const markerNavigatorSuiteCases = {
-    shouldNavigateToTheFirstElement: {
+    navigateToFirst: {
         title: 'should navigate to the first element',
         run: async workflow => {
             const navigator = provideMarkerNavigator(workflow.integration, workflow.app);
@@ -43,7 +43,7 @@ export const markerNavigatorSuiteCases = {
             });
         }
     },
-    shouldNavigateForwardsThroughTheElements: {
+    navigateForwards: {
         title: 'should navigate forwards through the elements',
         run: async workflow => {
             const navigator = provideMarkerNavigator(workflow.integration, workflow.app);
@@ -57,7 +57,7 @@ export const markerNavigatorSuiteCases = {
             }
         }
     },
-    shouldNavigateBackwardsThroughTheElements: {
+    navigateBackwards: {
         title: 'should navigate backwards through the elements',
         run: async workflow => {
             const navigator = provideMarkerNavigator(workflow.integration, workflow.app);
@@ -73,9 +73,6 @@ export const markerNavigatorSuiteCases = {
     }
 } satisfies WorkflowTestCases;
 
-/** Integration-provided replacement bodies for {@link defineMarkerNavigatorSuite}. */
-export type MarkerNavigatorSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof markerNavigatorSuiteCases>;
-
 /** Integration-specific skips for {@link defineMarkerNavigatorSuite}. */
 export type MarkerNavigatorSuiteOptions = WorkflowSuiteOptions<typeof markerNavigatorSuiteCases>;
 
@@ -88,9 +85,9 @@ export type MarkerNavigatorSuiteOptions = WorkflowSuiteOptions<typeof markerNavi
 export function defineMarkerNavigatorSuite(test: WorkflowTest, options?: MarkerNavigatorSuiteOptions): void {
     test.describe('The marker navigator', () => {
         const suite = workflowSuite(test, 'markerNavigator', markerNavigatorSuiteCases, options);
-        test(...suite.args('shouldNavigateToTheFirstElement'));
-        test(...suite.args('shouldNavigateForwardsThroughTheElements'));
-        test(...suite.args('shouldNavigateBackwardsThroughTheElements'));
+        test(...suite.args('navigateToFirst'));
+        test(...suite.args('navigateForwards'));
+        test(...suite.args('navigateBackwards'));
         suite.done();
     });
 }

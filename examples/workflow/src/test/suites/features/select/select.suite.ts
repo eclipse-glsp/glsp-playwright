@@ -16,12 +16,12 @@
 
 import { PModelElement, expect } from '@eclipse-glsp/playwright';
 import { TaskManual } from '../../../../graph/elements/task-manual.po';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
 import type { WorkflowTest } from '../../../workflow-test';
 
 /** Default cases of the reusable selection suite, keyed by stable identifiers. */
 export const selectSuiteCases = {
-    shouldAllowToSelectASingleElement: {
+    selectSingle: {
         title: 'should allow to select a single element',
         run: async workflow => {
             const element = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
@@ -32,7 +32,7 @@ export const selectSuiteCases = {
             });
         }
     },
-    shouldDeselectAfterANewSelection: {
+    deselectOnNewSelection: {
         title: 'should deselect after a new selection',
         run: async workflow => {
             const element1 = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
@@ -50,7 +50,7 @@ export const selectSuiteCases = {
             });
         }
     },
-    shouldAllowToSelectMultipleElements: {
+    selectMultiple: {
         title: 'should allow to select multiple elements',
         run: async workflow => {
             const element1 = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
@@ -68,7 +68,7 @@ export const selectSuiteCases = {
             });
         }
     },
-    shouldAllowToSelectAllElementsByUsingAShortcut: {
+    selectAllByShortcut: {
         title: 'should allow to select all elements by using a shortcut',
         run: async workflow => {
             await workflow.app.graph.locate().click();
@@ -79,7 +79,7 @@ export const selectSuiteCases = {
             });
         }
     },
-    shouldAllowToDeselectASingleElementByClickingOutside: {
+    deselectByClickOutside: {
         title: 'should allow to deselect a single element by clicking outside',
         run: async workflow => {
             const element = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
@@ -95,9 +95,6 @@ export const selectSuiteCases = {
     }
 } satisfies WorkflowTestCases;
 
-/** Integration-provided replacement bodies for {@link defineSelectSuite}. */
-export type SelectSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof selectSuiteCases>;
-
 /** Integration-specific skips for {@link defineSelectSuite}. */
 export type SelectSuiteOptions = WorkflowSuiteOptions<typeof selectSuiteCases>;
 
@@ -110,11 +107,11 @@ export type SelectSuiteOptions = WorkflowSuiteOptions<typeof selectSuiteCases>;
 export function defineSelectSuite(test: WorkflowTest, options?: SelectSuiteOptions): void {
     test.describe('The select feature', () => {
         const suite = workflowSuite(test, 'select', selectSuiteCases, options);
-        test(...suite.args('shouldAllowToSelectASingleElement'));
-        test(...suite.args('shouldDeselectAfterANewSelection'));
-        test(...suite.args('shouldAllowToSelectMultipleElements'));
-        test(...suite.args('shouldAllowToSelectAllElementsByUsingAShortcut'));
-        test(...suite.args('shouldAllowToDeselectASingleElementByClickingOutside'));
+        test(...suite.args('selectSingle'));
+        test(...suite.args('deselectOnNewSelection'));
+        test(...suite.args('selectMultiple'));
+        test(...suite.args('selectAllByShortcut'));
+        test(...suite.args('deselectByClickOutside'));
         suite.done();
     });
 }

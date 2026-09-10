@@ -18,12 +18,12 @@ import { ActivityNodeFork } from '../../../graph/elements/activity-node-fork.po'
 import { Edge } from '../../../graph/elements/edge.po';
 import { TaskManual } from '../../../graph/elements/task-manual.po';
 import { TaskManualNodes } from '../../nodes';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../suite';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../suite';
 import type { WorkflowTest } from '../../workflow-test';
 
 /** Default cases of the reusable connectable-element edge-accessor suite, keyed by stable identifiers. */
 export const connectableElementSuiteCases = {
-    shouldAllowAccessingAllEdgesOfAType: {
+    edgesOfType: {
         title: 'should allow accessing all edges of a type',
         run: async workflow => {
             const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -40,7 +40,7 @@ export const connectableElementSuiteCases = {
             });
         }
     },
-    shouldReturnTypedSourcesOnAccess: {
+    typedSources: {
         title: 'should return typed sources on access',
         run: async workflow => {
             const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -52,7 +52,7 @@ export const connectableElementSuiteCases = {
             expect(source instanceof TaskManual).toBeTruthy();
         }
     },
-    shouldAllowAccessingAllEdgesOfATypeAgainstATargetType: {
+    edgesOfTypeByTargetType: {
         title: 'should allow accessing all edges of a type against a target type',
         run: async workflow => {
             const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -70,9 +70,6 @@ export const connectableElementSuiteCases = {
     }
 } satisfies WorkflowTestCases;
 
-/** Integration-provided replacement bodies for {@link defineConnectableElementSuite}. */
-export type ConnectableElementSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof connectableElementSuiteCases>;
-
 /** Integration-specific skips for {@link defineConnectableElementSuite}. */
 export type ConnectableElementSuiteOptions = WorkflowSuiteOptions<typeof connectableElementSuiteCases>;
 
@@ -85,9 +82,9 @@ export type ConnectableElementSuiteOptions = WorkflowSuiteOptions<typeof connect
 export function defineConnectableElementSuite(test: WorkflowTest, options?: ConnectableElementSuiteOptions): void {
     test.describe('The edge accessor of a connectable element', () => {
         const suite = workflowSuite(test, 'connectableElement', connectableElementSuiteCases, options);
-        test(...suite.args('shouldAllowAccessingAllEdgesOfAType'));
-        test(...suite.args('shouldReturnTypedSourcesOnAccess'));
-        test(...suite.args('shouldAllowAccessingAllEdgesOfATypeAgainstATargetType'));
+        test(...suite.args('edgesOfType'));
+        test(...suite.args('typedSources'));
+        test(...suite.args('edgesOfTypeByTargetType'));
         suite.done();
     });
 }

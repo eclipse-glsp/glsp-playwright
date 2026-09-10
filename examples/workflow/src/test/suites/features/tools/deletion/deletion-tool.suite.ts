@@ -16,12 +16,12 @@
 import { expect } from '@eclipse-glsp/playwright';
 import { TaskManual } from '../../../../../graph/elements/task-manual.po';
 import { TaskManualNodes } from '../../../../nodes';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../../suite';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../../../suite';
 import type { WorkflowTest } from '../../../../workflow-test';
 
 /** Default cases of the reusable deletion-tool suite, keyed by stable identifiers. */
 export const deletionToolSuiteCases = {
-    shouldAllowDeletingElementsInTheGraphByMouse: {
+    deleteByMouse: {
         title: 'should allow deleting elements in the graph by mouse',
         run: async workflow => {
             await workflow.app.toolPalette.toolbar.deletionTool().click();
@@ -35,7 +35,7 @@ export const deletionToolSuiteCases = {
             expect(await task.locate().count()).toBe(0);
         }
     },
-    shouldAllowDeletingElementsInTheGraphByKeyboard: {
+    deleteByKeyboard: {
         title: 'should allow deleting elements in the graph by keyboard',
         run: async workflow => {
             const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -45,7 +45,7 @@ export const deletionToolSuiteCases = {
             expect(await task.locate().count()).toBe(0);
         }
     },
-    shouldAllowDeletingElementsInTheGraph: {
+    delete: {
         title: 'should allow deleting elements in the graph',
         run: async workflow => {
             const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -56,9 +56,6 @@ export const deletionToolSuiteCases = {
         }
     }
 } satisfies WorkflowTestCases;
-
-/** Integration-provided replacement bodies for {@link defineDeletionToolSuite}. */
-export type DeletionToolSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof deletionToolSuiteCases>;
 
 /** Integration-specific skips for {@link defineDeletionToolSuite}. */
 export type DeletionToolSuiteOptions = WorkflowSuiteOptions<typeof deletionToolSuiteCases>;
@@ -72,9 +69,9 @@ export type DeletionToolSuiteOptions = WorkflowSuiteOptions<typeof deletionToolS
 export function defineDeletionToolSuite(test: WorkflowTest, options?: DeletionToolSuiteOptions): void {
     test.describe('The deletion tool', () => {
         const suite = workflowSuite(test, 'deletionTool', deletionToolSuiteCases, options);
-        test(...suite.args('shouldAllowDeletingElementsInTheGraphByMouse'));
-        test(...suite.args('shouldAllowDeletingElementsInTheGraphByKeyboard'));
-        test(...suite.args('shouldAllowDeletingElementsInTheGraph'));
+        test(...suite.args('deleteByMouse'));
+        test(...suite.args('deleteByKeyboard'));
+        test(...suite.args('delete'));
         suite.done();
     });
 }

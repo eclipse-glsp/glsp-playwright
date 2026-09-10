@@ -17,20 +17,14 @@ import { expect, provideDiagramShortcut } from '@eclipse-glsp/playwright';
 import { TaskAutomated } from '../../../../graph/elements/task-automated.po';
 import { TaskManual } from '../../../../graph/elements/task-manual.po';
 import { assertPopup, automatedLabel, expectedAutomatedPopupText, expectedManualPopupText, manualLabel } from '../../../../popup-text';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
-import type { WorkflowTest, WorkflowTestContext } from '../../../workflow-test';
-
-function configureExpectedPopupText(workflow: WorkflowTestContext): void {
-    expectedManualPopupText.setServer(workflow.glspServer);
-    expectedAutomatedPopupText.setServer(workflow.glspServer);
-}
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
+import type { WorkflowTest } from '../../../workflow-test';
 
 /** Default cases of the reusable popup suite, keyed by stable identifiers. */
 export const popupSuiteCases = {
-    shouldBeShownOnHoveringATaskManual: {
+    shownOnHover: {
         title: 'should be shown on hovering a task manual',
         run: async workflow => {
-            configureExpectedPopupText(workflow);
             const task = await workflow.app.graph.getNodeByLabel(manualLabel, TaskManual);
 
             await expect(workflow.app.popup.locate()).toBeHidden();
@@ -42,10 +36,9 @@ export const popupSuiteCases = {
             expect(await popup.innerText()).toBe(expectedManualPopupText.get());
         }
     },
-    shouldAllowToAccessTheTextDirectlyInElements: {
+    textFromElement: {
         title: 'should allow to access the text directly in elements',
         run: async workflow => {
-            configureExpectedPopupText(workflow);
             const task = await workflow.app.graph.getNodeByLabel(manualLabel, TaskManual);
             await expect(workflow.app.popup.locate()).toBeHidden();
             const text = await task.popupText();
@@ -53,10 +46,9 @@ export const popupSuiteCases = {
             expect(text).toBe(expectedManualPopupText.get());
         }
     },
-    shouldBeClosedOnEscape: {
+    closeOnEscape: {
         title: 'escape',
         run: async workflow => {
-            configureExpectedPopupText(workflow);
             await workflow.app.graph.focus();
             await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
 
@@ -66,10 +58,9 @@ export const popupSuiteCases = {
             await expect(workflow.app.popup.locate()).toBeHidden();
         }
     },
-    shouldBeClosedOnNewHover: {
+    closeOnNewHover: {
         title: 'new hover',
         run: async workflow => {
-            configureExpectedPopupText(workflow);
             await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
 
             await workflow.app.popup.close();
@@ -77,10 +68,9 @@ export const popupSuiteCases = {
             await assertPopup(workflow.app, automatedLabel, TaskAutomated, expectedAutomatedPopupText.get());
         }
     },
-    shouldBeClosedOnMouseMovedAway: {
+    closeOnMouseAway: {
         title: 'mouse moved away',
         run: async workflow => {
-            configureExpectedPopupText(workflow);
             await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
 
             const bounds = await workflow.app.graph.bounds();
@@ -90,10 +80,9 @@ export const popupSuiteCases = {
             await expect(workflow.app.popup.locate()).toBeHidden();
         }
     },
-    shouldBeClosedOnFocusLost: {
+    closeOnFocusLost: {
         title: 'focus lost',
         run: async workflow => {
-            configureExpectedPopupText(workflow);
             const task = await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
 
             await workflow.app.graph.locate().click();
@@ -102,10 +91,9 @@ export const popupSuiteCases = {
             await expect(task.popup().locate()).toBeHidden();
         }
     },
-    shouldBeClosedOnCenterCommand: {
+    closeOnCenter: {
         title: 'center command',
         run: async workflow => {
-            configureExpectedPopupText(workflow);
             await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
             await workflow.app.graph.focus();
             await workflow.app.page.keyboard.press(provideDiagramShortcut(workflow.integration, 'center'));
@@ -114,10 +102,9 @@ export const popupSuiteCases = {
             await expect(workflow.app.popup.locate()).toBeHidden();
         }
     },
-    shouldBeClosedOnFitToScreenCommand: {
+    closeOnFitToScreen: {
         title: 'fit to screen command',
         run: async workflow => {
-            configureExpectedPopupText(workflow);
             await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
             await workflow.app.graph.focus();
             await workflow.app.page.keyboard.press(provideDiagramShortcut(workflow.integration, 'fitToScreen'));
@@ -126,10 +113,9 @@ export const popupSuiteCases = {
             await expect(workflow.app.popup.locate()).toBeHidden();
         }
     },
-    shouldBeClosedOnLayoutCommand: {
+    closeOnLayout: {
         title: 'layout command',
         run: async workflow => {
-            configureExpectedPopupText(workflow);
             await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
             await workflow.app.graph.focus();
             await workflow.app.page.keyboard.press(provideDiagramShortcut(workflow.integration, 'layout'));
@@ -139,9 +125,6 @@ export const popupSuiteCases = {
         }
     }
 } satisfies WorkflowTestCases;
-
-/** Integration-provided replacement bodies for {@link definePopupSuite}. */
-export type PopupSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof popupSuiteCases>;
 
 /** Integration-specific skips for {@link definePopupSuite}. */
 export type PopupSuiteOptions = WorkflowSuiteOptions<typeof popupSuiteCases>;
@@ -156,17 +139,17 @@ export function definePopupSuite(test: WorkflowTest, options?: PopupSuiteOptions
     test.describe('The popup', () => {
         const suite = workflowSuite(test, 'popup', popupSuiteCases, options);
 
-        test(...suite.args('shouldBeShownOnHoveringATaskManual'));
-        test(...suite.args('shouldAllowToAccessTheTextDirectlyInElements'));
+        test(...suite.args('shownOnHover'));
+        test(...suite.args('textFromElement'));
 
         test.describe('should be closed on', () => {
-            test(...suite.args('shouldBeClosedOnEscape'));
-            test(...suite.args('shouldBeClosedOnNewHover'));
-            test(...suite.args('shouldBeClosedOnMouseMovedAway'));
-            test(...suite.args('shouldBeClosedOnFocusLost'));
-            test(...suite.args('shouldBeClosedOnCenterCommand'));
-            test(...suite.args('shouldBeClosedOnFitToScreenCommand'));
-            test(...suite.args('shouldBeClosedOnLayoutCommand'));
+            test(...suite.args('closeOnEscape'));
+            test(...suite.args('closeOnNewHover'));
+            test(...suite.args('closeOnMouseAway'));
+            test(...suite.args('closeOnFocusLost'));
+            test(...suite.args('closeOnCenter'));
+            test(...suite.args('closeOnFitToScreen'));
+            test(...suite.args('closeOnLayout'));
         });
 
         suite.done();

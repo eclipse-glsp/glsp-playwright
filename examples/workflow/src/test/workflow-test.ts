@@ -15,30 +15,7 @@
  ********************************************************************************/
 import { GLSPServer, Integration, test as base } from '@eclipse-glsp/playwright';
 import { WorkflowApp } from '../app/workflow-app';
-import type {
-    CommandPaletteSuiteCaseBodies,
-    ConnectableElementSuiteCaseBodies,
-    ContextMenuSuiteCaseBodies,
-    DebugStandaloneSuiteCaseBodies,
-    DeletionToolSuiteCaseBodies,
-    EdgeCreationToolSuiteCaseBodies,
-    EdgeEditToolSuiteCaseBodies,
-    EdgeSuiteCaseBodies,
-    GraphSuiteCaseBodies,
-    LabelEditToolSuiteCaseBodies,
-    MarkerNavigatorSuiteCaseBodies,
-    MarkerSuiteCaseBodies,
-    NodeCreationToolSuiteCaseBodies,
-    ParentSuiteCaseBodies,
-    PopupSuiteCaseBodies,
-    ResizeHandleSuiteCaseBodies,
-    RoutingPointSuiteCaseBodies,
-    SelectKeybindingStandaloneSuiteCaseBodies,
-    SelectSuiteCaseBodies,
-    ShortcutsSuiteCaseBodies,
-    ToolPaletteSuiteCaseBodies,
-    UndoRedoSuiteCaseBodies
-} from './suites';
+import { expectedAutomatedPopupText, expectedManualPopupText } from '../popup-text';
 
 /**
  * Application-specific objects shared by the reusable Workflow test suites.
@@ -50,52 +27,10 @@ export interface WorkflowTestContext {
 }
 
 /**
- * Integration-provided test-body overrides for the reusable Workflow suites.
- *
- * Set them through the standard Playwright mechanisms, e.g. in a spec file:
- *
- * ```ts
- * test.use({
- *     suiteCases: {
- *         contextMenu: {
- *             open: async ({ app }) => { ... }
- *         }
- *     }
- * });
- * ```
- */
-export interface WorkflowSuiteCaseOverrides {
-    commandPalette?: CommandPaletteSuiteCaseBodies;
-    connectableElement?: ConnectableElementSuiteCaseBodies;
-    contextMenu?: ContextMenuSuiteCaseBodies;
-    debug?: DebugStandaloneSuiteCaseBodies;
-    deletionTool?: DeletionToolSuiteCaseBodies;
-    edge?: EdgeSuiteCaseBodies;
-    edgeCreationTool?: EdgeCreationToolSuiteCaseBodies;
-    edgeEditTool?: EdgeEditToolSuiteCaseBodies;
-    graph?: GraphSuiteCaseBodies;
-    labelEditTool?: LabelEditToolSuiteCaseBodies;
-    marker?: MarkerSuiteCaseBodies;
-    markerNavigator?: MarkerNavigatorSuiteCaseBodies;
-    nodeCreationTool?: NodeCreationToolSuiteCaseBodies;
-    parent?: ParentSuiteCaseBodies;
-    popup?: PopupSuiteCaseBodies;
-    resizeHandle?: ResizeHandleSuiteCaseBodies;
-    routingPoint?: RoutingPointSuiteCaseBodies;
-    select?: SelectSuiteCaseBodies;
-    selectKeybinding?: SelectKeybindingStandaloneSuiteCaseBodies;
-    shortcuts?: ShortcutsSuiteCaseBodies;
-    toolPalette?: ToolPaletteSuiteCaseBodies;
-    undoRedo?: UndoRedoSuiteCaseBodies;
-}
-
-/**
  * Fixtures made available by the Workflow test instance.
  */
 export interface WorkflowTestFixtures {
     workflow: WorkflowTestContext;
-    /** Option fixture carrying the integration-specific test-body overrides. */
-    suiteCases: WorkflowSuiteCaseOverrides;
 }
 
 /**
@@ -109,13 +44,17 @@ export const test = base.extend<WorkflowTestFixtures>({
         });
         await app.waitForReady();
 
+        // The expected popup text depends on the server implementation, which is only known
+        // once `glspServer` is resolved. Bound here so that no test has to set it up itself.
+        expectedManualPopupText.setServer(glspServer);
+        expectedAutomatedPopupText.setServer(glspServer);
+
         await use({
             app,
             glspServer,
             integration
         });
-    },
-    suiteCases: [{}, { option: true }]
+    }
 });
 
 export type WorkflowTest = typeof test;

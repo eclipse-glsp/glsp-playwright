@@ -17,12 +17,12 @@ import { expect } from '@eclipse-glsp/playwright';
 import { LabelHeading } from '../../../graph/elements/label-heading.po';
 import { TaskManual } from '../../../graph/elements/task-manual.po';
 import { TaskManualNodes } from '../../nodes';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../suite';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../suite';
 import type { WorkflowTest } from '../../workflow-test';
 
 /** Default cases of the reusable parent-element children-accessor suite, keyed by stable identifiers. */
 export const parentSuiteCases = {
-    shouldAllowToAccessAllElementsByUsingAType: {
+    allElementsByType: {
         title: 'should allow to access all elements by using a type',
         run: async workflow => {
             const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -35,7 +35,7 @@ export const parentSuiteCases = {
             expect(await label.textContent()).toBe('Push');
         }
     },
-    shouldAllowToAccessTheElementByUsingAType: {
+    elementByType: {
         title: 'should allow to access the element by using a type',
         run: async workflow => {
             const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -45,7 +45,7 @@ export const parentSuiteCases = {
             expect(await label.textContent()).toBe('Push');
         }
     },
-    shouldAllowToAccessTheElementByUsingATypeAndASelector: {
+    elementByTypeAndSelector: {
         title: 'should allow to access the element by using a type and a selector',
         run: async workflow => {
             const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -55,7 +55,7 @@ export const parentSuiteCases = {
             expect(await label.textContent()).toBe('Push');
         }
     },
-    shouldAllowToUseTypedElements: {
+    typedElements: {
         title: 'should allow to use typed elements',
         run: async workflow => {
             const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -66,9 +66,6 @@ export const parentSuiteCases = {
         }
     }
 } satisfies WorkflowTestCases;
-
-/** Integration-provided replacement bodies for {@link defineParentSuite}. */
-export type ParentSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof parentSuiteCases>;
 
 /** Integration-specific skips for {@link defineParentSuite}. */
 export type ParentSuiteOptions = WorkflowSuiteOptions<typeof parentSuiteCases>;
@@ -82,10 +79,10 @@ export type ParentSuiteOptions = WorkflowSuiteOptions<typeof parentSuiteCases>;
 export function defineParentSuite(test: WorkflowTest, options?: ParentSuiteOptions): void {
     test.describe('The children accessor of a parent element', () => {
         const suite = workflowSuite(test, 'parent', parentSuiteCases, options);
-        test(...suite.args('shouldAllowToAccessAllElementsByUsingAType'));
-        test(...suite.args('shouldAllowToAccessTheElementByUsingAType'));
-        test(...suite.args('shouldAllowToAccessTheElementByUsingATypeAndASelector'));
-        test(...suite.args('shouldAllowToUseTypedElements'));
+        test(...suite.args('allElementsByType'));
+        test(...suite.args('elementByType'));
+        test(...suite.args('elementByTypeAndSelector'));
+        test(...suite.args('typedElements'));
         suite.done();
     });
 }

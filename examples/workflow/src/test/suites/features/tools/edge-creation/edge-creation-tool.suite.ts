@@ -21,12 +21,12 @@ import { TaskAutomated } from '../../../../../graph/elements/task-automated.po';
 import { TaskManual } from '../../../../../graph/elements/task-manual.po';
 import { WeightedEdge } from '../../../../../graph/elements/weighted-edge.po';
 import { TaskAutomatedNodes, TaskManualNodes } from '../../../../nodes';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../../suite';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../../../suite';
 import type { WorkflowTest } from '../../../../workflow-test';
 
 /** Default cases of the reusable edge-creation-tool suite, keyed by stable identifiers. */
 export const edgeCreationToolSuiteCases = {
-    shouldAllowCreatingEdgesInTheGraph: {
+    createEdge: {
         title: 'should allow creating edges in the graph',
         run: async workflow => {
             const source = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -57,7 +57,7 @@ export const edgeCreationToolSuiteCases = {
             expect(targetId).toBe(await target.idAttr());
         }
     },
-    shouldAllowCreatingWeightedEdgesInTheGraph: {
+    createWeightedEdge: {
         title: 'should allow creating weighted edges in the graph',
         run: async workflow => {
             const chwkt = await workflow.app.graph.getNodeByLabel(TaskAutomatedNodes.chkwtLabel, TaskAutomated);
@@ -93,7 +93,7 @@ export const edgeCreationToolSuiteCases = {
             expect(targetId).toBe(await wtok.idAttr());
         }
     },
-    shouldPreventInvalidCombinations: {
+    preventInvalidCombinations: {
         title: 'should prevent invalid combinations',
         run: async workflow => {
             await workflow.app.toolPalette.waitForVisible();
@@ -105,7 +105,7 @@ export const edgeCreationToolSuiteCases = {
             await expect(workflow.app.graph).toContainClass(CursorCSS.OPERATION_NOT_ALLOWED);
         }
     },
-    shouldAllowToCancelTheOperation: {
+    cancel: {
         title: 'should allow to cancel the operation',
         run: async workflow => {
             const paletteItem = await workflow.app.toolPalette.content.toolElement('Nodes', 'Manual Task');
@@ -121,9 +121,6 @@ export const edgeCreationToolSuiteCases = {
     }
 } satisfies WorkflowTestCases;
 
-/** Integration-provided replacement bodies for {@link defineEdgeCreationToolSuite}. */
-export type EdgeCreationToolSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof edgeCreationToolSuiteCases>;
-
 /** Integration-specific skips for {@link defineEdgeCreationToolSuite}. */
 export type EdgeCreationToolSuiteOptions = WorkflowSuiteOptions<typeof edgeCreationToolSuiteCases>;
 
@@ -136,10 +133,10 @@ export type EdgeCreationToolSuiteOptions = WorkflowSuiteOptions<typeof edgeCreat
 export function defineEdgeCreationToolSuite(test: WorkflowTest, options?: EdgeCreationToolSuiteOptions): void {
     test.describe('The edge creation tool', () => {
         const suite = workflowSuite(test, 'edgeCreationTool', edgeCreationToolSuiteCases, options);
-        test(...suite.args('shouldAllowCreatingEdgesInTheGraph'));
-        test(...suite.args('shouldAllowCreatingWeightedEdgesInTheGraph'));
-        test(...suite.args('shouldPreventInvalidCombinations'));
-        test(...suite.args('shouldAllowToCancelTheOperation'));
+        test(...suite.args('createEdge'));
+        test(...suite.args('createWeightedEdge'));
+        test(...suite.args('preventInvalidCombinations'));
+        test(...suite.args('cancel'));
         suite.done();
     });
 }

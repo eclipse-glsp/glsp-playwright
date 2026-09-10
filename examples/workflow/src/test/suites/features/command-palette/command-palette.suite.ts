@@ -19,12 +19,12 @@ import { TaskAutomated } from '../../../../graph/elements/task-automated.po';
 import { TaskManual } from '../../../../graph/elements/task-manual.po';
 import { GLSP_SERVER_TYPE_JAVA, GLSP_SERVER_TYPE_NODE } from '../../../../server';
 import { TaskAutomatedNodes, TaskManualNodes } from '../../../nodes';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
 import type { WorkflowTest } from '../../../workflow-test';
 
 /** Default cases of the reusable command-palette suite, keyed by stable identifiers. */
 export const commandPaletteSuiteCases = {
-    inTheGlobalContextShouldAllowToSearchSuggestions: {
+    globalSearch: {
         title: 'should allow to search suggestions',
         run: async workflow => {
             expect(await workflow.app.globalCommandPalette.isHidden()).toBeTruthy();
@@ -83,7 +83,7 @@ export const commandPaletteSuiteCases = {
             expect(createSuggestions.sort()).toEqual(expectedCreateSuggestions.sort());
         }
     },
-    inTheGlobalContextShouldAllowToConfirmSuggestions: {
+    globalConfirm: {
         title: 'should allow to confirm suggestions',
         run: async workflow => {
             const before = await workflow.app.graph.getNodesOfType(TaskManual);
@@ -106,7 +106,7 @@ export const commandPaletteSuiteCases = {
             expect(names).toContain('ManualTask8');
         }
     },
-    inTheGlobalContextShouldAllowCreatingNewElementsInTheDiagram: {
+    globalCreateNode: {
         title: 'should allow creating new elements in the diagram',
         run: async workflow => {
             const nodes = await workflow.app.graph.waitForCreationOfType(TaskManual, async () => {
@@ -123,7 +123,7 @@ export const commandPaletteSuiteCases = {
             expect(await label.textContent()).toBe('ManualTask8');
         }
     },
-    inTheElementContextShouldAllowToSearchSuggestions: {
+    elementSearch: {
         title: 'should allow to search suggestions',
         run: async workflow => {
             const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -193,7 +193,7 @@ export const commandPaletteSuiteCases = {
             expect(createSuggestions.sort()).toEqual(expectedCreateSuggestions.sort());
         }
     },
-    inTheElementContextShouldAllowCreatingNewElementsInTheDiagram: {
+    elementCreateNode: {
         title: 'should allow creating new elements in the diagram',
         run: async workflow => {
             const task = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -212,7 +212,7 @@ export const commandPaletteSuiteCases = {
             expect(await label.textContent()).toBe('ManualTask8');
         }
     },
-    inTheElementContextShouldAllowCreatingEdgesInTheGraph: {
+    elementCreateEdge: {
         title: 'should allow creating edges in the graph',
         run: async workflow => {
             const source = await workflow.app.graph.getNodeByLabel(TaskManualNodes.pushLabel, TaskManual);
@@ -239,9 +239,6 @@ export const commandPaletteSuiteCases = {
     }
 } satisfies WorkflowTestCases;
 
-/** Integration-provided replacement bodies for {@link defineCommandPaletteSuite}. */
-export type CommandPaletteSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof commandPaletteSuiteCases>;
-
 /** Integration-specific skips for {@link defineCommandPaletteSuite}. */
 export type CommandPaletteSuiteOptions = WorkflowSuiteOptions<typeof commandPaletteSuiteCases>;
 
@@ -256,15 +253,15 @@ export function defineCommandPaletteSuite(test: WorkflowTest, options?: CommandP
         const suite = workflowSuite(test, 'commandPalette', commandPaletteSuiteCases, options);
 
         test.describe('in the global context', () => {
-            test(...suite.args('inTheGlobalContextShouldAllowToSearchSuggestions'));
-            test(...suite.args('inTheGlobalContextShouldAllowToConfirmSuggestions'));
-            test(...suite.args('inTheGlobalContextShouldAllowCreatingNewElementsInTheDiagram'));
+            test(...suite.args('globalSearch'));
+            test(...suite.args('globalConfirm'));
+            test(...suite.args('globalCreateNode'));
         });
 
         test.describe('in the element context', () => {
-            test(...suite.args('inTheElementContextShouldAllowToSearchSuggestions'));
-            test(...suite.args('inTheElementContextShouldAllowCreatingNewElementsInTheDiagram'));
-            test(...suite.args('inTheElementContextShouldAllowCreatingEdgesInTheGraph'));
+            test(...suite.args('elementSearch'));
+            test(...suite.args('elementCreateNode'));
+            test(...suite.args('elementCreateEdge'));
         });
 
         suite.done();

@@ -13,5 +13,18 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-export * from './context-menu.integration';
-export * from './context-menu.po';
+
+import type { Locator } from '@playwright/test';
+import type { Integration } from '../../../integration';
+import { hasProperty } from '../../../utils/ts.utils';
+
+/** Implemented by integrations that host the GLSP diagram inside their own context menu. */
+export interface ContextMenuIntegration extends Integration {
+    contextMenuLocator: Locator;
+}
+
+export namespace ContextMenuIntegration {
+    export function is(integration: Integration): integration is ContextMenuIntegration {
+        return hasProperty<ContextMenuIntegration>(integration, 'contextMenuLocator');
+    }
+}

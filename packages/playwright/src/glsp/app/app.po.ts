@@ -14,9 +14,9 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import type { Locator, Page } from 'playwright-core';
-import { ContextMenuIntegration, type Integration } from '../../integration';
+import type { Integration } from '../../integration';
 import { GLSPLocator } from '../../remote/locator';
-import { GLSPContextMenu, GLSPContextMenuNotSupported } from '../features';
+import { ContextMenuIntegration, GLSPContextMenu, GLSPContextMenuNotSupported } from '../features';
 import { GLSPGlobalCommandPalette } from '../features/command-palette';
 import { GLSPLabelEditor } from '../features/label-editor/label-editor.po';
 import { GLSPPopup } from '../features/popup/popup.po';

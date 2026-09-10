@@ -17,12 +17,12 @@ import { expect } from '@eclipse-glsp/playwright';
 import { ActivityNodeFork } from '../../../graph/elements/activity-node-fork.po';
 import { Edge } from '../../../graph/elements/edge.po';
 import { TaskManual } from '../../../graph/elements/task-manual.po';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../suite';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../suite';
 import type { WorkflowTest } from '../../workflow-test';
 
 /** Default cases of the reusable graph suite, keyed by stable identifiers. */
 export const graphSuiteCases = {
-    shouldAllowAccessingTheEdgeByUsingASelector: {
+    edgeBySelector: {
         title: 'by using a selector',
         run: async workflow => {
             const edge = await workflow.app.graph.getEdge('[id$="edge_task_Push_fork_1"]', Edge);
@@ -31,7 +31,7 @@ export const graphSuiteCases = {
             expect(await (await task.children.label()).textContent()).toBe('Push');
         }
     },
-    shouldAllowAccessingTheEdgeByUsingASourceType: {
+    edgeBySourceType: {
         title: 'by using a source type',
         run: async workflow => {
             const edges = await workflow.app.graph.getEdgesOfType(Edge, { sourceConstructor: TaskManual });
@@ -47,7 +47,7 @@ export const graphSuiteCases = {
             });
         }
     },
-    shouldAllowAccessingTheEdgeByUsingASourceSelector: {
+    edgeBySourceSelector: {
         title: 'by using a source selector',
         run: async workflow => {
             const sourceNode = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
@@ -58,7 +58,7 @@ export const graphSuiteCases = {
             expect(await source.idAttr()).toContain(await sourceNode.idAttr());
         }
     },
-    shouldAllowAccessingTheEdgeByUsingTheSourceTypeWithMultipleElements: {
+    edgesBySourceType: {
         title: 'by using the source type with multiple elements',
         run: async workflow => {
             const edges = await workflow.app.graph.getEdgesOfType(Edge, { sourceConstructor: TaskManual });
@@ -75,7 +75,7 @@ export const graphSuiteCases = {
             }
         }
     },
-    shouldAllowAccessingTheEdgeByUsingATargetType: {
+    edgesByTargetType: {
         title: 'by using a target type',
         run: async workflow => {
             const edges = await workflow.app.graph.getEdgesOfType(Edge, { targetConstructor: ActivityNodeFork });
@@ -92,7 +92,7 @@ export const graphSuiteCases = {
             }
         }
     },
-    shouldAllowAccessingTheEdgeByUsingTheSourceAndTargetType: {
+    edgesBySourceAndTargetType: {
         title: 'by using the source and target type',
         run: async workflow => {
             const edges = await workflow.app.graph.getEdgesOfType(Edge, {
@@ -113,7 +113,7 @@ export const graphSuiteCases = {
             }
         }
     },
-    shouldAllowAccessingTheNodeSemanticallyByUsingALabel: {
+    nodeByLabel: {
         title: 'semantically by using a label',
         run: async workflow => {
             const task = await workflow.app.graph.getNodeByLabel('Push', TaskManual);
@@ -122,16 +122,13 @@ export const graphSuiteCases = {
             expect(label).toBe('Push');
         }
     },
-    shouldAllowAccessingTheNodeSemanticallyByUsingALabelAndThrowAnErrorOnInvalidLabels: {
+    nodeByInvalidLabel: {
         title: 'semantically by using a label and throw an error on invalid labels',
         run: async workflow => {
             await expect(workflow.app.graph.getNodeByLabel('Not Existing', TaskManual)).rejects.toThrow();
         }
     }
 } satisfies WorkflowTestCases;
-
-/** Integration-provided replacement bodies for {@link defineGraphSuite}. */
-export type GraphSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof graphSuiteCases>;
 
 /** Integration-specific skips for {@link defineGraphSuite}. */
 export type GraphSuiteOptions = WorkflowSuiteOptions<typeof graphSuiteCases>;
@@ -147,17 +144,17 @@ export function defineGraphSuite(test: WorkflowTest, options?: GraphSuiteOptions
         const suite = workflowSuite(test, 'graph', graphSuiteCases, options);
 
         test.describe('should allow accessing the edge', () => {
-            test(...suite.args('shouldAllowAccessingTheEdgeByUsingASelector'));
-            test(...suite.args('shouldAllowAccessingTheEdgeByUsingASourceType'));
-            test(...suite.args('shouldAllowAccessingTheEdgeByUsingASourceSelector'));
-            test(...suite.args('shouldAllowAccessingTheEdgeByUsingTheSourceTypeWithMultipleElements'));
-            test(...suite.args('shouldAllowAccessingTheEdgeByUsingATargetType'));
-            test(...suite.args('shouldAllowAccessingTheEdgeByUsingTheSourceAndTargetType'));
+            test(...suite.args('edgeBySelector'));
+            test(...suite.args('edgeBySourceType'));
+            test(...suite.args('edgeBySourceSelector'));
+            test(...suite.args('edgesBySourceType'));
+            test(...suite.args('edgesByTargetType'));
+            test(...suite.args('edgesBySourceAndTargetType'));
         });
 
         test.describe('should allow accessing the node', () => {
-            test(...suite.args('shouldAllowAccessingTheNodeSemanticallyByUsingALabel'));
-            test(...suite.args('shouldAllowAccessingTheNodeSemanticallyByUsingALabelAndThrowAnErrorOnInvalidLabels'));
+            test(...suite.args('nodeByLabel'));
+            test(...suite.args('nodeByInvalidLabel'));
         });
 
         suite.done();

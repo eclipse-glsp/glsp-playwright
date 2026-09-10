@@ -16,12 +16,12 @@
 
 import { expect } from '@eclipse-glsp/playwright';
 import { TaskManual } from '../../../../graph/elements/task-manual.po';
-import { workflowSuite, WorkflowSuiteCaseBodies, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
+import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../../../suite';
 import type { WorkflowTest } from '../../../workflow-test';
 
 /** Default cases of the reusable standalone select-keybinding suite, keyed by stable identifiers. */
 export const selectKeybindingStandaloneSuiteCases = {
-    shouldAllowToDeselectASingleElementThroughAKeybinding: {
+    deselectSingle: {
         title: 'should allow to deselect a single element through a keybinding',
         run: async workflow => {
             const page = workflow.app.page;
@@ -40,9 +40,6 @@ export const selectKeybindingStandaloneSuiteCases = {
     }
 } satisfies WorkflowTestCases;
 
-/** Integration-provided replacement bodies for {@link defineSelectKeybindingStandaloneSuite}. */
-export type SelectKeybindingStandaloneSuiteCaseBodies = WorkflowSuiteCaseBodies<typeof selectKeybindingStandaloneSuiteCases>;
-
 /** Integration-specific skips for {@link defineSelectKeybindingStandaloneSuite}. */
 export type SelectKeybindingStandaloneSuiteOptions = WorkflowSuiteOptions<typeof selectKeybindingStandaloneSuiteCases>;
 
@@ -55,7 +52,7 @@ export type SelectKeybindingStandaloneSuiteOptions = WorkflowSuiteOptions<typeof
 export function defineSelectKeybindingStandaloneSuite(test: WorkflowTest, options?: SelectKeybindingStandaloneSuiteOptions): void {
     test.describe('The select keybinding', () => {
         const suite = workflowSuite(test, 'selectKeybinding', selectKeybindingStandaloneSuiteCases, options);
-        test(...suite.args('shouldAllowToDeselectASingleElementThroughAKeybinding'));
+        test(...suite.args('deselectSingle'));
         suite.done();
     });
 }

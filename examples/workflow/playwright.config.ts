@@ -13,8 +13,6 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import 'reflect-metadata';
-
 import type { GLSPPlaywrightOptions } from '@eclipse-glsp/playwright';
 import { type PlaywrightTestConfig } from '@playwright/test';
 import { baseConfig } from './configs/base.config';
