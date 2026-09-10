@@ -12,4 +12,4 @@ Eclipse GLSP Playwright — a Playwright-based testing framework for GLSP (Graph
 ## Code Style Rules
 
 - **Floating promises** — `@typescript-eslint/no-floating-promises` is an error; always `await` or handle promises
-- **Path alias** — `~/` maps to `packages/glsp-playwright/src/` in TypeScript configs
+- **Imports** — use relative imports within a package and package names across package boundaries; do not configure TypeScript path aliases

@@ -58,7 +58,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        integration: [standalone, theia, vscode]
+        # Each integration now lives in its own example package, so the matrix carries the
+        # directory to run instead of relying on a single package holding every project.
+        include:
+          - integration: standalone
+            dir: examples/workflow
+          - integration: theia
+            dir: examples/workflow-theia
+          - integration: vscode
+            dir: examples/workflow-vscode
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       - uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
@@ -74,13 +82,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
       - name: Run Playwright tests
         id: run_playwright_tests
-        run: xvfb-run -a pnpm test
+        run: xvfb-run -a pnpm -C ${{ matrix.dir }} test
       - name: Upload Playwright report
         if: ${{ always() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: playwright-report-node-${{ matrix.integration }}
-          path: examples/workflow-test/playwright-report/
+          path: ${{ matrix.dir }}/playwright-report/
 
   playwright-java:
     name: Playwright Tests (Java / ${{ matrix.integration }})
@@ -89,7 +97,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        integration: [standalone, theia, vscode]
+        # Each integration now lives in its own example package, so the matrix carries the
+        # directory to run instead of relying on a single package holding every project.
+        include:
+          - integration: standalone
+            dir: examples/workflow
+          - integration: theia
+            dir: examples/workflow-theia
+          - integration: vscode
+            dir: examples/workflow-vscode
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       - uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
@@ -110,10 +126,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
       - name: Run Playwright tests
         id: run_playwright_tests
-        run: xvfb-run -a pnpm test
+        run: xvfb-run -a pnpm -C ${{ matrix.dir }} test
       - name: Upload Playwright report
         if: ${{ always() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: playwright-report-java-${{ matrix.integration }}
-          path: examples/workflow-test/playwright-report/
+          path: ${{ matrix.dir }}/playwright-report/

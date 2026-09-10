@@ -39,7 +39,7 @@ Run the appropriate test command:
 - **standalone-browser**: `pnpm test:standalone-browser`
 - **theia**: `pnpm test:theia`
 - **vscode**: `pnpm test:vscode`
-- **pattern match**: If `$ARGUMENTS` contains a specific test name pattern, run: `cd examples/workflow-test && pnpm playwright test -g "$ARGUMENTS"`
+- **pattern match**: If `$ARGUMENTS` contains a specific test name pattern, run: `pnpm -C examples/<workflow|workflow-theia|workflow-vscode> exec playwright test -g "$ARGUMENTS"` (pick the package matching the integration)
 
 ### 4. Report Failures
 

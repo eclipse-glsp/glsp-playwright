@@ -8,6 +8,7 @@
     "examples/*/src",
     "examples/*/tests",
     "examples/*/*.config.ts",
-    "examples/*/configs/*.ts"
+    "examples/*/configs/*.ts",
+    "scripts/*.mts"
   ]
 }
