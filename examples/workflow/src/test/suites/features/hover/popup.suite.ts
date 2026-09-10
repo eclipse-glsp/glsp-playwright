@@ -33,7 +33,7 @@ export const popupSuiteCases = {
             await expect(workflow.app.popup.locate()).toBeVisible();
 
             const popup = task.popup();
-            expect(await popup.innerText()).toBe(expectedManualPopupText.get());
+            expect(await popup.innerText()).toBe(expectedManualPopupText(workflow.glspServer));
         }
     },
     textFromElement: {
@@ -43,14 +43,14 @@ export const popupSuiteCases = {
             await expect(workflow.app.popup.locate()).toBeHidden();
             const text = await task.popupText();
             await expect(workflow.app.popup.locate()).toBeVisible();
-            expect(text).toBe(expectedManualPopupText.get());
+            expect(text).toBe(expectedManualPopupText(workflow.glspServer));
         }
     },
     closeOnEscape: {
         title: 'escape',
         run: async workflow => {
             await workflow.app.graph.focus();
-            await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
+            await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText(workflow.glspServer));
 
             await workflow.app.page.keyboard.press('Escape');
             await workflow.app.popup.waitForHidden();
@@ -61,17 +61,17 @@ export const popupSuiteCases = {
     closeOnNewHover: {
         title: 'new hover',
         run: async workflow => {
-            await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
+            await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText(workflow.glspServer));
 
             await workflow.app.popup.close();
 
-            await assertPopup(workflow.app, automatedLabel, TaskAutomated, expectedAutomatedPopupText.get());
+            await assertPopup(workflow.app, automatedLabel, TaskAutomated, expectedAutomatedPopupText(workflow.glspServer));
         }
     },
     closeOnMouseAway: {
         title: 'mouse moved away',
         run: async workflow => {
-            await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
+            await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText(workflow.glspServer));
 
             const bounds = await workflow.app.graph.bounds();
             await bounds.position('middle_center').move();
@@ -83,7 +83,7 @@ export const popupSuiteCases = {
     closeOnFocusLost: {
         title: 'focus lost',
         run: async workflow => {
-            const task = await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
+            const task = await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText(workflow.glspServer));
 
             await workflow.app.graph.locate().click();
             await workflow.app.popup.waitForHidden();
@@ -94,7 +94,7 @@ export const popupSuiteCases = {
     closeOnCenter: {
         title: 'center command',
         run: async workflow => {
-            await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
+            await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText(workflow.glspServer));
             await workflow.app.graph.focus();
             await workflow.app.page.keyboard.press(provideDiagramShortcut(workflow.integration, 'center'));
             await workflow.app.popup.waitForHidden();
@@ -105,7 +105,7 @@ export const popupSuiteCases = {
     closeOnFitToScreen: {
         title: 'fit to screen command',
         run: async workflow => {
-            await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
+            await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText(workflow.glspServer));
             await workflow.app.graph.focus();
             await workflow.app.page.keyboard.press(provideDiagramShortcut(workflow.integration, 'fitToScreen'));
             await workflow.app.popup.waitForHidden();
@@ -116,7 +116,7 @@ export const popupSuiteCases = {
     closeOnLayout: {
         title: 'layout command',
         run: async workflow => {
-            await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText.get());
+            await assertPopup(workflow.app, manualLabel, TaskManual, expectedManualPopupText(workflow.glspServer));
             await workflow.app.graph.focus();
             await workflow.app.page.keyboard.press(provideDiagramShortcut(workflow.integration, 'layout'));
             await workflow.app.popup.waitForHidden();

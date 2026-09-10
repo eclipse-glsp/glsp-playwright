@@ -1,5 +1,20 @@
 import glspConfig from '@eclipse-glsp/eslint-config';
 
+/**
+ * Import specifiers that resolve to the importing module's own directory barrel or to one of its
+ * parent barrels, up to `depth` levels: `'.'`, `'..'`, `'../..'`, ...
+ */
+function ownAndParentBarrels(depth) {
+    return [
+        '.',
+        ...Array.from({ length: depth }, (_, level) =>
+            Array(level + 1)
+                .fill('..')
+                .join('/')
+        )
+    ];
+}
+
 export default [
     ...glspConfig,
     {
@@ -34,18 +49,21 @@ export default [
                 'error',
                 {
                     paths: [
-                        // `'..'`, `'../..'`, ... resolve to a parent barrel, which re-exports the
-                        // importing module itself. Type-only is fine, because the import erases; a
-                        // value import closes a runtime cycle and yields a partially initialized
-                        // module. Listed as exact paths rather than a pattern, because
+                        // `'.'`, `'..'`, `'../..'`, ... resolve to an own or parent barrel, which
+                        // re-exports the importing module itself. Type-only is fine, because the
+                        // import erases; a value import closes a runtime cycle and yields a
+                        // partially initialized module.
+                        //
+                        // Listed as exact paths rather than a pattern, because
                         // `no-restricted-imports` matches patterns gitignore-style and `'..'` would
-                        // then match every relative import.
-                        ...['..', '../..', '../../..', '../../../..', '../../../../..'].map(name => ({
+                        // then match every relative import. Generated well past the deepest source
+                        // directory so that adding a nesting level cannot silently uncover a barrel.
+                        ...ownAndParentBarrels(10).map(name => ({
                             name,
                             allowTypeImports: true,
                             message:
-                                'Importing a parent barrel closes a runtime import cycle. Import the defining module ' +
-                                'directly, or keep the import type-only with `import type`.'
+                                'Importing an own or parent barrel closes a runtime import cycle. Import the defining ' +
+                                'module directly, or keep the import type-only with `import type`.'
                         })),
                         {
                             name: 'sprotty',

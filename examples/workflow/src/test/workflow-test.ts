@@ -15,7 +15,6 @@
  ********************************************************************************/
 import { GLSPServer, Integration, test as base } from '@eclipse-glsp/playwright';
 import { WorkflowApp } from '../app/workflow-app';
-import { expectedAutomatedPopupText, expectedManualPopupText } from '../popup-text';
 
 /**
  * Application-specific objects shared by the reusable Workflow test suites.
@@ -43,11 +42,6 @@ export const test = base.extend<WorkflowTestFixtures>({
             integration
         });
         await app.waitForReady();
-
-        // The expected popup text depends on the server implementation, which is only known
-        // once `glspServer` is resolved. Bound here so that no test has to set it up itself.
-        expectedManualPopupText.setServer(glspServer);
-        expectedAutomatedPopupText.setServer(glspServer);
 
         await use({
             app,

@@ -20,8 +20,8 @@ import { assertPopup, expectedManualPopupText, manualLabel, TaskManual, test } f
 // that provides a context menu.
 test.describe('The popup', () => {
     test.describe('should be closed on', () => {
-        test('context menu', async ({ workflow: { app } }) => {
-            await assertPopup(app, manualLabel, TaskManual, expectedManualPopupText.get());
+        test('context menu', async ({ workflow: { app, glspServer } }) => {
+            await assertPopup(app, manualLabel, TaskManual, expectedManualPopupText(glspServer));
 
             await app.contextMenu.open();
             await app.popup.waitForHidden();

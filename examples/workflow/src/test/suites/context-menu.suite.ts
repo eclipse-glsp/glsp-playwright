@@ -13,9 +13,25 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
-import { ContextMenuIntegration, expect } from '@eclipse-glsp/playwright';
+import type { TestInfo } from '@playwright/test';
+import { ContextMenuIntegration, Integration, expect } from '@eclipse-glsp/playwright';
 import { workflowSuite, WorkflowSuiteOptions, WorkflowTestCases } from '../suite';
 import type { WorkflowTest } from '../workflow-test';
+
+/**
+ * Records which branch of the contract the case asserted.
+ *
+ * The integration is only known at runtime, so a single title has to cover both branches.
+ * The annotation puts the branch that actually ran into the report.
+ */
+function annotateSupport(testInfo: TestInfo, integration: Integration): boolean {
+    const supported = ContextMenuIntegration.is(integration);
+    testInfo.annotations.push({
+        type: 'capability',
+        description: supported ? 'context menu supported' : 'context menu not supported'
+    });
+    return supported;
+}
 
 /**
  * Default cases of the reusable context-menu suite, keyed by stable identifiers.
@@ -28,8 +44,8 @@ import type { WorkflowTest } from '../workflow-test';
 export const contextMenuSuiteCases = {
     open: {
         title: 'should be openable, or throw when the integration has no context menu',
-        run: async ({ app, integration }) => {
-            if (!ContextMenuIntegration.is(integration)) {
+        run: async ({ app, integration }, testInfo) => {
+            if (!annotateSupport(testInfo, integration)) {
                 expect(() => app.contextMenu.open()).toThrow();
                 return;
             }
@@ -40,8 +56,8 @@ export const contextMenuSuiteCases = {
     },
     close: {
         title: 'should be closeable, or throw when the integration has no context menu',
-        run: async ({ app, integration }) => {
-            if (!ContextMenuIntegration.is(integration)) {
+        run: async ({ app, integration }, testInfo) => {
+            if (!annotateSupport(testInfo, integration)) {
                 expect(() => app.contextMenu.close()).toThrow();
                 return;
             }

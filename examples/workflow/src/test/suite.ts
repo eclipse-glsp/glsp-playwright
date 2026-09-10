@@ -94,7 +94,12 @@ export function workflowSuite<T extends WorkflowTestCases>(
             const skip = override?.skip ?? testCase.skip;
 
             if (skip !== undefined) {
-                // The body destructures no fixtures, so the skip never resolves them.
+                // Skipped at runtime rather than through `test.skip(title, details, body)`, because
+                // that overload would have to be called from inside this helper, and Playwright
+                // takes the declaration location from the first frame outside its own code — every
+                // case would then report `suite.ts` instead of its own line. The body destructures
+                // no fixtures and none are `auto`, so no integration starts for a skipped case, and
+                // the annotation makes the reason visible during collection.
                 // eslint-disable-next-line no-empty-pattern
                 const body = async ({}: WorkflowTestFixtures, testInfo: TestInfo): Promise<void> => testInfo.skip(true, skip);
                 return [title, { annotation: { type: 'skip', description: skip } }, body];

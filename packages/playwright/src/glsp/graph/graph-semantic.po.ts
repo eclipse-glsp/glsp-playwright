@@ -14,11 +14,12 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 import { expect } from '@playwright/test';
-import { GraphConstructorOptions, SVGMetadataUtils } from '.';
 import { Selectable } from '../../extension';
 import { PLabelledElement } from '../../extension/model/labelled/labelled-element.model';
 import { PEdge, PEdgeConstructor, PModelElement, PModelElementConstructor, PNode, PNodeConstructor } from './elements';
 import { GLSPGraph } from './graph.po';
+import type { GraphConstructorOptions } from './graph.type';
+import { SVGMetadataUtils } from './svg-metadata-api';
 
 /**
  * The {@link GLSPSemanticGraph} allows compared to {@link GLSPGraph} semantic access.
