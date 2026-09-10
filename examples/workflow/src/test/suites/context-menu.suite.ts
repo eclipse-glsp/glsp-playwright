@@ -24,13 +24,11 @@ import type { WorkflowTest } from '../workflow-test';
  * The integration is only known at runtime, so a single title has to cover both branches.
  * The annotation puts the branch that actually ran into the report.
  */
-function annotateSupport(testInfo: TestInfo, integration: Integration): boolean {
-    const supported = ContextMenuIntegration.is(integration);
+function annotateContextMenuSupport(testInfo: TestInfo, integration: Integration): void {
     testInfo.annotations.push({
         type: 'capability',
-        description: supported ? 'context menu supported' : 'context menu not supported'
+        description: ContextMenuIntegration.is(integration) ? 'context menu supported' : 'context menu not supported'
     });
-    return supported;
 }
 
 /**
@@ -45,7 +43,9 @@ export const contextMenuSuiteCases = {
     open: {
         title: 'should be openable, or throw when the integration has no context menu',
         run: async ({ app, integration }, testInfo) => {
-            if (!annotateSupport(testInfo, integration)) {
+            annotateContextMenuSupport(testInfo, integration);
+
+            if (!ContextMenuIntegration.is(integration)) {
                 expect(() => app.contextMenu.open()).toThrow();
                 return;
             }
@@ -57,7 +57,9 @@ export const contextMenuSuiteCases = {
     close: {
         title: 'should be closeable, or throw when the integration has no context menu',
         run: async ({ app, integration }, testInfo) => {
-            if (!annotateSupport(testInfo, integration)) {
+            annotateContextMenuSupport(testInfo, integration);
+
+            if (!ContextMenuIntegration.is(integration)) {
                 expect(() => app.contextMenu.close()).toThrow();
                 return;
             }

@@ -17,7 +17,9 @@ import type { Locator } from '@playwright/test';
 import type { GLSPApp } from '..';
 import { GLSPLocator, type LocateContext } from '../../remote';
 import { definedAttr, isUndefinedOrValue } from '../../utils/ts.utils';
-import { expect } from '../../test';
+// Imported directly instead of via the `../../test` barrel: that barrel also pulls in
+// `test/test.ts`, which imports the integration barrel and would close a runtime import cycle.
+import { expect } from '../../test/assertions';
 import { ModelElementMetadata, PMetadata } from './decorators';
 import { assertEqualType, createTypedEdgeProxy, getPModelElementConstructorOfType } from './elements';
 import { isPEdgeConstructor, PEdge, PEdgeConstructor } from './elements/edge';

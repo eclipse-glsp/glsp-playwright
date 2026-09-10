@@ -15,7 +15,11 @@
  ********************************************************************************/
 import { expect as baseExpect, ExpectMatcherState, Locator } from '@playwright/test';
 import { Selectable } from '../extension';
-import { GLSPSemanticGraph, PModelElement, SVGMetadataUtils } from '../glsp';
+// Imported directly instead of via the `../glsp` barrel: that barrel reaches back into
+// `test/assertions.ts` through the graph page objects and would close a runtime import cycle.
+import { PModelElement } from '../glsp/graph/elements/element';
+import type { GLSPSemanticGraph } from '../glsp/graph/graph-semantic.po';
+import { SVGMetadataUtils } from '../glsp/graph/svg-metadata-api';
 import { GLSPLocator, Locateable } from '../remote';
 import { ConstructorT } from '../types';
 import { unwrapLocator } from '../utils';
