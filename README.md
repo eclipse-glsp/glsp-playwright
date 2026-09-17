@@ -1,10 +1,24 @@
 # Eclipse GLSP - Playwright [![CI](https://github.com/eclipse-glsp/glsp-playwright/actions/workflows/ci.yml/badge.svg)](https://github.com/eclipse-glsp/glsp-playwright/actions/workflows/ci.yml?branch=main)
 
+> [!IMPORTANT]
+> **This repository is deprecated and will be archived soon.**
+> Development has moved to the consolidated [`glsp-core`](https://github.com/eclipse-glsp/glsp-core) monorepo.
+> The `@eclipse-glsp/glsp-playwright` package has been **renamed to
+> [`@eclipse-glsp/playwright`](https://www.npmjs.com/package/@eclipse-glsp/playwright)** and is developed and published from
+> [`glsp-core/e2e/playwright`](https://github.com/eclipse-glsp/glsp-core/tree/main/e2e/playwright) starting with version `2.9.0`.
+> The Theia and VS Code integration code has been **split out into separate packages**:
+> [`@eclipse-glsp/playwright-theia`](https://www.npmjs.com/package/@eclipse-glsp/playwright-theia) (from
+> [`glsp-theia-integration/e2e/playwright-theia`](https://github.com/eclipse-glsp/glsp-theia-integration/tree/master/e2e/playwright-theia))
+> and [`@eclipse-glsp/playwright-vscode`](https://www.npmjs.com/package/@eclipse-glsp/playwright-vscode) (from
+> [`glsp-vscode-integration/e2e/playwright-vscode`](https://github.com/eclipse-glsp/glsp-vscode-integration/tree/master/e2e/playwright-vscode)).
+> Only the standalone integration remains part of `@eclipse-glsp/playwright`.
+> Please report issues in the [GLSP umbrella repository](https://github.com/eclipse-glsp/glsp/issues) and open pull requests against `glsp-core`.
+
 A Playwright-based framework for testing the [Graphical Language Server Platform (GLSP)](https://github.com/eclipse-glsp/glsp).
 
 ## Structure
 
-- `@eclipse-glsp/glsp-playwright`: Generic Playwright testing framework
+- `@eclipse-glsp/glsp-playwright`: Generic Playwright testing framework (superseded by [`@eclipse-glsp/playwright`](https://www.npmjs.com/package/@eclipse-glsp/playwright) in [`glsp-core/e2e/playwright`](https://github.com/eclipse-glsp/glsp-core/tree/main/e2e/playwright))
 
 ## Developer Documentation
 
@@ -57,8 +71,10 @@ The repository also provides build & watch tasks, so that you can build all pack
 ## Documentation
 
 We provide a [Documentation](./docs) for further information on the used concepts.
+These concept docs have been moved to [`glsp-core/e2e/playwright/docs`](https://github.com/eclipse-glsp/glsp-core/tree/main/e2e/playwright/docs) and are maintained there.
 
 ## More information
 
 For more information, please visit the [Eclipse GLSP Umbrella repository](https://github.com/eclipse-glsp/glsp) and the [Eclipse GLSP Website](https://www.eclipse.org/glsp/).
+The successor of this repository is the consolidated [`glsp-core`](https://github.com/eclipse-glsp/glsp-core) monorepo.
 If you have questions, please raise them in the [discussions](https://github.com/eclipse-glsp/glsp/discussions) and have a look at our [communication and support options](https://www.eclipse.org/glsp/contact/).

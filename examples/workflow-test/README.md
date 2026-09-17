@@ -1,5 +1,20 @@
 # Eclipse GLSP-Playwright Example
 
+> [!IMPORTANT]
+> **This repository is deprecated and will be archived soon.**
+> Development has moved to the consolidated [`glsp-core`](https://github.com/eclipse-glsp/glsp-core) monorepo, where this test suite
+> lives as **[`@eclipse-glsp-examples/workflow-e2e`](https://github.com/eclipse-glsp/glsp-core/tree/main/e2e/workflow-e2e)**
+> (`e2e/workflow-e2e`). The framework it builds on has been **renamed from `@eclipse-glsp/glsp-playwright` to
+> [`@eclipse-glsp/playwright`](https://www.npmjs.com/package/@eclipse-glsp/playwright)** (`glsp-core/e2e/playwright`) starting with
+> version `2.9.0`.
+> The Theia and VS Code parts covered by the table below no longer live together with the standalone tests. The framework code was split
+> out into [`@eclipse-glsp/playwright-theia`](https://www.npmjs.com/package/@eclipse-glsp/playwright-theia) and
+> [`@eclipse-glsp/playwright-vscode`](https://www.npmjs.com/package/@eclipse-glsp/playwright-vscode), and the corresponding test suites
+> into [`@eclipse-glsp-examples/workflow-theia-e2e`](https://github.com/eclipse-glsp/glsp-theia-integration/tree/master/e2e/workflow-theia-e2e)
+> and [`@eclipse-glsp-examples/workflow-vscode-e2e`](https://github.com/eclipse-glsp/glsp-vscode-integration/tree/master/e2e/workflow-vscode-e2e),
+> maintained in the `glsp-theia-integration` and `glsp-vscode-integration` repositories.
+> Please report issues in the [GLSP umbrella repository](https://github.com/eclipse-glsp/glsp/issues) and open pull requests against `glsp-core`.
+
 This package contains code examples that demonstrate how to test diagram editors using the [Graphical Language Server Platform (GLSP)](https://github.com/eclipse-glsp/glsp).
 
 <details>

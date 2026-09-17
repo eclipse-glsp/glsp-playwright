@@ -6,8 +6,6 @@ concurrency:
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '20 18 * * 1' # At 18:20 on Monday
 
 jobs:
   playwright-node:
