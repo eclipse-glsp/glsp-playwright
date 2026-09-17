@@ -1,5 +1,7 @@
 # AGENTS.md
 
+> **DEPRECATED:** This repository is deprecated and will be archived soon. Active development happens in the consolidated [`glsp-core`](https://github.com/eclipse-glsp/glsp-core) monorepo (`e2e/playwright`, `e2e/workflow-e2e`); the Theia and VS Code integrations were split out into `@eclipse-glsp/playwright-theia` and `@eclipse-glsp/playwright-vscode`, which live in the `glsp-theia-integration` and `glsp-vscode-integration` repositories — do not implement changes here.
+
 ## Project Overview
 
 Eclipse GLSP Playwright — a Playwright-based testing framework for GLSP (Graphical Language Server Platform) diagram editors. Supports Standalone, Theia, and VS Code integrations.
